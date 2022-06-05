@@ -1,8 +1,8 @@
-package transacoes;
+package transacao;
 
-import transacoes.databank.DataBank;
+import transacao.databank.DataBank;
 
-public class Boleto extends Transacoes {
+public class Boleto extends Transacao {
 
 	private String nomeDaTransacao = "Boleto";
 	private DataBank dataVencimento;

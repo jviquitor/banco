@@ -1,8 +1,8 @@
-package transacoes;
+package transacao;
 
-import transacoes.databank.DataBank;
+import transacao.databank.DataBank;
 
-public class Transacoes {
+public class Transacao {
 	private String nomeDaTransacao; //todo Talvez seja melhor se colocar um nome mais adequado para a variável
 	private int valor;
 	private Pessoa destino; //pensar em um nome melhor para essa classe pessoa

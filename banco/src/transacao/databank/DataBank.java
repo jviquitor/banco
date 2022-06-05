@@ -1,4 +1,4 @@
-package transacoes.databank;
+package transacao.databank;
 
 public class DataBank {
 	private String data;

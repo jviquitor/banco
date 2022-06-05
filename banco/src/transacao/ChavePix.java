@@ -1,4 +1,4 @@
-package transacoes;
+package transacao;
 
 public class ChavePix {
 	private int telefone;

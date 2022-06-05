@@ -1,6 +1,6 @@
-package transacoes;
+package transacao;
 
-public class Pix extends Transacoes {
+public class Pix extends Transacao {
 	private String nomeDaTransacao = "Pix";
 	private int quantidadeDeChavesAtuais;
 	private final int quantidadeDeChavesMax = 4;

@@ -1,4 +1,4 @@
-package transacoes;
+package transacao;
 
 // TODO: 6/5/2022  Colocar um nome mais adequado para essa classe
 //Lembrando que essa classe é para gerar quem será a pessoa destino/origem das transações
