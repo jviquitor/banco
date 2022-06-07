@@ -1,6 +1,6 @@
 package conta;
 
-import Historico.Historico;
+import historico.Historico;
 import cartao.Cartao;
 import transacao.Transacao;
 

@@ -1,4 +1,4 @@
-package Historico;
+package historico;
 
 public class Historico {
 }
