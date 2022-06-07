@@ -1,38 +1,20 @@
 package conta;
 
-import transacao.Transacao;
+import cartao.CartaoStandard;
+import interfaceUsuario.dados.Dados;
 
 public class ContaStandard extends Conta {
-	private final int saquesMaximos = 5;
-	private final int valorSaquesMaximo = 1000;
+	private static final int SAQUES_MAXIMOS = 5;
+	private static final int VALOR_SAQUES_MAXIMO = 1000;
+	private static final int FATOR_EMPRESTIMO =  4;
 
-	@Override
-	public boolean transferir(Transacao formaDeTransacao) {
-		return false;
-	}
-
-	@Override
-	public boolean pagar(Transacao formaDeTransacao) {
-		return false;
-	}
-
-	@Override
-	public boolean depositar(Transacao formaDeTransacao) {
-		return false;
-	}
-
-	@Override
-	public boolean agendarTransacao() {
-		return false;
-	}
-
-	@Override
-	public boolean resetNotificacoes() {
-		return false;
-	}
-
-	@Override
 	public boolean renderSaldo() {
 		return false;
+	}
+
+	public ContaStandard(Dados dados) {
+		super();
+		this.dinheiroDisponivelEmprestimo = dados.getRendaAtual() * FATOR_EMPRESTIMO;
+		this.limiteMaximo = CartaoStandard.LIMITE_MAX;
 	}
 }

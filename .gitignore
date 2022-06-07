@@ -8,6 +8,9 @@
 .idea/
 .vscode/
 
+# IntelliJ file
+*.iml
+
 # BlueJ files
 *.ctxt
 
