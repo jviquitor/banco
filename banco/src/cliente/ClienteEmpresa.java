@@ -8,7 +8,5 @@ import java.util.Set;
 public class ClienteEmpresa extends Cliente {
 	private String cnpj;
 	private final Set<String> gerentesEmpresa = new HashSet<>();
-	private int rendaEmpresa;
 	private Conta conta;
-	private boolean isOnline;
 }

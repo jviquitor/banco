@@ -9,7 +9,7 @@ public class Transacao {
 	private Pessoa origem;
 	private String idPagamento;
 	private DataBank dataTransacao;
-	
+
 	public void gerarComprovante() {
 		// TODO: 6/5/2022  
 	}

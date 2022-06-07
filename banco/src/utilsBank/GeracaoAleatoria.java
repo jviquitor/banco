@@ -9,7 +9,10 @@ import java.util.Set;
 public class GeracaoAleatoria {
 	private static Set<String> chavesNossosNumerosGeradas = new HashSet<>();
 	private static Set<String> chavesGeradasAleatorias = new HashSet<>();
+	private static Set<Integer> chavesGeradasNumeroCartao = new HashSet<>();
 	private static Set<String> chavesIdsConta = new HashSet<>();
+	private static final int NUMERO_CARTAO_SEM_AGENCIA = 12;
+
 
 	public static String gerarNossosNumeros(int quantidadeNumeros) {
 		Random random = new Random();
@@ -24,6 +27,21 @@ public class GeracaoAleatoria {
 
 		chavesNossosNumerosGeradas.add(String.valueOf(numberRandom));
 		return numberRandom.toString();
+	}
+
+	public static int gerarNumeroCartao() {
+		Random random = new Random();
+		StringBuilder numberRandom;
+		do {
+			numberRandom = new StringBuilder();
+			for (int i = 0; i < NUMERO_CARTAO_SEM_AGENCIA; i++) {
+				numberRandom.append(random.nextInt(10));
+			}
+
+		} while (chavesGeradasNumeroCartao.contains(Integer.parseInt(String.valueOf(numberRandom))));
+
+		chavesGeradasNumeroCartao.add(Integer.parseInt(String.valueOf(numberRandom)));
+		return Integer.parseInt(String.valueOf(numberRandom));
 	}
 
 	public static String gerarChaveAleatoria(int tamanhoChave) {

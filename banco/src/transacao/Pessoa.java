@@ -7,8 +7,6 @@ package transacao;
 
 public class Pessoa {
 	private String nome;
-	private int idAgencia;
-	private int idConta;
-
-
+	private String idAgencia;
+	private String idConta;
 }
