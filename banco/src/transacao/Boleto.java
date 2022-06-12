@@ -1,13 +1,16 @@
 package transacao;
 
+import interfaceUsuario.dados.DadosTransacao;
 import utilsBank.databank.Data;
 
-public class Boleto extends Transacao implements Pagavel {
+public class Boleto implements Pagavel {
 
 	private String nomeDaTransacao = "Boleto";
 	private Data dataVencimento;
 	private int multaPorDias;
-	private int nossoNumero;
-	private int linhaDigitavel;
 
+	public Boleto(DadosTransacao dadosTransacao) {
+		this.dataVencimento = dadosTransacao.getDataVencimento();
+		this.multaPorDias = dadosTransacao.getMultaPorDias();
+	}
 }

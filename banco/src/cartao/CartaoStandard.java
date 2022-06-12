@@ -6,5 +6,6 @@ public class CartaoStandard extends Cartao {
 
 	public CartaoStandard(Cliente cliente, DadosCartao dadosCartao) {
 		super(cliente, dadosCartao);
+		this.tipoCartao = "standard";
 	}
 }

@@ -15,6 +15,10 @@ public class ClienteEmpresa extends Cliente {
 		this.cnpj = cnpj;
 	}
 
+	public String getCnpj() {
+		return cnpj;
+	}
+
 	public void setConta(Conta conta) {
 		this.conta = conta;
 	}

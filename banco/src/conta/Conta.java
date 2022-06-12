@@ -1,9 +1,6 @@
 package conta;
 
-import cartao.Cartao;
-import cartao.CartaoDiamond;
-import cartao.CartaoPremium;
-import cartao.CartaoStandard;
+import cartao.*;
 import cliente.Cliente;
 import conta.exceptions.DadosInvalidosException;
 import conta.exceptions.TipoInvalido;
@@ -13,6 +10,8 @@ import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosConta;
 import transacao.Transacao;
 import utilsBank.GeracaoAleatoria;
+import utilsBank.databank.Data;
+import utilsBank.databank.DataBank;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,10 +20,8 @@ import java.util.Locale;
 
 public class Conta {
 	protected static final int TAMANHO_ID_CONTA = 4;
-	
-	protected String idConta;
 
-	protected int saquesOcorridos;
+	protected String idConta;
 	protected double saldo;
 	protected double dinheiroGuardado;
 	protected double dinheiroDisponivelEmprestimo;
@@ -41,7 +38,6 @@ public class Conta {
 
 	protected Conta() {
 		this.idConta = GeracaoAleatoria.gerarIdConta(Conta.TAMANHO_ID_CONTA);
-		this.saquesOcorridos = 0;
 		this.saldo = 0;
 		this.dinheiroGuardado = 0;
 		this.transacoesRealizadas = new ArrayList<>();
@@ -53,20 +49,42 @@ public class Conta {
 		this.limiteUsado = 0;
 	}
 
-	public boolean hasCartao(String tipo) {
-		for (Cartao cartao: listaDeCartao) {
-			if (tipo.equalsIgnoreCase(cartao.getTipoCartao())) {
+	public void setChavesPix(List<ChavePix> chavesPix) {
+		this.chavesPix = chavesPix;
+	}
+
+	public boolean hasCartao(FuncaoCartao funcaoCartao) {
+		for (Cartao cartao : listaDeCartao) {
+			if (funcaoCartao == cartao.getFuncaoCartao()) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean transferir(Cliente cliente) {
-		//Criar uma nova transação
-			//Essa transação precisará dos dados informados
-		//Realiza a transação
-		return false;
+	private void aumentarSaldo(Double valor) {
+		//TODO Interface trata caso o valor seja negativo ou zero, avisando que o mesmo esta inserindo um valor errado
+		this.saldo += valor;
+	}
+
+	private void diminuirSaldo(Double valor) {
+		//TODO Interface trata caso o valor seja maior que o saldo disponivel na conta
+		this.saldo -= valor;
+	}
+
+	public void transferir() {
+		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
+		Transacao transacao = new Transacao(dadosTransacao);
+		Double valorT = transacao.getValor();
+		transacao.getCobrador().aumentarSaldo(valorT);
+		transacao.getPagador().diminuirSaldo(valorT);
+	}
+
+	public void transferir(DadosTransacao dadosTransacao) {
+		Transacao transacao = new Transacao(dadosTransacao);
+		Double valorT = transacao.getValor();
+		transacao.getCobrador().aumentarSaldo(valorT);
+		transacao.getPagador().diminuirSaldo(valorT);
 	}
 
 	public static Conta criarConta() {
@@ -118,12 +136,30 @@ public class Conta {
 		return true;
 	}
 
+	public void pagar() {
+		transferir();
+	}
 
-//	public boolean pagar(Transacao formaDeTransacao);//Nao é abstrata
-//	public boolean depositar(Transacao formaDeTransacao);//Nao é abstrata
-//	public boolean agendarTransacao();//Nao é abstrata
+	public void depositar() {
+		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
+		Transacao transacao = new Transacao(dadosTransacao);
+		Double valorT = transacao.getValor();
+		transacao.getCobrador().aumentarSaldo(valorT);
+	}
+
+	//TODO perguntar a vania se tem problema essa funcao ser meio que simbolica (explicar que eh por causa do async etc)
+	public boolean agendarTransacao() {
+		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
+		InterfaceUsuario.setDataAgendada();
+		Data data = DataBank.criaData(InterfaceUsuario.getDataAgendada());
+
+		if (data.equals(DataBank.criaData())) {
+			transferir(dadosTransacao);
+			return true;
+		}
+		return false;
+	}
 //	public boolean resetNotificacoes();//Nao é abstrata
 //	public abstract boolean renderSaldo();
-
 
 }

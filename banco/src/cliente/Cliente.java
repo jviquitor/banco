@@ -8,6 +8,8 @@ public abstract class Cliente {
 	private Endereco end;
 	private boolean isOnline;
 	private double renda;
+	private int quantidadeDeChavesAtuais; //TODO set quantidadeDeChavesDependendo da quantidade em lista
+	private final int QUANTIDADE_DE_CHAVES_MAX = 4;
 
 	public Cliente(String nome, String email, int telefone, int idade, Endereco end, boolean isOnline, double renda) {
 		this.nome = nome;

@@ -31,4 +31,7 @@ public abstract class Cartao {
 		return this.tipoCartao;
 	}
 
+	public FuncaoCartao getFuncaoCartao() {
+		return funcaoCartao;
+	}
 }

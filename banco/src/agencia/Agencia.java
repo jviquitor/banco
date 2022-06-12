@@ -8,6 +8,7 @@ import java.util.List;
 public class Agencia {
 	private static List<Cliente> clientes = new ArrayList<>(); //Talvez mudaremos o tipo de estrutura que usaremos para guardar os clientes
 	public static final String ID_AGENCIA = "6721";
+	public static final String CODIGO_MOEDA = "9";
 
 	public boolean addCliente(Cliente cliente) {
 		if (!clientes.contains(cliente)) {

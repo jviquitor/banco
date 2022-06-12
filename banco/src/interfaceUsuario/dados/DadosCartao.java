@@ -6,7 +6,6 @@ import conta.exceptions.TipoInvalido;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class DadosCartao {
 	private String apelidoCartao;
@@ -25,9 +24,9 @@ public class DadosCartao {
 		List<String> debito = new ArrayList<>(Arrays.asList("debito", "débito"));
 		List<String> credito = new ArrayList<>(Arrays.asList("crédito", "credito"));
 
-		if (debito.contains(this.funcaoCartao.toLowerCase(Locale.ROOT))) {
+		if (debito.contains(this.funcaoCartao.toLowerCase())) {
 			return FuncaoCartao.CARTAO_DEBITO;
-		} else if (credito.contains(this.funcaoCartao.toLowerCase(Locale.ROOT))) {
+		} else if (credito.contains(this.funcaoCartao.toLowerCase())) {
 			return FuncaoCartao.CARTAO_CREDITO;
 		}
 		throw new TipoInvalido("Por favor, escolha um tipo de cartao valido");
