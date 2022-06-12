@@ -1,5 +1,8 @@
 package cartao;
 
+import cliente.Cliente;
+import interfaceUsuario.dados.DadosCartao;
+
 public class CartaoStandard extends Cartao {
 	private int limite;
 	public static final int LIMITE_MAX = 10 ^ 4;

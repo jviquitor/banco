@@ -8,6 +8,8 @@ import historico.Historico;
 import interfaceUsuario.InterfaceUsuario;
 import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosConta;
+import interfaceUsuario.dados.DadosTransacao;
+import transacao.ChavePix;
 import transacao.Transacao;
 import utilsBank.GeracaoAleatoria;
 import utilsBank.databank.Data;
@@ -36,6 +38,8 @@ public class Conta {
 	protected int limiteMaximo;
 	protected int limiteUsado;
 
+	protected List<ChavePix> chavesPix;
+
 	protected Conta() {
 		this.idConta = GeracaoAleatoria.gerarIdConta(Conta.TAMANHO_ID_CONTA);
 		this.saldo = 0;
@@ -47,6 +51,7 @@ public class Conta {
 		this.historico = new Historico();
 		this.listaDeCartao = new ArrayList<>();
 		this.limiteUsado = 0;
+		this.chavesPix = new ArrayList<>();
 	}
 
 	public void setChavesPix(List<ChavePix> chavesPix) {
