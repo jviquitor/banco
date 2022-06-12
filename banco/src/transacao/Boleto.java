@@ -1,11 +1,11 @@
 package transacao;
 
-import transacao.databank.DataBank;
+import utilsBank.databank.Data;
 
-public class Boleto extends Transacao {
+public class Boleto extends Transacao implements Pagavel {
 
 	private String nomeDaTransacao = "Boleto";
-	private DataBank dataVencimento;
+	private Data dataVencimento;
 	private int multaPorDias;
 	private int nossoNumero;
 	private int linhaDigitavel;

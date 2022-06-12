@@ -1,7 +1,7 @@
 package conta;
 
 import cartao.CartaoStandard;
-import interfaceUsuario.dados.Dados;
+import interfaceUsuario.dados.DadosConta;
 
 public class ContaStandard extends Conta {
 	private static final int SAQUES_MAXIMOS = 5;
@@ -12,7 +12,7 @@ public class ContaStandard extends Conta {
 		return false;
 	}
 
-	public ContaStandard(Dados dados) {
+	public ContaStandard(DadosConta dados) {
 		super();
 		this.dinheiroDisponivelEmprestimo = dados.getRendaAtual() * FATOR_EMPRESTIMO;
 		this.limiteMaximo = CartaoStandard.LIMITE_MAX;

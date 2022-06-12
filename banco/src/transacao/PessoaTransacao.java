@@ -5,8 +5,16 @@ package transacao;
 //O gerar comprovante, precisará saber quem é a pessoa, com o id da agência e o idDaConta
 //para INFORMAR no comprovante, quem foi o destino de tal transação ou a origem da mesma
 
-public class Pessoa {
+public class PessoaTransacao {
 	private String nome;
 	private String idAgencia;
 	private String idConta;
+
+	public PessoaTransacao(String nome, String idAgencia, String idConta) {
+		this.nome = nome;
+		this.idAgencia = idAgencia;
+		this.idConta = idConta;
+	}
+
+
 }

@@ -1,11 +1,23 @@
 package interfaceUsuario;
 
-import interfaceUsuario.dados.Dados;
+import cliente.Cliente;
+import interfaceUsuario.dados.DadosCartao;
+import interfaceUsuario.dados.DadosConta;
 
 public class InterfaceUsuario {
-    public static Dados dados;
+	private static DadosConta dadosConta;
+	private static DadosCartao dadosCartao;
+	private static Cliente cliente;
 
-    public static Dados getDados() {
-        return dados;
-    }
+	public static Cliente getCliente() {
+		return cliente;
+	}
+
+	public static DadosConta getDadosConta() {
+		return dadosConta;
+	}
+
+	public static DadosCartao getDadosCartao() {
+		return dadosCartao;
+	}
 }

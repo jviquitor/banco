@@ -1,8 +1,6 @@
 package interfaceUsuario.dados;
 
-import conta.Conta;
-
-public class Dados {
+public class DadosConta {
     private String tipoDaConta;
     private int rendaAtual;
     private boolean cartaoCredito;
@@ -11,6 +9,7 @@ public class Dados {
     public boolean hasCartaoCredito() {
         return cartaoCredito;
     }
+
     public boolean hasCartaoDebit() {
         return cartaoCredito;
     }
@@ -22,4 +21,5 @@ public class Dados {
     public int getRendaAtual() {
         return rendaAtual;
     }
+
 }

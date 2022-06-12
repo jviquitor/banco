@@ -1,11 +1,16 @@
 package conta;
 
-import cartao.*;
+import cartao.Cartao;
+import cartao.CartaoDiamond;
+import cartao.CartaoPremium;
+import cartao.CartaoStandard;
 import cliente.Cliente;
+import conta.exceptions.DadosInvalidosException;
 import conta.exceptions.TipoInvalido;
 import historico.Historico;
 import interfaceUsuario.InterfaceUsuario;
-import interfaceUsuario.dados.Dados;
+import interfaceUsuario.dados.DadosCartao;
+import interfaceUsuario.dados.DadosConta;
 import transacao.Transacao;
 import utilsBank.GeracaoAleatoria;
 
@@ -66,45 +71,45 @@ public class Conta {
 
 	public static Conta criarConta() {
 		//Sabendo que o cliente está online (a Interface precisa tratar isso)
-		Dados dados = InterfaceUsuario.getDados();
+		DadosConta dadosConta = InterfaceUsuario.getDadosConta();
+		DadosCartao dadosCartao = InterfaceUsuario.getDadosCartao();
+		Cliente cliente = InterfaceUsuario.getCliente();
 		Conta conta;
-		if (dados == null) {
-			return null;
-		}
-		else {
+
+		if (dadosConta == null || dadosCartao == null || cliente == null) {
+			throw new DadosInvalidosException("Dados inseridos incorretamente, Por favor, logue novamente!");
+		} else {
 			List<String> standard = new ArrayList<>(Arrays.asList("standard", "normal", "conta de pobre", "qualquer conta", "basica"));
 			List<String> premium = new ArrayList<>(Arrays.asList("premium", "plus", "conta mediana"));
 			List<String> diamond = new ArrayList<>(Arrays.asList("diamond", "a melhor", "com mais beneficios", "conta de rico"));
 
-
-			if (diamond.contains(dados.getTipoDaConta().toLowerCase(Locale.ROOT))) {
-				conta = new ContaDiamond(dados);
-            } else if (premium.contains(dados.getTipoDaConta().toLowerCase(Locale.ROOT))) {
-				conta = new ContaPremium(dados);
-			} else if (standard.contains(dados.getTipoDaConta().toLowerCase(Locale.ROOT))) {
-				conta = new ContaStandard(dados);
+			if (diamond.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
+				conta = new ContaDiamond(dadosConta);
+			} else if (premium.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
+				conta = new ContaPremium(dadosConta);
+			} else if (standard.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
+				conta = new ContaStandard(dadosConta);
 			} else {
 				throw new TipoInvalido("Por favor, escolha um tipo de conta valido");
 			}
-			if (dados.hasCartaoCredito()) {
-				conta.criarCartao(TipoCartao.CARTAO_CREDITO);
-			} else if (dados.hasCartaoDebit()) {
-				conta.criarCartao(TipoCartao.CARTAO_DEBITO);
+			if (dadosConta.hasCartaoCredito()) {
+				conta.criarCartao(cliente, dadosCartao);
+			} else if (dadosConta.hasCartaoDebit()) {
+				conta.criarCartao(cliente, dadosCartao);
 			}
 		}
 		return conta;
 	}
 
-	public boolean criarCartao(TipoCartao tCartao) {
+	public boolean criarCartao(Cliente cliente, DadosCartao dadosCartao) {
 		Cartao cartao;
 
-		//aqui tem que passar a informaçao da função dele ser debito
 		if (this.getClass() == ContaStandard.class) {
-			cartao = new CartaoStandard();
+			cartao = new CartaoStandard(cliente, dadosCartao);
 		} else if (this.getClass() == ContaPremium.class) {
-			cartao = new CartaoPremium();
+			cartao = new CartaoPremium(cliente, dadosCartao);
 		} else if (this.getClass() == ContaDiamond.class) {
-			cartao = new CartaoDiamond();
+			cartao = new CartaoDiamond(cliente, dadosCartao);
 		} else {
 			throw new TipoInvalido("Tipo do cartao invalido.");
 		}

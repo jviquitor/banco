@@ -2,10 +2,9 @@ package cartao;
 
 public class CartaoStandard extends Cartao {
 	private int limite;
-	public static final int LIMITE_MAX = 10^4;
+	public static final int LIMITE_MAX = 10 ^ 4;
 
-	@Override
-	public String getTipoCartao() {
-		return null;
+	public CartaoStandard(Cliente cliente, DadosCartao dadosCartao) {
+		super(cliente, dadosCartao);
 	}
 }

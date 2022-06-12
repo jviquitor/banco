@@ -29,7 +29,20 @@ public class GeracaoAleatoria {
 		return numberRandom.toString();
 	}
 
-	public static int gerarNumeroCartao() {
+	public static String gerarNumeros(int quantidade) {
+		Random random = new Random();
+		StringBuilder numberRandom;
+
+		numberRandom = new StringBuilder();
+		for (int i = 0; i < NUMERO_CARTAO_SEM_AGENCIA; i++) {
+			numberRandom.append(random.nextInt(10));
+		}
+
+		return String.valueOf(numberRandom);
+	}
+
+
+	public static String gerarNumeroCartao() {
 		Random random = new Random();
 		StringBuilder numberRandom;
 		do {
@@ -41,7 +54,7 @@ public class GeracaoAleatoria {
 		} while (chavesGeradasNumeroCartao.contains(Integer.parseInt(String.valueOf(numberRandom))));
 
 		chavesGeradasNumeroCartao.add(Integer.parseInt(String.valueOf(numberRandom)));
-		return Integer.parseInt(String.valueOf(numberRandom));
+		return String.valueOf(numberRandom);
 	}
 
 	public static String gerarChaveAleatoria(int tamanhoChave) {
