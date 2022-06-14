@@ -83,6 +83,7 @@ public class Conta {
 		Double valorT = transacao.getValor();
 		transacao.getCobrador().aumentarSaldo(valorT);
 		transacao.getPagador().diminuirSaldo(valorT);
+
 	}
 
 	public void transferir(DadosTransacao dadosTransacao) {
@@ -146,10 +147,7 @@ public class Conta {
 	}
 
 	public void depositar() {
-		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
-		Transacao transacao = new Transacao(dadosTransacao);
-		Double valorT = transacao.getValor();
-		transacao.getCobrador().aumentarSaldo(valorT);
+		transferir();
 	}
 
 	//TODO perguntar a vania se tem problema essa funcao ser meio que simbolica (explicar que eh por causa do async etc)
