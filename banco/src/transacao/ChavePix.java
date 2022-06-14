@@ -4,5 +4,5 @@ public class ChavePix {
 	private int telefone;
 	private String chaveAleatoria;
 	private String email;
-	private String cpf_or_cpnj;
+	private String identificacao; // CPF ou CNPJ
 }

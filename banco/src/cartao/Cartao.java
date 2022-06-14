@@ -22,6 +22,7 @@ public abstract class Cartao {
 		this.apelidoCartao = dadosCartao.getApelidoCartao();
 		this.nomeTitular = cliente.getNome();
 		Data dataAtual = DataBank.criaData();
+		//Possível implementação de método para somar datas (na classe Data)
 		String dataString = String.format("%02d/%02d/%04d %02d:%02d:%02d", dataAtual.getDia(), dataAtual.getMes(), dataAtual.getAno() + 1, dataAtual.getHora(), dataAtual.getMinuto(), dataAtual.getSegundo());
 		this.validade = DataBank.criaData(dataString);
 		this.funcaoCartao = dadosCartao.getFuncaoCartao();

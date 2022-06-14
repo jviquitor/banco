@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+//TODO Criar exceptions para os casos inválidos
 public class GerenciadorArquivo {
 	private static final String PATH = "banco/contas.dados";
 

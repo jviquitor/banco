@@ -7,7 +7,7 @@ public class Boleto implements Pagavel {
 
 	private String nomeDaTransacao = "Boleto";
 	private Data dataVencimento;
-	private int multaPorDias;
+	private double multaPorDias;
 
 	public Boleto(DadosTransacao dadosTransacao) {
 		this.dataVencimento = dadosTransacao.getDataVencimento();
