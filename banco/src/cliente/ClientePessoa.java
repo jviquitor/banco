@@ -16,7 +16,7 @@ public class ClientePessoa extends Cliente {
 	}
 
 	public Conta getConta() {
-		return conta;
+		return this.conta;
 	}
 
 	public void setConta(Conta conta) {

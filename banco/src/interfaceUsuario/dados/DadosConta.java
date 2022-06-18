@@ -2,9 +2,11 @@ package interfaceUsuario.dados;
 
 public class DadosConta {
     private String tipoDaConta;
-    private int rendaAtual;
+    private Double rendaAtual;
     private boolean cartaoCredito;
     private boolean cartaoDebito;
+
+    private boolean debitoAutomatico;
 
     public boolean hasCartaoCredito() {
         return cartaoCredito;
@@ -18,8 +20,11 @@ public class DadosConta {
         return tipoDaConta;
     }
 
-    public int getRendaAtual() {
+    public Double getRendaAtual() {
         return rendaAtual;
     }
 
+    public boolean isDebitoAutomatico() {
+        return debitoAutomatico;
+    }
 }

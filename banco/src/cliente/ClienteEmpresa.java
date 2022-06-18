@@ -22,4 +22,9 @@ public class ClienteEmpresa extends Cliente {
 	public void setConta(Conta conta) {
 		this.conta = conta;
 	}
+
+	@Override
+	public Conta getConta() {
+		return this.conta;
+	}
 }

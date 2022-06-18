@@ -24,9 +24,9 @@ public class Conta {
 	protected static final int TAMANHO_ID_CONTA = 4;
 
 	protected String idConta;
-	protected double saldo;
-	protected double dinheiroGuardado;
-	protected double dinheiroDisponivelEmprestimo;
+	protected Double saldo;
+	protected Double dinheiroGuardado;
+	protected Double dinheiroDisponivelEmprestimo;
 
 	protected List<Transacao> transacoesRealizadas;
 	protected List<Transacao> transacoesAgendadas;
@@ -34,37 +34,58 @@ public class Conta {
 	protected List<Transacao> notificacoes;
 	protected Historico historico;
 
-	protected List<Cartao> listaDeCartao;
-	protected int limiteMaximo;
-	protected int limiteUsado;
+	protected GerenciamentoCartao carteira;
 
 	protected List<ChavePix> chavesPix;
 
 	protected Conta() {
 		this.idConta = GeracaoAleatoria.gerarIdConta(Conta.TAMANHO_ID_CONTA);
-		this.saldo = 0;
-		this.dinheiroGuardado = 0;
+		this.saldo = 0.0;
+		this.dinheiroGuardado = 0.0;
 		this.transacoesRealizadas = new ArrayList<>();
 		this.transacoesAgendadas = new ArrayList<>();
 		this.transacoesRecebidas = new ArrayList<>();
 		this.notificacoes = new ArrayList<>();
 		this.historico = new Historico();
-		this.listaDeCartao = new ArrayList<>();
-		this.limiteUsado = 0;
+		this.carteira = new GerenciamentoCartao();
 		this.chavesPix = new ArrayList<>();
 	}
+
 
 	public void setChavesPix(List<ChavePix> chavesPix) {
 		this.chavesPix = chavesPix;
 	}
 
-	public boolean hasCartao(FuncaoCartao funcaoCartao) {
-		for (Cartao cartao : listaDeCartao) {
-			if (funcaoCartao == cartao.getFuncaoCartao()) {
-				return true;
+	public static Conta criarConta() {
+		//Sabendo que o cliente está online (a Interface precisa tratar isso)
+		DadosConta dadosConta = InterfaceUsuario.getDadosConta();
+		DadosCartao dadosCartao = InterfaceUsuario.getDadosCartao();
+		Cliente cliente = InterfaceUsuario.getClienteAtual();
+		Conta conta;
+
+		if (dadosConta == null || dadosCartao == null || cliente == null) {
+			throw new DadosInvalidosException("Dados inseridos incorretamente, Por favor, logue novamente!");
+		} else {
+			List<String> standard = new ArrayList<>(Arrays.asList("standard", "normal", "conta de pobre", "qualquer conta", "basica"));
+			List<String> premium = new ArrayList<>(Arrays.asList("premium", "plus", "conta mediana"));
+			List<String> diamond = new ArrayList<>(Arrays.asList("diamond", "a melhor", "com mais beneficios", "conta de rico"));
+
+			if (diamond.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
+				conta = new ContaDiamond(dadosConta);
+			} else if (premium.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
+				conta = new ContaPremium(dadosConta);
+			} else if (standard.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
+				conta = new ContaStandard(dadosConta);
+			} else {
+				throw new TipoInvalido("Por favor, escolha um tipo de conta valido");
+			}
+			if (dadosConta.hasCartaoCredito()) {
+				conta.criarCartao(cliente, dadosCartao);
+			} else if (dadosConta.hasCartaoDebit()) {
+				conta.criarCartao(cliente, dadosCartao);
 			}
 		}
-		return false;
+		return conta;
 	}
 
 	private void aumentarSaldo(Double valor) {
@@ -93,36 +114,13 @@ public class Conta {
 		transacao.getPagador().diminuirSaldo(valorT);
 	}
 
-	public static Conta criarConta() {
-		//Sabendo que o cliente está online (a Interface precisa tratar isso)
-		DadosConta dadosConta = InterfaceUsuario.getDadosConta();
-		DadosCartao dadosCartao = InterfaceUsuario.getDadosCartao();
-		Cliente cliente = InterfaceUsuario.getCliente();
-		Conta conta;
-
-		if (dadosConta == null || dadosCartao == null || cliente == null) {
-			throw new DadosInvalidosException("Dados inseridos incorretamente, Por favor, logue novamente!");
-		} else {
-			List<String> standard = new ArrayList<>(Arrays.asList("standard", "normal", "conta de pobre", "qualquer conta", "basica"));
-			List<String> premium = new ArrayList<>(Arrays.asList("premium", "plus", "conta mediana"));
-			List<String> diamond = new ArrayList<>(Arrays.asList("diamond", "a melhor", "com mais beneficios", "conta de rico"));
-
-			if (diamond.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
-				conta = new ContaDiamond(dadosConta);
-			} else if (premium.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
-				conta = new ContaPremium(dadosConta);
-			} else if (standard.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
-				conta = new ContaStandard(dadosConta);
-			} else {
-				throw new TipoInvalido("Por favor, escolha um tipo de conta valido");
-			}
-			if (dadosConta.hasCartaoCredito()) {
-				conta.criarCartao(cliente, dadosCartao);
-			} else if (dadosConta.hasCartaoDebit()) {
-				conta.criarCartao(cliente, dadosCartao);
+	public boolean hasCartao(FuncaoCartao funcaoCartao) {
+		for (Cartao cartao : this.carteira.getListaDeCartao()) {
+			if (funcaoCartao == cartao.getFuncaoCartao()) {
+				return true;
 			}
 		}
-		return conta;
+		return false;
 	}
 
 	public boolean criarCartao(Cliente cliente, DadosCartao dadosCartao) {
@@ -138,8 +136,7 @@ public class Conta {
 			throw new TipoInvalido("Tipo do cartao invalido.");
 		}
 
-		this.listaDeCartao.add(cartao);
-		return true;
+		return this.carteira.adicionarNovoCartao(cartao);
 	}
 
 	public void pagar() {
@@ -161,6 +158,23 @@ public class Conta {
 			return true;
 		}
 		return false;
+	}
+
+	public void pagarFatura(Double valor) {
+		this.carteira.aumentarLimiteAtual(valor);
+		this.saldo -= valor; //TODO por enquanto a fatura sera descontada direto pelo valor do saldo e a interface precisa tratar caso a pessoa tenha saldo
+	}
+
+	public void aumentarFatura(Double valor) {
+		this.carteira.diminuirLimiteAtual(valor);
+	}
+
+	public Data getDataDebitoAutomatic() {
+		return this.carteira.getDataDebitoAutomatico();
+	}
+
+	public boolean getDebitoAutomatic() {
+		return this.carteira.isDebitoAutomatico();
 	}
 //	public boolean resetNotificacoes();//Nao é abstrata
 //	public abstract boolean renderSaldo();

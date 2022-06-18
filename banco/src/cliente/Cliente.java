@@ -1,5 +1,7 @@
 package cliente;
 
+import conta.Conta;
+
 public abstract class Cliente {
 	private String nome;
 	private String email;
@@ -24,4 +26,6 @@ public abstract class Cliente {
 	public String getNome() {
 		return nome;
 	}
+
+	public abstract Conta getConta();
 }
