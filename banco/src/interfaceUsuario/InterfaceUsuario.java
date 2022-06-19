@@ -2,6 +2,7 @@ package interfaceUsuario;
 
 import cliente.Cliente;
 import conta.Conta;
+import funcionalidades.exceptions.EmprestimoException;
 import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosConta;
 import interfaceUsuario.dados.DadosTransacao;
@@ -54,10 +55,22 @@ public class InterfaceUsuario {
 		return 1.0;
 	}
 
+	public static Double getValorUsuarioDesejaPedir() {
+		//TODO a interface ira perguntar qual o valor que o usuario irá pedir de empréstimo e tratará os casos
+		return 1.0;
+	}
+
 	public static boolean pagarFatura() {
 		Double valor = getValorUsuarioDesejaPagar();
 		clienteAtual.getConta().pagarFatura(valor);
 		return true;
+	}
+
+	public static void pedirEmprestimo() {
+		if (InterfaceUsuario.usuarioAtualConta().hasEmprestimo()) {
+			throw new EmprestimoException("Essa conta ja pediu emprestimo.");
+		}
+		InterfaceUsuario.usuarioAtualConta().setEmprestimo(getValorUsuarioDesejaPedir());
 	}
 
 	public static boolean pagamentoDebitoAutomatico() {

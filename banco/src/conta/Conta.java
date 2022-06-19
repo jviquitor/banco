@@ -37,6 +37,8 @@ public class Conta {
 
 	protected List<ChavePix> chavesPix;
 
+	protected double emprestimo;
+
 	protected Conta() {
 		this.idConta = GeracaoAleatoria.gerarIdConta(Conta.TAMANHO_ID_CONTA);
 		this.saldo = 0.0;
@@ -48,6 +50,7 @@ public class Conta {
 		this.historico = new Historico();
 		this.carteira = new GerenciamentoCartao();
 		this.chavesPix = new ArrayList<>();
+		this.emprestimo = 0;
 	}
 
 
@@ -187,6 +190,14 @@ public class Conta {
 
 	public boolean getDebitoAutomatico() {
 		return this.carteira.isDebitoAutomatico();
+	}
+
+	public boolean hasEmprestimo() {
+		return this.emprestimo > 0;
+	}
+
+	public void setEmprestimo(double valor) {
+		this.emprestimo = valor;
 	}
 //	public boolean resetNotificacoes();//Nao é abstrata
 //	public abstract boolean renderSaldo();
