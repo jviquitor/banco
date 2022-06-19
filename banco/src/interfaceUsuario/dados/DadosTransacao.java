@@ -1,6 +1,6 @@
 package interfaceUsuario.dados;
 
-import conta.Conta;
+import cliente.Cliente;
 import conta.exceptions.TipoInvalido;
 import transacao.Boleto;
 import transacao.Pagavel;
@@ -16,8 +16,8 @@ public class DadosTransacao {
 	private Double valor;
 	private String dataVencimento; //@Lembrando sera setada no construtor e sera utilizada com o getters
 	private int multaPorDias;
-	private Conta cobrador;  //Cobrador cobrara o dinheiro de alguem recebe o dinheiro
-	private Conta pagador; //Pagador pagara o dinheiro cobrado pelo cobrador LEMBRANDO QUE SE O PAGADOR FOR NULO DEVE SER UM BOLETO O TIPO DE TRANSACAO
+	private Cliente cobrador;  //Cobrador cobrara o dinheiro de alguem recebe o dinheiro
+	private Cliente pagador; //Pagador pagara o dinheiro cobrado pelo cobrador LEMBRANDO QUE SE O PAGADOR FOR NULO DEVE SER UM BOLETO O TIPO DE TRANSACAO
 	private String tipoDaTransacao;
 
 	public int getMultaPorDias() {
@@ -32,11 +32,11 @@ public class DadosTransacao {
 		return getDataVencimento().toString(DataBank.SEM_HORA);
 	}
 
-	public Conta getCobrador() {
+	public Cliente getCobrador() {
 		return cobrador;
 	}
 
-	public Conta getPagador() {
+	public Cliente getPagador() {
 		return pagador;
 	}
 

@@ -1,7 +1,5 @@
 package utilsBank;
 
-// TODO: 6/5/2022 Fazer metódos aleatorios para ajudar na geração das coisas
-
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;

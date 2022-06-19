@@ -13,4 +13,9 @@ public class Boleto implements Pagavel {
 		this.dataVencimento = dadosTransacao.getDataVencimento();
 		this.multaPorDias = dadosTransacao.getMultaPorDias();
 	}
+
+	@Override
+	public String toString() {
+		return nomeDaTransacao;
+	}
 }

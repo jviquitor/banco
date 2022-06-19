@@ -22,5 +22,13 @@ public class ClientePessoa extends Cliente {
 	public void setConta(Conta conta) {
 		this.conta = conta;
 	}
+
+	@Override
+	public String toString() {
+		return "Pessoa {" +
+				"Nome = " + this.getNome() +
+				"CPF ='" + cpf + '\'' + //TODO esconder CPF NE
+				'}';
+	}
 }
 

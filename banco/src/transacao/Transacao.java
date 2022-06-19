@@ -1,6 +1,7 @@
 package transacao;
 
 import agencia.Agencia;
+import cliente.Cliente;
 import conta.Conta;
 import interfaceUsuario.dados.DadosTransacao;
 import utilsBank.GeracaoAleatoria;
@@ -12,8 +13,8 @@ public class Transacao {
 	private String nossoNumero;
 	private String idPagamento;
 	private Data dataEmissaoTransacao;
-	private Conta cobrador; //@Lembrando Cobrador cobrara o dinheiro de alguem recebe o dinheiro
-	private Conta pagador; //@Lembrando Pagador pagara o dinheiro cobrado pelo cobrador LEMBRANDO QUE SE O PAGADOR FOR NULO DEVE SER UM BOLETO O TIPO DE TRANSACAO
+	private Cliente cobrador; //@Lembrando Cobrador cobrara o dinheiro de alguem recebe o dinheiro
+	private Cliente pagador; //@Lembrando Pagador pagara o dinheiro cobrado pelo cobrador LEMBRANDO QUE SE O PAGADOR FOR NULO DEVE SER UM BOLETO O TIPO DE TRANSACAO
 	private Data dataAgendada;
 	private Pagavel tipoDeTransacao;
 
@@ -33,24 +34,34 @@ public class Transacao {
 		transacao.dataAgendada = dataAgendada;
 	}
 
-	public void gerarComprovante() {
-		// TODO: 6/5/2022  Perguntar a vania se eh melhor o modulo da interfaace gerar um comprovante ou se a transacao eh responsavel....
-		//  e perguntar se criar uma classe comprovante seria bom ou so fazer um ToString de Transacao
+	public void gerarComprovante(Transacao transacao) {
+		System.out.println(transacao.toString());
+	}
+
+	@Override
+	public String toString() {
+		return "Transacao " +
+				"valor =" + valor +
+				", idPagamento ='" + idPagamento + '\'' +
+				", dataEmissaoTransacao =" + dataEmissaoTransacao.toString(DataBank.COM_HORA) +
+				", Cobrador =" + cobrador.toString() +
+				", Pagador =" + pagador.toString() +
+				", tipoDeTransacao=" + tipoDeTransacao.toString();
 	}
 
 	public Data getDataAgendada() {
 		return dataAgendada;
 	}
 
-	public Conta getPagador() {
-		return pagador;
+	public Conta getContaPagador() {
+		return pagador.getConta();
 	}
 
 	public Double getValor() {
 		return valor;
 	}
 
-	public Conta getCobrador() {
-		return cobrador;
+	public Conta getContaCobrador() {
+		return cobrador.getConta();
 	}
 }

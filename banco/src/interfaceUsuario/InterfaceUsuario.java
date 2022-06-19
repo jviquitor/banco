@@ -23,7 +23,6 @@ public class InterfaceUsuario {
 		return clienteAtual;
 	}
 
-
 	public static Data getDataAgendada() {
 		return DataBank.criarData(InterfaceUsuario.chamarUsuarioParaEscolherDataAgendada(), DataBank.SEM_HORA);
 	}
@@ -37,7 +36,6 @@ public class InterfaceUsuario {
 	}
 
 	public static Conta usuarioAtualConta() {
-
 		return clienteAtual.getConta();
 	}
 
@@ -49,14 +47,14 @@ public class InterfaceUsuario {
 		return dadosCartao;
 	}
 
+	//TODO a interface ira perguntar qual o valor que o usuario ira pagar da fatura e ira tratar os casos
+	//VERIFICAR SE O VALOR EXISTE NA CONTA, VERIFICAR SE O VALOR EH NEGATIVO, VERIFICAR SE O VALOR EH IGUAL A 0, VERIFICAR SE O VALOR EH MAIOR DO QUE O VALOR DA FATURA ATUAL
 	public static Double getValorUsuarioDesejaPagar() {
-		//TODO a interface ira perguntar qual o valor que o usuario ira pagar da fatura e ira tratar os casos
-		//VERIFICAR SE O VALOR EXISTE NA CONTA, VERIFICAR SE O VALOR EH NEGATIVO, VERIFICAR SE O VALOR EH IGUAL A 0, VERIFICAR SE O VALOR EH MAIOR DO QUE O VALOR DA FATURA ATUAL
 		return 1.0;
 	}
 
+	//TODO a interface ira perguntar qual o valor que o usuario irá pedir de empréstimo e tratará os casos
 	public static Double getValorUsuarioDesejaPedir() {
-		//TODO a interface ira perguntar qual o valor que o usuario irá pedir de empréstimo e tratará os casos
 		return 1.0;
 	}
 

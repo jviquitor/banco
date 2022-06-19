@@ -20,6 +20,14 @@ public class ClienteEmpresa extends Cliente {
 	}
 
 	@Override
+	public String toString() {
+		return "Empresa {" +
+				"Nome = " + this.getNome() +
+				"CNPJ = '" + cnpj + '\'' + //TODO ESCONDER CNPJ NE
+				'}';
+	}
+
+	@Override
 	public Conta getConta() {
 		return this.conta;
 	}

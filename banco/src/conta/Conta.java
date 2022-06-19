@@ -37,7 +37,7 @@ public class Conta {
 
 	protected List<ChavePix> chavesPix;
 
-	protected double emprestimo;
+	protected Double emprestimo;
 
 	protected Conta() {
 		this.idConta = GeracaoAleatoria.gerarIdConta(Conta.TAMANHO_ID_CONTA);
@@ -50,11 +50,11 @@ public class Conta {
 		this.historico = new Historico();
 		this.carteira = new GerenciamentoCartao();
 		this.chavesPix = new ArrayList<>();
-		this.emprestimo = 0;
+		this.emprestimo = 0.0;
 	}
 
 
-	//O criar conta provavelmente tera que ir para um local mais apropriado como agencia ou cliente ou gerenciamento de conta
+	//@Lembrando O criar conta provavelmente tera que ir para um local mais apropriado como agencia ou cliente ou gerenciamento de conta
 	public static Conta criarConta() {
 		//Sabendo que o cliente está online (a Interface precisa tratar isso)
 		DadosConta dadosConta = InterfaceUsuario.getDadosConta();
@@ -94,13 +94,13 @@ public class Conta {
 		return chavesPix.add(chavePix);
 	}
 
+	//TODO Interface trata caso o valor seja negativo ou zero, avisando que o mesmo esta inserindo um valor errado
 	private void aumentarSaldo(Double valor) {
-		//TODO Interface trata caso o valor seja negativo ou zero, avisando que o mesmo esta inserindo um valor errado
 		this.saldo += valor;
 	}
 
+	//TODO Interface trata caso o valor seja maior que o saldo disponivel na conta
 	private void diminuirSaldo(Double valor) {
-		//TODO Interface trata caso o valor seja maior que o saldo disponivel na conta
 		this.saldo -= valor;
 	}
 
@@ -108,15 +108,15 @@ public class Conta {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
 		Transacao transacao = new Transacao(dadosTransacao);
 		Double valorT = transacao.getValor();
-		transacao.getCobrador().aumentarSaldo(valorT);
-		transacao.getPagador().diminuirSaldo(valorT);
+		transacao.getContaCobrador().aumentarSaldo(valorT);
+		transacao.getContaPagador().diminuirSaldo(valorT);
 
 	}
 
 	public void transferir(Transacao transacao) {
 		Double valorT = transacao.getValor();
-		transacao.getCobrador().aumentarSaldo(valorT);
-		transacao.getPagador().diminuirSaldo(valorT);
+		transacao.getContaCobrador().aumentarSaldo(valorT);
+		transacao.getContaPagador().diminuirSaldo(valorT);
 	}
 
 	public boolean hasCartao(FuncaoCartao funcaoCartao) {
@@ -175,9 +175,21 @@ public class Conta {
 		return true;
 	}
 
+	public Double getSaldo() {
+		return saldo;
+	}
+
 	public void pagarFatura(Double valor) {
 		this.carteira.aumentarLimiteAtual(valor);
 		this.saldo -= valor; //TODO por enquanto a fatura sera descontada direto pelo valor do saldo e a interface precisa tratar caso a pessoa tenha saldo
+	}
+
+	public Double getEmprestimo() {
+		return emprestimo;
+	}
+
+	public void setEmprestimo(Double valor) {
+		this.emprestimo = valor;
 	}
 
 	public void aumentarFatura(Double valor) {
@@ -193,11 +205,7 @@ public class Conta {
 	}
 
 	public boolean hasEmprestimo() {
-		return this.emprestimo > 0;
-	}
-
-	public void setEmprestimo(double valor) {
-		this.emprestimo = valor;
+		return this.emprestimo > 0.0;
 	}
 //	public boolean resetNotificacoes();//Nao é abstrata
 //	public abstract boolean renderSaldo();
