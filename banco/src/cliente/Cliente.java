@@ -10,7 +10,7 @@ public abstract class Cliente {
 	private Endereco end;
 	private boolean isOnline;
 	private double renda;
-	private int quantidadeDeChavesAtuais; //TODO set quantidadeDeChavesDependendo da quantidade em lista
+	private int quantidadeDeChavesAtuais;
 	private final int QUANTIDADE_DE_CHAVES_MAX = 4;
 
 	public Cliente(String nome, String email, int telefone, int idade, Endereco end, boolean isOnline, double renda) {
@@ -21,6 +21,7 @@ public abstract class Cliente {
 		this.end = end;
 		this.isOnline = isOnline;
 		this.renda = renda;
+		this.quantidadeDeChavesAtuais = 0;
 	}
 
 	public String getNome() {
@@ -28,4 +29,8 @@ public abstract class Cliente {
 	}
 
 	public abstract Conta getConta();
+
+	public void setQuantidadeDeChavesAtuais() {
+		this.quantidadeDeChavesAtuais++;
+	}
 }

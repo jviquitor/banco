@@ -12,8 +12,9 @@ public class Transacao {
 	private String nossoNumero;
 	private String idPagamento;
 	private Data dataEmissaoTransacao;
-	private Conta cobrador; //Cobrador cobrara o dinheiro de alguem recebe o dinheiro
-	private Conta pagador; //Pagador pagara o dinheiro cobrado pelo cobrador LEMBRANDO QUE SE O PAGADOR FOR NULO DEVE SER UM BOLETO O TIPO DE TRANSACAO
+	private Conta cobrador; //@Lembrando Cobrador cobrara o dinheiro de alguem recebe o dinheiro
+	private Conta pagador; //@Lembrando Pagador pagara o dinheiro cobrado pelo cobrador LEMBRANDO QUE SE O PAGADOR FOR NULO DEVE SER UM BOLETO O TIPO DE TRANSACAO
+	private Data dataAgendada;
 	private Pagavel tipoDeTransacao;
 
 	public void gerarComprovante() {
@@ -32,6 +33,15 @@ public class Transacao {
 		this.cobrador = dadosTransacao.getCobrador();
 		this.pagador = dadosTransacao.getPagador();
 		this.tipoDeTransacao = dadosTransacao.getTipoDaTransacao();
+	}
+
+	public Transacao(DadosTransacao dadosTransacao, Data dataAgendada) {
+		Transacao transacao = new Transacao(dadosTransacao);
+		transacao.dataAgendada = dataAgendada;
+	}
+
+	public Data getDataAgendada() {
+		return dataAgendada;
 	}
 
 	public Conta getPagador() {

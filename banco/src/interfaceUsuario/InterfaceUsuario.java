@@ -11,7 +11,6 @@ import utilsBank.databank.DataBank;
 public class InterfaceUsuario {
 	private static DadosConta dadosConta;
 	private static DadosCartao dadosCartao;
-	private static String dataAgendada;
 	private static Cliente clienteAtual;
 
 	public static DadosTransacao getDadosTransacao() {
@@ -24,13 +23,9 @@ public class InterfaceUsuario {
 		return clienteAtual;
 	}
 
-	public static String getDataAgendada() {
-		return dataAgendada;
-	}
 
-	public static void setDataAgendada() {
-		dataAgendada = InterfaceUsuario.chamarUsuarioParaEscolherADataAgendada();
-		;
+	public static Data getDataAgendada() {
+		return DataBank.criaData(InterfaceUsuario.chamarUsuarioParaEscolherADataAgendada()); //TODO Lembrando que aqui ainda tem o horario
 	}
 
 	public static String chamarUsuarioParaEscolherADataAgendada() {
@@ -68,7 +63,7 @@ public class InterfaceUsuario {
 
 	public static boolean pagamentoDebitoAutomatic() {
 		if (clienteAtual.getConta().getDebitoAutomatic()) {
-			Data dataAtual = DataBank.criaData();
+			Data dataAtual = DataBank.criaData(); //TODO usar uma funcao que nao retorne tambem a hora
 
 			if (dataAtual.equals(clienteAtual.getConta().getDataDebitoAutomatic())) {
 				InterfaceUsuario.pagarFatura();

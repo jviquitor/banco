@@ -13,8 +13,8 @@ public abstract class Cartao {
 	protected String apelidoCartao;
 	protected String nomeTitular;
 	protected Data validade;
-	protected String tipoCartao; // TODO: 6/5/2022: Lembrando, tipo se refere ao tipo de conta
-	protected FuncaoCartao funcaoCartao; // TODO: 6/5/2022 Se refere a ser debito ou credito
+	protected String tipoCartao; // @Lembrando, tipo se refere ao tipo de conta
+	protected FuncaoCartao funcaoCartao; // @Lembrando Se refere a ser debito ou credito
 
 	protected Cartao(Cliente cliente, DadosCartao dadosCartao) {
 		this.numeroCartao = Agencia.ID_AGENCIA + GeracaoAleatoria.gerarNumeroCartao();
@@ -24,7 +24,7 @@ public abstract class Cartao {
 		Data dataAtual = DataBank.criaData();
 		//Possível implementação de método para somar datas (na classe Data)
 		String dataString = String.format("%02d/%02d/%04d %02d:%02d:%02d", dataAtual.getDia(), dataAtual.getMes(), dataAtual.getAno() + 1, dataAtual.getHora(), dataAtual.getMinuto(), dataAtual.getSegundo());
-		this.validade = DataBank.criaData(dataString);
+		this.validade = DataBank.criaData(dataString); //TODO lembrando que aqui tem horario
 		this.funcaoCartao = dadosCartao.getFuncaoCartao();
 	}
 

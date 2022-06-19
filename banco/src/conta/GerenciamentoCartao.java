@@ -8,8 +8,7 @@ import java.util.List;
 
 public class GerenciamentoCartao {
     //TODO Parcelamento com juros dependendo do tipo do cartoa
-    //TODO Verifica Limite
-    private List<Cartao> listaDeCartao;
+    private final List<Cartao> listaDeCartao;
     private Double limiteMaximo;
     private Double limiteUsado;
     private boolean debitoAutomatico = false;
@@ -20,9 +19,14 @@ public class GerenciamentoCartao {
         this.listaDeCartao = new ArrayList<>();
     }
 
-    public Data getDataDebitoAutomatico() {
+    protected Data getDataDebitoAutomatico() {
         return dataDebitoAutomatico;
     }
+    /*
+    protected Double getFatura() {
+        return limiteUsado;
+    }
+    */
 
     /**
      * Metodo apenas utilizada para quando o cliente pagar a fatura e ter o seu limite atual atualizado conforme pagamento
@@ -35,38 +39,38 @@ public class GerenciamentoCartao {
         this.limiteUsado += valorGasto;
     }
 
-
-    public boolean adicionarNovoCartao(Cartao cartao) {
+    protected boolean adicionarNovoCartao(Cartao cartao) {
         return listaDeCartao.add(cartao);
     }
 
-    public List<Cartao> getListaDeCartao() {
+    protected List<Cartao> getListaDeCartao() {
         return listaDeCartao;
     }
 
-
-    public void setLimiteMaximo(Double limiteMaximo) {
+    protected void setLimiteMaximo(Double limiteMaximo) {
         this.limiteMaximo = limiteMaximo;
     }
 
-    public Double getLimiteUsado() {
+    /*
+    protected Double getLimiteUsado() {
         return limiteUsado;
     }
 
     public void setLimiteUsado(Double limiteUsado) {
         this.limiteUsado = limiteUsado;
     }
-
+    */
     protected boolean isDebitoAutomatico() {
         return this.debitoAutomatico;
     }
 
-    public void setDebitoAutomatico(boolean debitoAutomatico) {
+    /*
+    protected void setDebitoAutomatico(boolean debitoAutomatico) {
         this.debitoAutomatico = debitoAutomatico;
     }
-
+    */
     //TODO A INterface precisa ter um local que mostra a gerencia do cartao pra ativar ou nao o debito automatico
-    public void setDebitoAutomatico(boolean debitoAutomatico, Data dataDebitoAutomatico) {
+    protected void setDebitoAutomatico(boolean debitoAutomatico, Data dataDebitoAutomatico) {
         this.debitoAutomatico = debitoAutomatico;
         this.dataDebitoAutomatico = dataDebitoAutomatico;
     }

@@ -13,12 +13,11 @@ import transacao.ChavePix;
 import transacao.Transacao;
 import utilsBank.GeracaoAleatoria;
 import utilsBank.databank.Data;
-import utilsBank.databank.DataBank;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
+import java.util.Objects;
 
 public class Conta {
 	protected static final int TAMANHO_ID_CONTA = 4;
@@ -52,10 +51,7 @@ public class Conta {
 	}
 
 
-	public void setChavesPix(List<ChavePix> chavesPix) {
-		this.chavesPix = chavesPix;
-	}
-
+	//O criar conta provavelmente tera que ir para um local mais apropriado como agencia ou cliente ou gerenciamento de conta
 	public static Conta criarConta() {
 		//Sabendo que o cliente está online (a Interface precisa tratar isso)
 		DadosConta dadosConta = InterfaceUsuario.getDadosConta();
@@ -70,11 +66,11 @@ public class Conta {
 			List<String> premium = new ArrayList<>(Arrays.asList("premium", "plus", "conta mediana"));
 			List<String> diamond = new ArrayList<>(Arrays.asList("diamond", "a melhor", "com mais beneficios", "conta de rico"));
 
-			if (diamond.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
+			if (diamond.contains(dadosConta.getTipoDaConta().toLowerCase())) {
 				conta = new ContaDiamond(dadosConta);
-			} else if (premium.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
+			} else if (premium.contains(dadosConta.getTipoDaConta().toLowerCase())) {
 				conta = new ContaPremium(dadosConta);
-			} else if (standard.contains(dadosConta.getTipoDaConta().toLowerCase(Locale.ROOT))) {
+			} else if (standard.contains(dadosConta.getTipoDaConta().toLowerCase())) {
 				conta = new ContaStandard(dadosConta);
 			} else {
 				throw new TipoInvalido("Por favor, escolha um tipo de conta valido");
@@ -86,6 +82,13 @@ public class Conta {
 			}
 		}
 		return conta;
+	}
+
+	public boolean addChavesPix(Cliente cliente, ChavePix chavePix) {
+		if (chavesPix.contains(chavePix))
+			return false;
+		cliente.setQuantidadeDeChavesAtuais();
+		return chavesPix.add(chavePix);
 	}
 
 	private void aumentarSaldo(Double valor) {
@@ -107,8 +110,7 @@ public class Conta {
 
 	}
 
-	public void transferir(DadosTransacao dadosTransacao) {
-		Transacao transacao = new Transacao(dadosTransacao);
+	public void transferir(Transacao transacao) {
 		Double valorT = transacao.getValor();
 		transacao.getCobrador().aumentarSaldo(valorT);
 		transacao.getPagador().diminuirSaldo(valorT);
@@ -147,17 +149,27 @@ public class Conta {
 		transferir();
 	}
 
-	//TODO perguntar a vania se tem problema essa funcao ser meio que simbolica (explicar que eh por causa do async etc)
 	public boolean agendarTransacao() {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
-		InterfaceUsuario.setDataAgendada();
-		Data data = DataBank.criaData(InterfaceUsuario.getDataAgendada());
+		Data dataAgendada = InterfaceUsuario.getDataAgendada();
+		Transacao transacao = new Transacao(dadosTransacao, dataAgendada);
+		transacoesAgendadas.add(transacao);
+		return true;
+	}
 
-		if (data.equals(DataBank.criaData())) {
-			transferir(dadosTransacao);
-			return true;
+	//TODO: a Interface eh responsavel por checar o CADA DIA esta corretamente para chamar essa funcao
+	public Transacao buscarTransacoesAgendadas(Data data) {
+		for (Transacao t : transacoesAgendadas) {
+			if (Objects.equals(t.getDataAgendada().toString(), data.toString())) {
+				return t;
+			}
 		}
-		return false;
+		return null;
+	}
+
+	public boolean realizarTransacaoAgendada(Transacao transacao) {
+		transferir(transacao);
+		return true;
 	}
 
 	public void pagarFatura(Double valor) {
