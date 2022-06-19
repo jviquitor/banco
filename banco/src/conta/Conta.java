@@ -152,6 +152,11 @@ public class Conta {
 		transferir();
 	}
 
+	public void pagarEmprestimo() {
+		this.saldo -= this.emprestimo;
+		this.emprestimo = 0.0;
+	}
+
 	public boolean agendarTransacao() {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
 		Data dataAgendada = InterfaceUsuario.getDataAgendada();

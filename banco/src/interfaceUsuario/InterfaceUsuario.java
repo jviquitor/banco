@@ -71,6 +71,17 @@ public class InterfaceUsuario {
 		InterfaceUsuario.usuarioAtualConta().setEmprestimo(getValorUsuarioDesejaPedir());
 	}
 
+	public static void pagarEmprestimo() {
+		Conta conta = InterfaceUsuario.usuarioAtualConta();
+		if (!conta.hasEmprestimo()) {
+			throw new EmprestimoException("Essa conta nao possui emprestimo");
+		}
+		if (conta.getEmprestimo() > conta.getSaldo()) {
+			throw new EmprestimoException("Saldo insuficiente");
+		}
+		conta.pagarEmprestimo();
+	}
+
 	public static boolean pagamentoDebitoAutomatico() {
 		if (clienteAtual.getConta().getDebitoAutomatico()) {
 			Data dataAtual = DataBank.criarData(DataBank.SEM_HORA); //TODO usar uma funcao que nao retorne tambem a hora
