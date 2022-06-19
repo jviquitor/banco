@@ -17,10 +17,9 @@ public class DataBank {
 		// Retorna a data atual.
 		Calendar data = Calendar.getInstance(IDIOMA);
 		if (flag == SEM_HORA) {
-			int ano = data.get(Calendar.YEAR);
-			int mes = data.get(Calendar.MONTH);
-			int dia = data.get(Calendar.DAY_OF_MONTH);
-			data.set(ano, mes, dia, 0, 0, 0);
+			data.set(Calendar.HOUR_OF_DAY, 0);
+			data.set(Calendar.HOUR, 0);
+			data.set(Calendar.MINUTE, 0);
 		}
 		return new Data(data);
 	}
