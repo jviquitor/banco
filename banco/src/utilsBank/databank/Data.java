@@ -55,4 +55,11 @@ public class Data {
 				this.segundo
 		);
 	}
+
+	public String toString(int flag) {
+		if (flag == DataBank.SEM_HORA) {
+			return this.toString().split(" ")[0];
+		}
+		return this.toString();
+	}
 }
