@@ -5,10 +5,10 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class DataBank {
-	private static final Locale IDIOMA = new Locale("pt", "BR");
-	private static final int FORMATO = DateFormat.SHORT;
 	public static final int SEM_HORA = 0;
 	public static final int COM_HORA = 1;
+	private static final Locale IDIOMA = new Locale("pt", "BR");
+	private static final int FORMATO = DateFormat.SHORT;
 
 	/**
 	 * @return Objeto Data a partir da hora atual.

@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ClienteEmpresa extends Cliente {
-	private String cnpj;
 	private final Set<String> gerentesEmpresa = new HashSet<>();
+	private String cnpj;
 	private Conta conta;
 
 	public ClienteEmpresa(String nome, String email, int telefone, int idade, Endereco end, boolean isOnline, double renda, String cnpj) {
@@ -19,12 +19,12 @@ public class ClienteEmpresa extends Cliente {
 		return cnpj;
 	}
 
-	public void setConta(Conta conta) {
-		this.conta = conta;
-	}
-
 	@Override
 	public Conta getConta() {
 		return this.conta;
+	}
+
+	public void setConta(Conta conta) {
+		this.conta = conta;
 	}
 }

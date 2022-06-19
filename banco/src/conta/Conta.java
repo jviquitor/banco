@@ -181,11 +181,11 @@ public class Conta {
 		this.carteira.diminuirLimiteAtual(valor);
 	}
 
-	public Data getDataDebitoAutomatic() {
+	public Data getDataDebitoAutomatico() {
 		return this.carteira.getDataDebitoAutomatico();
 	}
 
-	public boolean getDebitoAutomatic() {
+	public boolean getDebitoAutomatico() {
 		return this.carteira.isDebitoAutomatico();
 	}
 //	public boolean resetNotificacoes();//Nao é abstrata

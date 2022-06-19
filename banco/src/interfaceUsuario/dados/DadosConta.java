@@ -1,30 +1,30 @@
 package interfaceUsuario.dados;
 
 public class DadosConta {
-    private String tipoDaConta;
-    private Double rendaAtual;
-    private boolean cartaoCredito;
-    private boolean cartaoDebito;
+	private String tipoDaConta;
+	private Double rendaAtual;
+	private boolean cartaoCredito;
+	private boolean cartaoDebito;
 
-    private boolean debitoAutomatico;
+	private boolean debitoAutomatico;
 
-    public boolean hasCartaoCredito() {
-        return cartaoCredito;
-    }
+	public boolean hasCartaoCredito() {
+		return cartaoCredito;
+	}
 
-    public boolean hasCartaoDebit() {
-        return cartaoCredito;
-    }
+	public boolean hasCartaoDebit() {
+		return cartaoCredito;
+	}
 
-    public String getTipoDaConta() {
-        return tipoDaConta;
-    }
+	public String getTipoDaConta() {
+		return tipoDaConta;
+	}
 
-    public Double getRendaAtual() {
-        return rendaAtual;
-    }
+	public Double getRendaAtual() {
+		return rendaAtual;
+	}
 
-    public boolean isDebitoAutomatico() {
-        return debitoAutomatico;
-    }
+	public boolean isDebitoAutomatico() {
+		return debitoAutomatico;
+	}
 }

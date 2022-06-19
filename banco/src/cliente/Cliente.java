@@ -3,6 +3,7 @@ package cliente;
 import conta.Conta;
 
 public abstract class Cliente {
+	private final int QUANTIDADE_DE_CHAVES_MAX = 4;
 	private String nome;
 	private String email;
 	private int telefone;
@@ -11,7 +12,6 @@ public abstract class Cliente {
 	private boolean isOnline;
 	private double renda;
 	private int quantidadeDeChavesAtuais;
-	private final int QUANTIDADE_DE_CHAVES_MAX = 4;
 
 	public Cliente(String nome, String email, int telefone, int idade, Endereco end, boolean isOnline, double renda) {
 		this.nome = nome;

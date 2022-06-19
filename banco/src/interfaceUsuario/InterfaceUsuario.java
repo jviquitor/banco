@@ -12,12 +12,11 @@ public class InterfaceUsuario {
 	private static DadosConta dadosConta;
 	private static DadosCartao dadosCartao;
 	private static Cliente clienteAtual;
+	private static DadosTransacao dadosTransacao;
 
 	public static DadosTransacao getDadosTransacao() {
 		return dadosTransacao;
 	}
-
-	private static DadosTransacao dadosTransacao;
 
 	public static Cliente getClienteAtual() {
 		return clienteAtual;
@@ -25,10 +24,10 @@ public class InterfaceUsuario {
 
 
 	public static Data getDataAgendada() {
-		return DataBank.criaData(InterfaceUsuario.chamarUsuarioParaEscolherADataAgendada()); //TODO Lembrando que aqui ainda tem o horario
+		return DataBank.criarData(InterfaceUsuario.chamarUsuarioParaEscolherDataAgendada(), DataBank.SEM_HORA);
 	}
 
-	public static String chamarUsuarioParaEscolherADataAgendada() {
+	public static String chamarUsuarioParaEscolherDataAgendada() {
 		return "01/02/2002";
 	}
 
@@ -61,11 +60,11 @@ public class InterfaceUsuario {
 		return true;
 	}
 
-	public static boolean pagamentoDebitoAutomatic() {
-		if (clienteAtual.getConta().getDebitoAutomatic()) {
-			Data dataAtual = DataBank.criaData(); //TODO usar uma funcao que nao retorne tambem a hora
+	public static boolean pagamentoDebitoAutomatico() {
+		if (clienteAtual.getConta().getDebitoAutomatico()) {
+			Data dataAtual = DataBank.criarData(DataBank.SEM_HORA); //TODO usar uma funcao que nao retorne tambem a hora
 
-			if (dataAtual.equals(clienteAtual.getConta().getDataDebitoAutomatic())) {
+			if (dataAtual.toString(DataBank.SEM_HORA).equals(clienteAtual.getConta().getDataDebitoAutomatico().toString(DataBank.SEM_HORA))) {
 				InterfaceUsuario.pagarFatura();
 				return true;
 			}

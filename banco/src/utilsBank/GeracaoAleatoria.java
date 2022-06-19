@@ -7,12 +7,11 @@ import java.util.Random;
 import java.util.Set;
 
 public class GeracaoAleatoria {
-	private static Set<String> chavesNossosNumerosGeradas = new HashSet<>();
-	private static Set<String> chavesGeradasAleatorias = new HashSet<>();
-	private static Set<Integer> chavesGeradasNumeroCartao = new HashSet<>();
-	private static Set<String> chavesIdsConta = new HashSet<>();
 	private static final int NUMERO_CARTAO_SEM_AGENCIA = 12;
-
+	private static final Set<String> chavesNossosNumerosGeradas = new HashSet<>();
+	private static final Set<String> chavesGeradasAleatorias = new HashSet<>();
+	private static final Set<Integer> chavesGeradasNumeroCartao = new HashSet<>();
+	private static final Set<String> chavesIdsConta = new HashSet<>();
 
 	public static String gerarNossosNumeros(int quantidadeNumeros) {
 		Random random = new Random();

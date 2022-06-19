@@ -14,7 +14,7 @@ import java.util.List;
 
 public class DadosTransacao {
 	private Double valor;
-	private String dataVencimento;
+	private String dataVencimento; //@Lembrando sera setada no construtor e sera utilizada com o getters
 	private int multaPorDias;
 	private Conta cobrador;  //Cobrador cobrara o dinheiro de alguem recebe o dinheiro
 	private Conta pagador; //Pagador pagara o dinheiro cobrado pelo cobrador LEMBRANDO QUE SE O PAGADOR FOR NULO DEVE SER UM BOLETO O TIPO DE TRANSACAO
@@ -25,12 +25,11 @@ public class DadosTransacao {
 	}
 
 	public Data getDataVencimento() {
-		return DataBank.criaData(dataVencimento);
+		return DataBank.criarData(dataVencimento, DataBank.SEM_HORA);
 	}
 
-	public String getDataVencimentoInt() {
-		String dataA[] = dataVencimento.split("/");
-		return String.format("%02d/%02d/%04d", Integer.parseInt(dataA[0]), Integer.parseInt(dataA[1]), Integer.parseInt(dataA[2]));
+	public String getDataVencimentoString() {
+		return getDataVencimento().toString(DataBank.SEM_HORA);
 	}
 
 	public Conta getCobrador() {
