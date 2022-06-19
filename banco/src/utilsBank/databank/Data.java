@@ -14,7 +14,7 @@ public class Data {
 		this.dia = data.get(Calendar.DAY_OF_MONTH);
 		this.mes = data.get(Calendar.MONTH) + 1;
 		this.ano = data.get(Calendar.YEAR);
-		this.hora = data.get(Calendar.HOUR);
+		this.hora = data.get(Calendar.HOUR_OF_DAY);
 		this.minuto = data.get(Calendar.MINUTE);
 		this.segundo = data.get(Calendar.SECOND);
 	}
