@@ -14,7 +14,7 @@ public class Agencia {
 	public static final String ID_AGENCIA = "6721";
 	public static final String CODIGO_MOEDA = "9";
 	private static final Set<Cliente> clientes = GerenciadorBanco.inicializarClientes();
-	private Double rendaAgencia = 0.0;
+	private Double rendaAgencia;
 
 	private Agencia() {
 		this.rendaAgencia = 0.0;
@@ -26,8 +26,13 @@ public class Agencia {
 		}
 	}
 
-	public boolean buscarCliente() {
-		return false;
+	public Cliente buscarCliente(String chave) {
+		for (Cliente cliente : clientes) {
+			if (Objects.equals(cliente.getIdentificacao(), chave)) {
+				return cliente;
+			}
+		}
+		return null;
 	}
 
 	public static Agencia getInstance() {

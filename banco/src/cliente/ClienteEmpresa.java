@@ -6,17 +6,25 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ClienteEmpresa extends Cliente {
-	private final Set<String> gerentesEmpresa = new HashSet<>();
+	private final Set<String> GERENTES_EMPRESA = new HashSet<>(); //Guardara as identificacoes de quem pode acessar a conta
 	private final String CNPJ;
 	private Conta conta;
 
-	public ClienteEmpresa(String nome, String email, int telefone, int idade, Endereco end, boolean isOnline, double renda, String cnpj) {
-		super(nome, email, telefone, idade, end, isOnline, renda);
+	public ClienteEmpresa(String nome, String email, String telefone, Integer idade, Endereco end, Double renda, String cnpj) {
+		super(nome, email, telefone, idade, end, renda);
 		this.CNPJ = cnpj;
 	}
 
 	public String getCnpj() {
 		return CNPJ;
+	}
+
+	public boolean addGerentes(String identificacao) {
+		return GERENTES_EMPRESA.add(identificacao);
+	}
+
+	public Boolean verificarGerente(String chave) {
+		return GERENTES_EMPRESA.contains(chave);
 	}
 
 	@Override
@@ -34,6 +42,10 @@ public class ClienteEmpresa extends Cliente {
 
 	public void setConta(Conta conta) {
 		this.conta = conta;
+	}
+
+	public String getIdentificacao() {
+		return this.CNPJ;
 	}
 
 	@Override

@@ -8,7 +8,9 @@ import utilsBank.GeracaoAleatoria;
 import utilsBank.databank.Data;
 import utilsBank.databank.DataBank;
 
-public class Transacao {
+import java.io.Serializable;
+
+public class Transacao implements Serializable {
 	private Double valor;
 	private String nossoNumero;
 	private String idPagamento;

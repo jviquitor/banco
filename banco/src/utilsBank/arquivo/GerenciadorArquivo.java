@@ -15,9 +15,9 @@ import java.util.HashSet;
 public class GerenciadorArquivo {
 	public static final String PATH_CLIENTES = "banco/clientes.dat";
 	public static final String PATH_CHAVES_NOSSO_NUMEROS = "banco/chaves_nossos_numeros.dat";
-	public static final String CHAVES_GERADAS_ALEATORIA = "banco/chaves_geradas_aleatoria.dat";
-	public static final String CHAVES_GERADAS_NUMERO_CARTAO = "banco/geradas_numero_cartao.dat";
-	public static final String CHAVES_ID_CONTA = "banco/chaves_id_conta.dat";
+	public static final String PATH_CHAVES_GERADAS_ALEATORIA = "banco/chaves_geradas_aleatoria.dat";
+	public static final String PATH_CHAVES_GERADAS_NUMERO_CARTAO = "banco/geradas_numero_cartao.dat";
+	public static final String PATH_CHAVES_ID_CONTA = "banco/chaves_id_conta.dat";
 
 	public static ArrayList<Conta> listar(String path) throws RuntimeException, LeituraArquivoException {
 		try {
@@ -28,6 +28,7 @@ public class GerenciadorArquivo {
 				return dados;
 			}
 			/* Lista vazia */
+
 			throw new LeituraArquivoException("Lista vazia");
 		} catch (FileNotFoundException ex) {
 			/* Arquivo nao encontrado */

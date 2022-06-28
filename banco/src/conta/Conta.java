@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class Conta implements Serializable {
-	protected static final int TAMANHO_ID_CONTA = 4;
 
 	protected String idConta;
 	protected Double saldo;
@@ -41,7 +40,7 @@ public class Conta implements Serializable {
 	protected Double emprestimo;
 
 	protected Conta() {
-		this.idConta = GeracaoAleatoria.gerarIdConta(Conta.TAMANHO_ID_CONTA);
+		this.idConta = GeracaoAleatoria.gerarIdConta(GeracaoAleatoria.TAMANHO_ID_CONTA);
 		this.saldo = 0.0;
 		this.dinheiroGuardado = 0.0;
 		this.transacoesRealizadas = new ArrayList<>();

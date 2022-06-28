@@ -9,7 +9,7 @@ import java.util.HashSet;
 public class GerenciadorBanco {
     //Classe para gerenciar o inicio do programa do banco
     //Chega e guarda todos os clientes numa estrutura para a agencia
-
+    private final int QUANTIDADE_DE_CHAVES_MAX = 4;
     //
     public static HashSet<Cliente> inicializarClientes() {
         try {

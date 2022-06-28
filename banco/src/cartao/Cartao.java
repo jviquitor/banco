@@ -7,9 +7,11 @@ import utilsBank.GeracaoAleatoria;
 import utilsBank.databank.Data;
 import utilsBank.databank.DataBank;
 
-public abstract class Cartao {
+import java.io.Serializable;
+
+public abstract class Cartao implements Serializable {
 	protected String numeroCartao;
-	protected int cvc;
+	protected Integer cvc;
 	protected String apelidoCartao;
 	protected String nomeTitular;
 	protected Data validade;

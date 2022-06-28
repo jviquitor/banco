@@ -18,7 +18,8 @@ public class GerenciadorGeracaoAleatoria {
             throw new RuntimeException();
         }
     }
-     public static void salvandoNossosNumeros(String path, HashSet<String> dados) {
+
+    public static void salvandoGeracaoAleatoria(String path, HashSet<String> dados) {
         GerenciadorArquivo.inserirSetGeracao(path, dados);
     }
 }
