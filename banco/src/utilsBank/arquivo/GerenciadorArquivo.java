@@ -2,6 +2,8 @@ package utilsBank.arquivo;
 
 import cliente.Cliente;
 import conta.Conta;
+import utilsBank.arquivo.Exception.ArquivoVazioException;
+import utilsBank.arquivo.Exception.EscritaArquivoException;
 import utilsBank.arquivo.Exception.LeituraArquivoException;
 
 import java.io.*;
@@ -51,18 +53,18 @@ public class GerenciadorArquivo {
 			throw new LeituraArquivoException("Conjunto vazio");
 		} catch (FileNotFoundException ex) {
 			/* Arquivo nao encontrado */
-			throw new RuntimeException("Arquivo nao encontrado");
+			throw new LeituraArquivoException("Arquivo nao encontrado");
 		} catch (IOException ex) {
 			/* Arquivo nao pode ser acessado */
-			throw new RuntimeException("Arquivo nao pode ser acessado");
+			throw new LeituraArquivoException("Arquivo nao pode ser acessado");
 		} catch (ClassNotFoundException ex) {
 			/* Classe invalida */
-			throw new RuntimeException("Classe invalida");
+			throw new LeituraArquivoException("Classe invalida");
 		}
 	}
 
 
-	public static HashSet<String> listarSetGeracaoAleatoria(String path) throws RuntimeException, LeituraArquivoException {
+	public static HashSet<String> listarSetGeracaoAleatoria(String path) throws LeituraArquivoException, ArquivoVazioException {
 		try {
 			ObjectInputStream arquivo = new ObjectInputStream(new FileInputStream(path));
 			HashSet<String> dados = (HashSet<String>) arquivo.readObject();
@@ -71,28 +73,30 @@ public class GerenciadorArquivo {
 				return dados;
 			}
 			/* Lista vazia */
-			throw new LeituraArquivoException("Conjunto vazio");
+			throw new ArquivoVazioException();
 		} catch (FileNotFoundException ex) {
 			/* Arquivo nao encontrado */
-			throw new RuntimeException("Arquivo nao encontrado");
+			throw new LeituraArquivoException("Arquivo nao encontrado");
 		} catch (IOException ex) {
 			/* Arquivo nao pode ser acessado */
-			throw new RuntimeException("Arquivo nao pode ser acessado");
+			throw new LeituraArquivoException("Arquivo nao pode ser acessado");
 		} catch (ClassNotFoundException ex) {
 			/* Classe invalida */
-			throw new RuntimeException("Classe invalida");
+			throw new LeituraArquivoException("Classe invalida");
 		}
 	}
 
-	public static void inserir(String path, ArrayList<Conta> novosDados) {
+	public static void inserir(String path, ArrayList<Conta> novosDados) throws LeituraArquivoException, EscritaArquivoException {
 		try {
 			ObjectOutputStream arquivo = new ObjectOutputStream(new FileOutputStream(path));
 			arquivo.writeObject(novosDados);
 			arquivo.close();
 		} catch (FileNotFoundException ex) {
 			/* Diretorio nao encontrado */
+			throw new LeituraArquivoException("Diretorio nao encontrado");
 		} catch (IOException ex) {
 			/* Arquivo nao pode ser acessado */
+			throw new EscritaArquivoException("Arquivo nao pode ser acessado");
 		}
 	}
 

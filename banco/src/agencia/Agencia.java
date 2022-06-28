@@ -1,9 +1,11 @@
 package agencia;
 
+import agencia.exceptions.InsercaoException;
 import cliente.Cliente;
 import utilsBank.GerenciadorBanco;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.Set;
 
 //TODO Perguntar se a implementação em Singleton é melhor
 public class Agencia {
@@ -14,8 +16,14 @@ public class Agencia {
 	private static final Set<Cliente> clientes = GerenciadorBanco.inicializarClientes();
 	private Double rendaAgencia = 0.0;
 
-	public boolean addCliente(Cliente cliente) {
-		return clientes.add(cliente);
+	private Agencia() {
+		this.rendaAgencia = 0.0;
+	}
+
+	public void addCliente(Cliente cliente) throws InsercaoException {
+		if (!clientes.add(cliente)) {
+			throw new InsercaoException("Cliente ja existe");
+		}
 	}
 
 	public boolean buscarCliente() {

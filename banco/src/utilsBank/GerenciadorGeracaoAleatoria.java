@@ -1,19 +1,21 @@
 package utilsBank;
 
-import cliente.Cliente;
+import utilsBank.arquivo.Exception.ArquivoVazioException;
 import utilsBank.arquivo.Exception.LeituraArquivoException;
 import utilsBank.arquivo.GerenciadorArquivo;
 
 import java.util.HashSet;
-import java.util.Set;
 
 public class GerenciadorGeracaoAleatoria {
 
     public static HashSet<String> inicializarGeracaoAleatoria(String path) {
         try {
             return GerenciadorArquivo.listarSetGeracaoAleatoria(path);
-        } catch (LeituraArquivoException ex) {
+        } catch (ArquivoVazioException ex) {
             return new HashSet<>();
+        } catch (LeituraArquivoException ex) {
+            //TODO Tratar erro
+            throw new RuntimeException();
         }
     }
      public static void salvandoNossosNumeros(String path, HashSet<String> dados) {
