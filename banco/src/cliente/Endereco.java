@@ -1,6 +1,8 @@
 package cliente;
 
-public class Endereco {
+import java.io.Serializable;
+
+public class Endereco implements Serializable {
 	private int CEP;
 	private String rua;
 	private int numeroRua;

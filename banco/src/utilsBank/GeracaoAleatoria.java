@@ -1,15 +1,17 @@
 package utilsBank;
 
+import utilsBank.arquivo.GerenciadorArquivo;
+
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
 public class GeracaoAleatoria {
 	private static final int NUMERO_CARTAO_SEM_AGENCIA = 12;
-	private static final Set<String> chavesNossosNumerosGeradas = new HashSet<>();
-	private static final Set<String> chavesGeradasAleatorias = new HashSet<>();
-	private static final Set<Integer> chavesGeradasNumeroCartao = new HashSet<>();
-	private static final Set<String> chavesIdsConta = new HashSet<>();
+	private static final Set<String> CHAVES_NOSSO_NUMEROS = GerenciadorGeracaoAleatoria.inicializarGeracaoAleatoria(GerenciadorArquivo.PATH_CHAVES_NOSSO_NUMEROS);
+	private static final Set<String> CHAVES_GERADAS_ALEATORIA = GerenciadorGeracaoAleatoria.inicializarGeracaoAleatoria(GerenciadorArquivo.CHAVES_GERADAS_ALEATORIA);
+	private static final Set<String> CHAVES_GERADAS_NUMERO_CARTAO = GerenciadorGeracaoAleatoria.inicializarGeracaoAleatoria(GerenciadorArquivo.CHAVES_GERADAS_NUMERO_CARTAO);
+	private static final Set<String> CHAVES_ID_CONTA = GerenciadorGeracaoAleatoria.inicializarGeracaoAleatoria(GerenciadorArquivo.CHAVES_ID_CONTA);
 
 	public static String gerarNossosNumeros(int quantidadeNumeros) {
 		Random random = new Random();
@@ -20,9 +22,9 @@ public class GeracaoAleatoria {
 				numberRandom.append(random.nextInt(10));
 			}
 
-		} while (chavesNossosNumerosGeradas.contains(numberRandom));
+		} while (CHAVES_NOSSO_NUMEROS.contains(String.valueOf(numberRandom)));
 
-		chavesNossosNumerosGeradas.add(String.valueOf(numberRandom));
+		CHAVES_NOSSO_NUMEROS.add(String.valueOf(numberRandom));
 		return numberRandom.toString();
 	}
 
@@ -48,14 +50,14 @@ public class GeracaoAleatoria {
 				numberRandom.append(random.nextInt(10));
 			}
 
-		} while (chavesGeradasNumeroCartao.contains(Integer.parseInt(String.valueOf(numberRandom))));
+		} while (CHAVES_GERADAS_NUMERO_CARTAO.contains(String.valueOf(numberRandom)));
 
-		chavesGeradasNumeroCartao.add(Integer.parseInt(String.valueOf(numberRandom)));
+		CHAVES_GERADAS_NUMERO_CARTAO.add((String.valueOf(numberRandom)));
 		return String.valueOf(numberRandom);
 	}
 
 	public static String gerarChaveAleatoria(int tamanhoChave) {
-		if (chavesGeradasAleatorias.size() < Math.pow(36, tamanhoChave)) {
+		if (CHAVES_GERADAS_ALEATORIA.size() < Math.pow(36, tamanhoChave)) {
 			Random aleatorio = new Random();
 			String caracteres = "abcdefghijklmnopqrstuvwxyz1234567890";
 			String chaveAleatoria;
@@ -64,7 +66,7 @@ public class GeracaoAleatoria {
 				for (int i = 0; i < 1; i++) {
 					chaveAleatoria += caracteres.charAt(aleatorio.nextInt(36));
 				}
-			} while (!chavesGeradasAleatorias.add(chaveAleatoria));
+			} while (!CHAVES_GERADAS_ALEATORIA.add(chaveAleatoria));
 			return chaveAleatoria;
 		} else {
 			throw new RuntimeException("Tamanho maximo de chaves atingido");
@@ -81,17 +83,11 @@ public class GeracaoAleatoria {
 				numberRandom.append(random.nextInt(10));
 			}
 
-		} while (chavesIdsConta.contains(numberRandom));
+		} while (CHAVES_ID_CONTA.contains(String.valueOf(numberRandom)));
 
-		chavesIdsConta.add(String.valueOf(numberRandom));
+
+		CHAVES_ID_CONTA.add(String.valueOf(numberRandom));
 		return numberRandom.toString();
 	}
 
-	public static void main(String[] args) {
-		int valor = 1000;
-		for (int i = 0; i < valor; i++) {
-			String valorAleatorio = GeracaoAleatoria.gerarNossosNumeros(2);
-		}
-		System.out.println(chavesNossosNumerosGeradas);
-	}
 }

@@ -1,6 +1,8 @@
 package transacao;
 
-public interface Pagavel {
+import java.io.Serializable;
+
+public interface Pagavel extends Serializable {
 
 
 }

@@ -1,8 +1,9 @@
 package utilsBank.databank;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class Data {
+public class Data implements Serializable {
 	private final int dia;
 	private final int mes;
 	private final int ano;

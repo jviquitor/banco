@@ -14,12 +14,13 @@ import transacao.Transacao;
 import utilsBank.GeracaoAleatoria;
 import utilsBank.databank.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class Conta {
+public class Conta implements Serializable {
 	protected static final int TAMANHO_ID_CONTA = 4;
 
 	protected String idConta;

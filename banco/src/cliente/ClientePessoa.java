@@ -3,16 +3,16 @@ package cliente;
 import conta.Conta;
 
 public class ClientePessoa extends Cliente {
-	private String cpf;
+	private final String CPF;
 	private Conta conta;
 
 	public ClientePessoa(String nome, String email, int telefone, int idade, Endereco end, boolean isOnline, double renda, String cpf) {
 		super(nome, email, telefone, idade, end, isOnline, renda);
-		this.cpf = cpf;
+		this.CPF = cpf;
 	}
 
 	public String getCpf() {
-		return cpf;
+		return CPF;
 	}
 
 	public Conta getConta() {
@@ -27,8 +27,16 @@ public class ClientePessoa extends Cliente {
 	public String toString() {
 		return "Pessoa {" +
 				"Nome = " + this.getNome() +
-				"CPF ='" + cpf + '\'' + //TODO esconder CPF NE
+				"CPF ='" + CPF + '\'' + //TODO esconder CPF NE
 				'}';
+	}
+
+	@Override
+	public boolean equals(Cliente outroCliente) {
+		if (outroCliente instanceof ClientePessoa) {
+			return ((ClientePessoa) outroCliente).CPF.equalsIgnoreCase(this.CPF);
+		}
+		return false;
 	}
 }
 

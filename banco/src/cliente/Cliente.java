@@ -2,7 +2,9 @@ package cliente;
 
 import conta.Conta;
 
-public abstract class Cliente {
+import java.io.Serializable;
+
+public abstract class Cliente implements Serializable {
 	private final int QUANTIDADE_DE_CHAVES_MAX = 4;
 	private String nome;
 	private String email;
@@ -33,4 +35,6 @@ public abstract class Cliente {
 	public void setQuantidadeDeChavesAtuais() {
 		this.quantidadeDeChavesAtuais++;
 	}
+
+	public abstract boolean equals(Cliente outroCliente);
 }
