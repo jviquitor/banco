@@ -8,7 +8,7 @@ import java.util.Set;
 public class ClienteEmpresa extends Cliente {
 	private final Set<String> GERENTES_EMPRESA = new HashSet<>(); //Guardara as identificacoes de quem pode acessar a conta
 	private final String CNPJ;
-	private Conta conta;
+
 
 	public ClienteEmpresa(String nome, String email, String telefone, Integer idade, Endereco end, Double renda, String cnpj) {
 		super(nome, email, telefone, idade, end, renda);

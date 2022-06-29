@@ -6,6 +6,7 @@ import cliente.Cliente;
 import cliente.ClienteEmpresa;
 import cliente.ClientePessoa;
 import cliente.Endereco;
+import conta.Conta;
 
 import java.util.Scanner;
 
@@ -47,7 +48,7 @@ public class MenuUsuario {
     private static Cliente criarCliente() throws InsercaoException {
         imprimirBorda("-", 20);
         System.out.print("""
-                Tipo de conta:
+                Tipo de cliente:
                 [0] - Cancelar
                 [1] - Pessoa fisica
                 [2] - Pessoa juridica
@@ -114,4 +115,36 @@ public class MenuUsuario {
 
         return cliente;
     }
+
+    //mudar o nome para ligacao com o usuario
+    private static void menuCriacaoConta() {
+        imprimirBorda("-", 20);
+        Double renda = inserirRenda();
+        String tipo = teclado.nextLine();
+    }
+
+    private static Double inserirRenda() throws IllegalArgumentException{
+        System.out.println("Por favor, Insira sua Renda");
+        Double renda = teclado.nextDouble();
+
+
+        if (0 < renda) {
+            throw new IllegalArgumentException("O valor de renda nao pode ser menos que 0");
+        } else if (renda < 200) {
+            throw new IllegalArgumentException("As regras da Agencia nao permite essa renda, por favor, consulte nossos termos de uso!");
+        }
+
+        return renda;
+    }
+
+    private static Double tryInserirRenda() {
+        Double renda;
+        try {
+            renda = inserirRenda();
+        } catch (IllegalArgumentException exception) {
+            renda = inserirRenda();
+        }
+        return renda;
+    }
+
 }

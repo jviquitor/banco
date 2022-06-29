@@ -12,6 +12,12 @@ public class DadosCartao {
 	private String nomeTitular;
 	private String funcaoCartao;
 
+	public DadosCartao(String apelidoCartao, String nomeTitular, String funcaoCartao) {
+		this.apelidoCartao = apelidoCartao;
+		this.nomeTitular = nomeTitular;
+		this.funcaoCartao = funcaoCartao;
+	}
+
 	public String getApelidoCartao() {
 		return apelidoCartao;
 	}

@@ -6,6 +6,14 @@ public class DadosConta {
 	private boolean cartaoCredito;
 	private boolean cartaoDebito;
 
+	public DadosConta(String tipoDaConta, Double rendaAtual, boolean cartaoCredito, boolean cartaoDebito, boolean debitoAutomatico) {
+		this.tipoDaConta = tipoDaConta;
+		this.rendaAtual = rendaAtual;
+		this.cartaoCredito = cartaoCredito;
+		this.cartaoDebito = cartaoDebito;
+		this.debitoAutomatico = debitoAutomatico;
+	}
+
 	private boolean debitoAutomatico;
 
 	public boolean hasCartaoCredito() {

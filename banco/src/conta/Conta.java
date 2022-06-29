@@ -54,38 +54,6 @@ public class Conta implements Serializable {
 	}
 
 
-	//@Lembrando O criar conta provavelmente tera que ir para um local mais apropriado como agencia ou cliente ou gerenciamento de conta
-	public static Conta criarConta() {
-		//Sabendo que o cliente está online (a Interface precisa tratar isso)
-		DadosConta dadosConta = InterfaceUsuario.getDadosConta();
-		DadosCartao dadosCartao = InterfaceUsuario.getDadosCartao();
-		Cliente cliente = InterfaceUsuario.getClienteAtual();
-		Conta conta;
-
-		if (dadosConta == null || dadosCartao == null || cliente == null) {
-			throw new DadosInvalidosException("Dados inseridos incorretamente, Por favor, logue novamente!");
-		} else {
-			List<String> standard = new ArrayList<>(Arrays.asList("standard", "normal", "conta de pobre", "qualquer conta", "basica"));
-			List<String> premium = new ArrayList<>(Arrays.asList("premium", "plus", "conta mediana"));
-			List<String> diamond = new ArrayList<>(Arrays.asList("diamond", "a melhor", "com mais beneficios", "conta de rico"));
-
-			if (diamond.contains(dadosConta.getTipoDaConta().toLowerCase())) {
-				conta = new ContaDiamond(dadosConta);
-			} else if (premium.contains(dadosConta.getTipoDaConta().toLowerCase())) {
-				conta = new ContaPremium(dadosConta);
-			} else if (standard.contains(dadosConta.getTipoDaConta().toLowerCase())) {
-				conta = new ContaStandard(dadosConta);
-			} else {
-				throw new TipoInvalido("Por favor, escolha um tipo de conta valido");
-			}
-			if (dadosConta.hasCartaoCredito()) {
-				conta.criarCartao(cliente, dadosCartao);
-			} else if (dadosConta.hasCartaoDebit()) {
-				conta.criarCartao(cliente, dadosCartao);
-			}
-		}
-		return conta;
-	}
 
 	public boolean addChavesPix(Cliente cliente, ChavePix chavePix) {
 		if (chavesPix.contains(chavePix))
