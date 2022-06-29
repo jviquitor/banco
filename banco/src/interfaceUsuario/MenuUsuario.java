@@ -6,13 +6,24 @@ import cliente.Cliente;
 import cliente.ClienteEmpresa;
 import cliente.ClientePessoa;
 import cliente.Endereco;
-import conta.Conta;
+import conta.exceptions.TipoInvalido;
+import interfaceUsuario.Exceptions.ValorInvalido;
+import interfaceUsuario.dados.DadosConta;
 
 import java.util.Scanner;
 
+import utilsBank.GerenciadorBanco;
+
 public class MenuUsuario {
     private static final Scanner teclado = new Scanner(System.in);
+    private static final double RENDA_MINIMA = 200.0;
+    private static final double RENDA_MAXIMA_STANDARD = 10000.0;
+    private static final double RENDA_MAXIMA_PREMIUM = 30000.0;
+    private static final double RENDA_MINIMA_DIAMOND = 30001.0;
 
+    private static final String STANDARD = "Standard";
+    private static final String PREMIUM = "Premium";
+    private static final String DIAMOND = "Diamond";
     public static void iniciar() {
         imprimirBorda("=", 30);
         System.out.println("[0] - Encerrar programa");
@@ -112,37 +123,67 @@ public class MenuUsuario {
             );
         }
         Agencia.getInstance().addCliente(cliente);
-
+        InterfaceUsuario.setClienteAtual(cliente);
         return cliente;
     }
 
-    //mudar o nome para ligacao com o usuario
     private static void menuCriacaoConta() {
         imprimirBorda("-", 20);
         Double renda = inserirRenda();
-        String tipo = teclado.nextLine();
-    }
+        boolean debitoAutomatico = false;
+        String[] cabecalhoCartoesGeral = {
+            "Deseja Cartao de Credito? [1] SIM [0] NAO",
+            "Deseja Cartao de Debito? [1] SIM [0] NAO",
+        };
 
-    private static Double inserirRenda() throws IllegalArgumentException{
-        System.out.println("Por favor, Insira sua Renda");
-        Double renda = teclado.nextDouble();
-
-
-        if (0 < renda) {
-            throw new IllegalArgumentException("O valor de renda nao pode ser menos que 0");
-        } else if (renda < 200) {
-            throw new IllegalArgumentException("As regras da Agencia nao permite essa renda, por favor, consulte nossos termos de uso!");
+        String[] entradaCartoesGeral = new String[cabecalhoCartoesGeral.length];
+        for (int i = 0; i < cabecalhoCartoesGeral.length; i++) {
+            System.out.printf("%s:\n> ", cabecalhoCartoesGeral[i]);
+            entradaCartoesGeral[i] = teclado.nextLine();
         }
-
-        return renda;
+        if (Integer.parseInt(entradaCartoesGeral[0]) == 0) {
+            System.out.println("Deseja debito automatico? [1] SIM [0] NAO");
+            debitoAutomatico = GerenciadorBanco.intToBoolean(Integer.parseInt(teclado.nextLine()));
+        }
+        InterfaceUsuario.setDadosConta(new DadosConta(
+                tipoDeContaPelaRenda(renda),
+                renda,
+                GerenciadorBanco.intToBoolean(Integer.parseInt(entradaCartoesGeral[0])),
+                GerenciadorBanco.intToBoolean(Integer.parseInt(entradaCartoesGeral[1])),
+                debitoAutomatico)
+        );
     }
 
-    private static Double tryInserirRenda() {
-        Double renda;
-        try {
-            renda = inserirRenda();
-        } catch (IllegalArgumentException exception) {
-            renda = inserirRenda();
+    private static String tipoDeContaPelaRenda(Double renda) {
+        if (renda <= RENDA_MAXIMA_STANDARD) {
+            return STANDARD;
+        } else if (renda <= RENDA_MAXIMA_PREMIUM) {
+            return PREMIUM;
+        } else if (renda > RENDA_MAXIMA_PREMIUM) {
+            return DIAMOND;
+        }
+        throw new TipoInvalido("O tipo de conta nao pode ser definido");
+    }
+
+
+    private static void verificarRenda(Double renda) throws ValorInvalido {
+        if (0.0 < renda) {
+            throw new ValorInvalido("[ERRO] Valor negativo para sua renda");
+        } else if (renda < RENDA_MINIMA) {
+            throw new ValorInvalido("[RENDA MINIMA NAO PERMITIDA] As regras da Agencia nao permite essa renda, por favor, consulte nossos termos de uso!");
+        }
+    }
+
+    private static Double inserirRenda() {
+        double renda = 0.0;
+        while (renda < RENDA_MINIMA) {
+            try {
+                System.out.println("Por favor, Insira sua Renda");
+                renda = Double.parseDouble(teclado.nextLine());
+                verificarRenda(renda);
+            } catch (ValorInvalido ex) {
+                System.out.println(ex.getMessage());
+            }
         }
         return renda;
     }

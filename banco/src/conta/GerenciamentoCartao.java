@@ -3,10 +3,11 @@ package conta;
 import cartao.Cartao;
 import utilsBank.databank.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GerenciamentoCartao {
+public class GerenciamentoCartao implements Serializable {
 	//TODO Parcelamento com juros dependendo do tipo do cartoa
 	private final List<Cartao> listaDeCartao;
 	private Double limiteMaximo;

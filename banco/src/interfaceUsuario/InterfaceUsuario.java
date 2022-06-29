@@ -15,6 +15,22 @@ public class InterfaceUsuario {
 	private static Cliente clienteAtual;
 	private static DadosTransacao dadosTransacao;
 
+	public static void setDadosConta(DadosConta dadosConta) {
+		InterfaceUsuario.dadosConta = dadosConta;
+	}
+
+	public static void setDadosCartao(DadosCartao dadosCartao) {
+		InterfaceUsuario.dadosCartao = dadosCartao;
+	}
+
+	public static void setClienteAtual(Cliente clienteAtual) {
+		InterfaceUsuario.clienteAtual = clienteAtual;
+	}
+
+	public static void setDadosTransacao(DadosTransacao dadosTransacao) {
+		InterfaceUsuario.dadosTransacao = dadosTransacao;
+	}
+
 	public static DadosTransacao getDadosTransacao() {
 		return dadosTransacao;
 	}

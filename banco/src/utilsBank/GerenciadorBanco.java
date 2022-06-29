@@ -22,4 +22,8 @@ public class GerenciadorBanco {
     public static void salvandoClientes(HashSet<Cliente> clientes) {
         GerenciadorArquivo.inserirSet(GerenciadorArquivo.PATH_CLIENTES, clientes);
     }
+
+    public static boolean intToBoolean(int value) {
+        return value != 0;
+    }
 }
