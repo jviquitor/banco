@@ -1,10 +1,11 @@
 package interfaceUsuario.dados;
 
 public class DadosConta {
-	private String tipoDaConta;
-	private Double rendaAtual;
-	private boolean cartaoCredito;
-	private boolean cartaoDebito;
+	private final String tipoDaConta;
+	private final Double rendaAtual;
+	private final boolean cartaoCredito;
+	private final boolean cartaoDebito;
+	private final boolean debitoAutomatico;
 
 	public DadosConta(String tipoDaConta, Double rendaAtual, boolean cartaoCredito, boolean cartaoDebito, boolean debitoAutomatico) {
 		this.tipoDaConta = tipoDaConta;
@@ -13,8 +14,6 @@ public class DadosConta {
 		this.cartaoDebito = cartaoDebito;
 		this.debitoAutomatico = debitoAutomatico;
 	}
-
-	private boolean debitoAutomatico;
 
 	public boolean hasCartaoCredito() {
 		return cartaoCredito;

@@ -3,8 +3,8 @@ package cliente;
 import java.io.Serializable;
 
 public class Endereco implements Serializable {
-	private Integer CEP;
-	private Integer numeroCasa;
+	private final Integer CEP;
+	private final Integer numeroCasa;
 	private String complemento;
 
 	public Endereco(Integer CEP, Integer numeroCasa, String complemento) {

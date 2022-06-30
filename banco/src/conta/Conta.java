@@ -2,12 +2,10 @@ package conta;
 
 import cartao.*;
 import cliente.Cliente;
-import conta.exceptions.DadosInvalidosException;
 import conta.exceptions.TipoInvalido;
 import historico.Historico;
 import interfaceUsuario.InterfaceUsuario;
 import interfaceUsuario.dados.DadosCartao;
-import interfaceUsuario.dados.DadosConta;
 import interfaceUsuario.dados.DadosTransacao;
 import transacao.ChavePix;
 import transacao.Transacao;
@@ -16,7 +14,6 @@ import utilsBank.databank.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,8 +49,6 @@ public class Conta implements Serializable {
 		this.chavesPix = new ArrayList<>();
 		this.emprestimo = 0.0;
 	}
-
-
 
 	public boolean addChavesPix(Cliente cliente, ChavePix chavePix) {
 		if (chavesPix.contains(chavePix))

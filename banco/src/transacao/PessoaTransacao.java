@@ -6,9 +6,9 @@ package transacao;
 //para INFORMAR no comprovante, quem foi o destino de tal transação ou a origem da mesma
 
 public class PessoaTransacao {
-	private String nome;
-	private String idAgencia;
-	private String idConta;
+	private final String nome;
+	private final String idAgencia;
+	private final String idConta;
 
 	public PessoaTransacao(String nome, String idAgencia, String idConta) {
 		this.nome = nome;

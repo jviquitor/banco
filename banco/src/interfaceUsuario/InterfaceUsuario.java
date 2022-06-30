@@ -15,28 +15,20 @@ public class InterfaceUsuario {
 	private static Cliente clienteAtual;
 	private static DadosTransacao dadosTransacao;
 
-	public static void setDadosConta(DadosConta dadosConta) {
-		InterfaceUsuario.dadosConta = dadosConta;
-	}
-
-	public static void setDadosCartao(DadosCartao dadosCartao) {
-		InterfaceUsuario.dadosCartao = dadosCartao;
-	}
-
-	public static void setClienteAtual(Cliente clienteAtual) {
-		InterfaceUsuario.clienteAtual = clienteAtual;
+	public static DadosTransacao getDadosTransacao() {
+		return dadosTransacao;
 	}
 
 	public static void setDadosTransacao(DadosTransacao dadosTransacao) {
 		InterfaceUsuario.dadosTransacao = dadosTransacao;
 	}
 
-	public static DadosTransacao getDadosTransacao() {
-		return dadosTransacao;
-	}
-
 	public static Cliente getClienteAtual() {
 		return clienteAtual;
+	}
+
+	public static void setClienteAtual(Cliente clienteAtual) {
+		InterfaceUsuario.clienteAtual = clienteAtual;
 	}
 
 	public static Data getDataAgendada() {
@@ -47,10 +39,6 @@ public class InterfaceUsuario {
 		return "01/02/2002";
 	}
 
-	public static Cliente clienteAtualLogado() {
-		return clienteAtual;
-	}
-
 	public static Conta usuarioAtualConta() {
 		return clienteAtual.getConta();
 	}
@@ -59,8 +47,16 @@ public class InterfaceUsuario {
 		return dadosConta;
 	}
 
+	public static void setDadosConta(DadosConta dadosConta) {
+		InterfaceUsuario.dadosConta = dadosConta;
+	}
+
 	public static DadosCartao getDadosCartao() {
 		return dadosCartao;
+	}
+
+	public static void setDadosCartao(DadosCartao dadosCartao) {
+		InterfaceUsuario.dadosCartao = dadosCartao;
 	}
 
 	//TODO a interface ira perguntar qual o valor que o usuario ira pagar da fatura e ira tratar os casos

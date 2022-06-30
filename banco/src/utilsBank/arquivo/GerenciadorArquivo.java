@@ -112,6 +112,7 @@ public class GerenciadorArquivo {
 			/* Arquivo nao pode ser acessado */
 		}
 	}
+
 	public static void inserirSetGeracao(String path, HashSet<String> novosDados) {
 		try {
 			ObjectOutputStream arquivo = new ObjectOutputStream(new FileOutputStream(path));
@@ -123,6 +124,7 @@ public class GerenciadorArquivo {
 			/* Arquivo nao pode ser acessado */
 		}
 	}
+
 	public static <T extends Collection, Serializable> T tryListar(String path) throws RuntimeException, LeituraArquivoException {
 		try {
 			ObjectInputStream arquivo = new ObjectInputStream(new FileInputStream(path));

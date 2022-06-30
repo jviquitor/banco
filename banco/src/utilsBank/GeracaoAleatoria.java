@@ -7,8 +7,8 @@ import java.util.Random;
 import java.util.Set;
 
 public class GeracaoAleatoria {
-	private static final int NUMERO_CARTAO_SEM_AGENCIA = 12;
 	public static final int TAMANHO_ID_CONTA = 4;
+	private static final int NUMERO_CARTAO_SEM_AGENCIA = 12;
 	private static final Set<String> CHAVES_NOSSO_NUMEROS = GerenciadorGeracaoAleatoria.inicializarGeracaoAleatoria(GerenciadorArquivo.PATH_CHAVES_NOSSO_NUMEROS);
 	private static final Set<String> CHAVES_GERADAS_ALEATORIA = GerenciadorGeracaoAleatoria.inicializarGeracaoAleatoria(GerenciadorArquivo.PATH_CHAVES_GERADAS_ALEATORIA);
 	private static final Set<String> CHAVES_GERADAS_NUMERO_CARTAO = GerenciadorGeracaoAleatoria.inicializarGeracaoAleatoria(GerenciadorArquivo.PATH_CHAVES_GERADAS_NUMERO_CARTAO);

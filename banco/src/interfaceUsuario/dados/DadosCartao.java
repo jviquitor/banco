@@ -8,13 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DadosCartao {
-	private String apelidoCartao;
-	private String nomeTitular;
-	private String funcaoCartao;
+	private final String apelidoCartao;
+	private final String funcaoCartao;
 
 	public DadosCartao(String apelidoCartao, String nomeTitular, String funcaoCartao) {
 		this.apelidoCartao = apelidoCartao;
-		this.nomeTitular = nomeTitular;
 		this.funcaoCartao = funcaoCartao;
 	}
 
@@ -22,9 +20,6 @@ public class DadosCartao {
 		return apelidoCartao;
 	}
 
-	public String getNomeTitular() {
-		return nomeTitular;
-	}
 
 	public FuncaoCartao getFuncaoCartao() {
 		List<String> debito = new ArrayList<>(Arrays.asList("debito", "débito"));
