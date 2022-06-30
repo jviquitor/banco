@@ -6,6 +6,7 @@ import cliente.Cliente;
 import cliente.ClienteEmpresa;
 import cliente.ClientePessoa;
 import cliente.Endereco;
+import cliente.exceptions.LoginException;
 import conta.exceptions.TipoInvalido;
 import interfaceUsuario.Exceptions.ValorInvalido;
 import interfaceUsuario.dados.DadosCartao;
@@ -25,28 +26,33 @@ public class MenuUsuario {
 	private static final double RENDA_MINIMA_DIAMOND = 30001.0;
 
 	public static void iniciar() {
-		imprimirBorda("=", 30);
-		System.out.println("[0] - Encerrar programa");
-		System.out.println("[1] - Acessar conta");
-		System.out.println("[2] - Criar conta");
-		imprimirBorda("=", 30);
-		System.out.print("\n> ");
-		try {
-			switch (teclado.nextLine()) {
-				case "0":
-					break;
-				case "1":
-					//Login
-					break;
-				case "2":
-					criarCliente();
-					menuCriacaoConta();
-					break;
-				default:
-					//Opção inválida
+		boolean loop = true;
+		while (loop) {
+			imprimirBorda("=", 30);
+			System.out.println("[0] - Encerrar programa");
+			System.out.println("[1] - Acessar conta");
+			System.out.println("[2] - Criar conta");
+			imprimirBorda("=", 30);
+			System.out.print("\n> ");
+			try {
+				switch (teclado.nextLine()) {
+					case "0":
+						loop = false;
+						break;
+					case "1":
+						//Login
+						logar();
+						break;
+					case "2":
+						criarCliente();
+						menuCriacaoConta();
+						break;
+					default:
+						//Opção inválida
+				}
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
 			}
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
 		}
 	}
 
@@ -59,13 +65,11 @@ public class MenuUsuario {
 
 	private static Cliente criarCliente() throws InsercaoException {
 		imprimirBorda("-", 20);
-		System.out.print("""
-				Tipo de cliente:
-				[0] - Cancelar
-				[1] - Pessoa fisica
-				[2] - Pessoa juridica
-				>\040
-				""");
+		System.out.print("Tipo de cliente:\n" +
+						 "[0] - Cancelar\n" +
+						 "[1] - Pessoa fisica\n" +
+						 "[2] - Pessoa juridica\n" +
+						 "> \n");
 		String tipo = teclado.nextLine();
 
 		String tag = (tipo.equals("1")) ? "CPF" : "CNPJ";
@@ -82,6 +86,7 @@ public class MenuUsuario {
 				"Idade",
 				"Renda",
 				tag,
+				"Senha",
 		};
 
 		String[] entradaEndereco = new String[cabecalhoEndereco.length];
@@ -110,7 +115,8 @@ public class MenuUsuario {
 					Integer.parseInt(entradaGeral[3]),
 					endereco,
 					Double.parseDouble(entradaGeral[4]),
-					entradaGeral[5]
+					entradaGeral[5],
+					entradaGeral[6]
 			);
 		} else {
 			cliente = new ClienteEmpresa(
@@ -120,7 +126,8 @@ public class MenuUsuario {
 					Integer.parseInt(entradaGeral[3]),
 					endereco,
 					Double.parseDouble(entradaGeral[4]),
-					entradaGeral[5]
+					entradaGeral[5],
+					entradaGeral[6]
 			);
 		}
 		Agencia.getInstance().addCliente(cliente);
@@ -196,4 +203,25 @@ public class MenuUsuario {
 		return renda;
 	}
 
+	private static <T extends Cliente> void  logar() throws LoginException {
+		String[] cabecalho = {
+				"CPF/CNPJ",
+				"Senha",
+		};
+
+		String[] entrada = new String[cabecalho.length];
+		for (int i = 0; i < cabecalho.length; i++) {
+			System.out.printf("%s:\n> ", cabecalho[i]);
+			entrada[i] = teclado.nextLine();
+		}
+
+		ClientePessoa cliente = (ClientePessoa) Agencia.getInstance().buscarCliente(entrada[0]);
+		if (cliente != null) {
+			cliente.verificarSenha(entrada[1]);
+			InterfaceUsuario.setClienteAtual(cliente);
+			System.out.println("Login realizado com sucesso");
+		} else {
+			throw new LoginException("Cliente nao encontrado");
+		}
+	}
 }

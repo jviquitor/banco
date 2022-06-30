@@ -6,8 +6,8 @@ public class ClientePessoa extends Cliente {
 	private final String CPF;
 	private Conta conta;
 
-	public ClientePessoa(String nome, String email, String telefone, Integer idade, Endereco end, Double renda, String cpf) {
-		super(nome, email, telefone, idade, end, renda);
+	public ClientePessoa(String nome, String email, String telefone, Integer idade, Endereco end, Double renda, String cpf, String senha) {
+		super(nome, email, telefone, idade, end, renda, senha);
 		this.CPF = cpf;
 	}
 
