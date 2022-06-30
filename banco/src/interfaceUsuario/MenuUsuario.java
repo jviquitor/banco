@@ -215,7 +215,7 @@ public class MenuUsuario {
 			entrada[i] = teclado.nextLine();
 		}
 
-		ClientePessoa cliente = (ClientePessoa) Agencia.getInstance().buscarCliente(entrada[0]);
+		Cliente cliente = Agencia.getInstance().buscarCliente(entrada[0]);
 		if (cliente != null) {
 			cliente.verificarSenha(entrada[1]);
 			InterfaceUsuario.setClienteAtual(cliente);

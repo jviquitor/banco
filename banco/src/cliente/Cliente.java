@@ -83,7 +83,7 @@ public abstract class Cliente implements Serializable {
 	}
 
 	public void verificarSenha(String senha) throws LoginException {
-		if (this.senha.equals(senha)) {
+		if (!this.senha.equals(senha)) {
 			throw new LoginException("Senha incorreta");
 		}
 	}
