@@ -40,31 +40,18 @@ public class Agencia {
 	}
 
 	public static Cliente buscarClientePorChavePix(String tipodeChave, String chave) {
+		String chavePix = null;
 		for (Cliente cliente : clientes) {
 			Conta contaCliente = cliente.getConta();
 			switch (tipodeChave) {
-				case DadosChavesPix.TELEFONE -> {
-					if (chave.equals(contaCliente.getChavesPix().getTelefone().get(tipodeChave))) {
-						return cliente;
-					}
-				}
-				case DadosChavesPix.EMAIL -> {
-					if (chave.equals(contaCliente.getChavesPix().getEmail().get(tipodeChave))) {
-						return cliente;
-					}
-				}
-				case DadosChavesPix.IDENTIFICACAO -> {
-					if (chave.equals(contaCliente.getChavesPix().getIdentificacao().get(tipodeChave))) {
-						return cliente;
-					}
-				}
-				case DadosChavesPix.CHAVE_ALEATORIA -> {
-					if (chave.equals(contaCliente.getChavesPix().getChaveAleatoria().get(tipodeChave))) {
-						return cliente;
-					}
-				}
+				case DadosChavesPix.TELEFONE -> chavePix = contaCliente.getChavesPix().getTelefone();
+				case DadosChavesPix.EMAIL -> chavePix = contaCliente.getChavesPix().getEmail();
+				case DadosChavesPix.IDENTIFICACAO -> chavePix = contaCliente.getChavesPix().getIdentificacao();
+				case DadosChavesPix.CHAVE_ALEATORIA -> chavePix = contaCliente.getChavesPix().getChaveAleatoria();
 			}
-
+			if (chave.equals(chavePix)) {
+				return cliente;
+			}
 		}
 		return null;
 	}

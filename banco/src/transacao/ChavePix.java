@@ -4,91 +4,75 @@ import interfaceUsuario.dados.DadosChavesPix;
 import utilsBank.GeracaoAleatoria;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Objects;
 
 public class ChavePix implements Serializable {
-	private HashMap<String, String> telefone;
-	private HashMap<String, String> chaveAleatoria; //gerar
-	private HashMap<String, String> email;
-	private HashMap<String, String> identificacao; // CPF ou CNPJ
+	private String telefone;
+	private String chaveAleatoria; //gerar
+	private String email;
+	private String identificacao; // CPF ou CNPJ
 
-	private ChavePix(HashMap<String, String> telefone, HashMap<String, String> chaveAleatoria, HashMap<String, String> email, HashMap<String, String> identificacao) {
+	private ChavePix(String telefone, String chaveAleatoria, String email, String identificacao) {
 		this.telefone = telefone;
 		this.chaveAleatoria = chaveAleatoria;
 		this.email = email;
 		this.identificacao = identificacao;
 	}
 
-	public static ChavePix criarChavePix(String chave, DadosChavesPix dadosChavesPix) {
-		HashMap<String, String> hashMap = new HashMap<>();
-		switch (chave) {
+	public static ChavePix criarChavePix(String tipoChave, DadosChavesPix dadosChavesPix) {
+		switch (tipoChave) {
 			case DadosChavesPix.TELEFONE -> {
-				hashMap.put(chave, dadosChavesPix.getTelefone());
-				return new ChavePix(hashMap, null, null, null);
+				return new ChavePix(dadosChavesPix.getTelefone(), null, null, null);
 			}
 			case DadosChavesPix.EMAIL -> {
-				hashMap.put(chave, dadosChavesPix.getEmail());
-				return new ChavePix(null, null, hashMap, null);
+				return new ChavePix(null, null, dadosChavesPix.getEmail(), null);
 			}
 			case DadosChavesPix.IDENTIFICACAO -> {
-				hashMap.put(chave, dadosChavesPix.getIdentificacao());
-				return new ChavePix(null, null, null, hashMap);
+				return new ChavePix(null, null, null, dadosChavesPix.getIdentificacao());
 			}
 		}
 		throw new RuntimeException("Erro ao criar a chave pix, verifique os valores e tente novamente");
 	}
 
 	public static ChavePix criarChavePix(String chave) {
-		if (Objects.equals(chave, DadosChavesPix.CHAVE_ALEATORIA)) {
-			HashMap<String, String> hashMap = new HashMap<>();
+		if (chave.equals(DadosChavesPix.CHAVE_ALEATORIA)) {
 			String value = GeracaoAleatoria.gerarChaveAleatoria(GeracaoAleatoria.TAMANHO_CHAVE_ALEATORIA);
-			hashMap.put(chave, value);
-			return new ChavePix(null, hashMap, null, null);
+			return new ChavePix(null, value, null, null);
 		}
 		throw new RuntimeException("Erro ao criar a chave pix, verifique os valores e tente novamente");
 	}
 
 	public boolean mudarAdicionarChavePix(String chave, DadosChavesPix dadosChavesPix) {
-		HashMap<String, String> hashMap = new HashMap<>();
 		switch (chave) {
 			case DadosChavesPix.TELEFONE -> {
-				hashMap.put(chave, dadosChavesPix.getTelefone());
-				this.telefone = hashMap;
+				this.telefone = dadosChavesPix.getTelefone();
 			}
 			case DadosChavesPix.EMAIL -> {
-				hashMap.put(chave, dadosChavesPix.getEmail());
-				this.email = hashMap;
+				this.email = dadosChavesPix.getEmail();
 			}
 			case DadosChavesPix.IDENTIFICACAO -> {
-				hashMap.put(chave, dadosChavesPix.getIdentificacao());
-				this.identificacao = hashMap;
+				this.identificacao = dadosChavesPix.getIdentificacao();
 			}
 			case DadosChavesPix.CHAVE_ALEATORIA -> {
 				String value = GeracaoAleatoria.gerarChaveAleatoria(GeracaoAleatoria.TAMANHO_CHAVE_ALEATORIA);
-				hashMap.put(chave, value);
-				this.chaveAleatoria = hashMap;
+				this.chaveAleatoria = value;
 			}
 		}
 		return true;
 	}
 
-
-	public HashMap<String, String> getTelefone() {
+	public String getTelefone() {
 		return telefone;
 	}
 
-	public HashMap<String, String> getChaveAleatoria() {
+	public String getChaveAleatoria() {
 		return chaveAleatoria;
 	}
 
-	public HashMap<String, String> getEmail() {
+	public String getEmail() {
 		return email;
 	}
 
-	public HashMap<String, String> getIdentificacao() {
+	public String getIdentificacao() {
 		return identificacao;
 	}
-
-
 }
