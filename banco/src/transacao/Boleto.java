@@ -5,7 +5,7 @@ import utilsBank.databank.Data;
 
 public class Boleto implements Pagavel {
 
-	private final String nomeDaTransacao = "Boleto";
+	private final String nomeDaTransacao = "boleto";
 	private final Data dataVencimento;
 	private final double multaPorDias;
 

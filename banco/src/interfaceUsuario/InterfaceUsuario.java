@@ -4,6 +4,7 @@ import cliente.Cliente;
 import conta.Conta;
 import funcionalidades.exceptions.EmprestimoException;
 import interfaceUsuario.dados.DadosCartao;
+import interfaceUsuario.dados.DadosChavesPix;
 import interfaceUsuario.dados.DadosConta;
 import interfaceUsuario.dados.DadosTransacao;
 import utilsBank.databank.Data;
@@ -14,6 +15,7 @@ public class InterfaceUsuario {
 	private static DadosCartao dadosCartao;
 	private static Cliente clienteAtual;
 	private static DadosTransacao dadosTransacao;
+	private static DadosChavesPix dadosChavePix;
 
 	public static DadosTransacao getDadosTransacao() {
 		return dadosTransacao;
@@ -21,6 +23,14 @@ public class InterfaceUsuario {
 
 	public static void setDadosTransacao(DadosTransacao dadosTransacao) {
 		InterfaceUsuario.dadosTransacao = dadosTransacao;
+	}
+
+	public static DadosChavesPix getDadosChavePix() {
+		return dadosChavePix;
+	}
+
+	public static void setDadosChavePix(DadosChavesPix dadosChavePix) {
+		InterfaceUsuario.dadosChavePix = dadosChavePix;
 	}
 
 	public static Cliente getClienteAtual() {

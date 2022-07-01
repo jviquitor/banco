@@ -6,6 +6,7 @@ import conta.exceptions.TipoInvalido;
 import historico.Historico;
 import interfaceUsuario.InterfaceUsuario;
 import interfaceUsuario.dados.DadosCartao;
+import interfaceUsuario.dados.DadosChavesPix;
 import interfaceUsuario.dados.DadosTransacao;
 import transacao.ChavePix;
 import transacao.Transacao;
@@ -32,7 +33,7 @@ public class Conta implements Serializable {
 
 	protected GerenciamentoCartao carteira;
 
-	protected List<ChavePix> chavesPix;
+	protected ChavePix chavesPix;
 
 	protected Double emprestimo;
 
@@ -46,16 +47,34 @@ public class Conta implements Serializable {
 		this.notificacoes = new ArrayList<>();
 		this.historico = new Historico();
 		this.carteira = new GerenciamentoCartao();
-		this.chavesPix = new ArrayList<>();
 		this.emprestimo = 0.0;
 	}
 
-	public boolean addChavesPix(Cliente cliente, ChavePix chavePix) {
-		if (chavesPix.contains(chavePix))
-			return false;
-		cliente.setQuantidadeDeChavesAtuais();
-		return chavesPix.add(chavePix);
+	public ChavePix getChavesPix() {
+		return chavesPix;
 	}
+
+	private void setChavesPix(ChavePix chavesPix) {
+		this.chavesPix = chavesPix;
+	}
+
+	public boolean criarChavePix() {
+		DadosChavesPix dadosChavePix = InterfaceUsuario.getDadosChavePix();
+		ChavePix chavePix;
+		if (dadosChavePix.isChaveAleatoria()) {
+			chavePix = ChavePix.criarChavePix(DadosChavesPix.CHAVE_ALEATORIA);
+		} else {
+			chavePix = ChavePix.criarChavePix(dadosChavePix.getTipoChave(), dadosChavePix);
+		}
+		setChavesPix(chavePix);
+		return true;
+	}
+
+	public boolean adicionarChavePix() {
+		DadosChavesPix dadosChavePix = InterfaceUsuario.getDadosChavePix();
+		return chavesPix.mudarAdicionarChavePix(dadosChavePix.getTipoChave(), dadosChavePix);
+	}
+
 
 	//TODO Interface trata caso o valor seja negativo ou zero, avisando que o mesmo esta inserindo um valor errado
 	private void aumentarSaldo(Double valor) {

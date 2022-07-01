@@ -10,7 +10,9 @@ import cliente.exceptions.LoginException;
 import conta.exceptions.TipoInvalido;
 import interfaceUsuario.Exceptions.ValorInvalido;
 import interfaceUsuario.dados.DadosCartao;
+import interfaceUsuario.dados.DadosChavesPix;
 import interfaceUsuario.dados.DadosConta;
+import interfaceUsuario.dados.DadosTransacao;
 import utilsBank.GerenciadorBanco;
 
 import java.util.Scanner;
@@ -19,6 +21,13 @@ public class MenuUsuario {
 	public static final String STANDARD = "standard";
 	public static final String PREMIUM = "premium";
 	public static final String DIAMOND = "diamond";
+	public static final String DEPOSITO = "do seu Deposito";
+	public static final String TRANSFERENCIA = "da sua transferencia";
+	public static final String PAGAMENTO = "do seu pagamento";
+	public static final String FORMATO_DATAS = "31/12/2002";
+	public static final String BOLETO = "boleto";
+	public static final String PIX = "pix";
+	public static final String CHAVES_DISPONIVEIS = "chave_aleatoria | telefone | email | identificacao (CPF OU CNPJ)";
 	private static final Scanner teclado = new Scanner(System.in);
 	private static final double RENDA_MINIMA = 200.0;
 	private static final double RENDA_MAXIMA_STANDARD = 10000.0;
@@ -44,7 +53,7 @@ public class MenuUsuario {
 						logar();
 						break;
 					case "2":
-						criarCliente();
+						InterfaceUsuario.setClienteAtual(criarCliente());
 						menuCriacaoConta();
 						break;
 					default:
@@ -56,6 +65,113 @@ public class MenuUsuario {
 		}
 	}
 
+	public static void menuCliente() {
+		boolean loop = true;
+		Cliente cliente = InterfaceUsuario.getClienteAtual();
+		if (cliente != null) {
+
+			while (loop) {
+				imprimirBorda("=", 30);
+				System.out.println("Bem vindo " + cliente.getNome());
+				System.out.println("[0] - Sair");
+				System.out.println("[1] - Transferir");
+				System.out.println("[2] - Pagar");
+				System.out.println("[3] - Depositar");
+				System.out.println("[4] - Agendar transferencia");
+				System.out.println("[5] - Pagar fatura");
+				System.out.println("[6] - Criar chave Pix");
+				System.out.println("[7] - Modificar chave Pix");
+				imprimirBorda("=", 30);
+				System.out.print("\n> ");
+				try {
+					String value = teclado.nextLine();
+					switch (value) {
+						case "0":
+							System.out.println("Obrigada por acessar ao nosso Internet Banking!");
+							loop = false;
+							break;
+						case "1":
+							MenuDadosTransacao(TRANSFERENCIA);
+							cliente.getConta().transferir();
+							break;
+						case "2":
+							MenuDadosTransacao(PAGAMENTO);
+							cliente.getConta().pagar();
+							break;
+						case "3":
+							MenuDadosTransacao(DEPOSITO);
+							cliente.getConta().depositar();
+							break;
+						default:
+							//Opção inválida
+					}
+				} catch (Exception ex) {
+					System.out.println(ex.getMessage());
+				}
+			}
+		}
+	}
+
+	public static void MenuDadosTransacao(String tipoOperacao) {
+		imprimirBorda("-", 20);
+		boolean debitoAutomatico = false;
+		String[] cabecalhoDadosTransacao = {
+				"Digite o valor " + tipoOperacao,
+				"Digite o tipo de Transacao [FORMATO : " + MenuUsuario.BOLETO + " " + MenuUsuario.PIX + " ]+",
+		};
+
+		String[] entradaDadosTransacao = new String[cabecalhoDadosTransacao.length];
+
+		for (int i = 0; i < cabecalhoDadosTransacao.length; i++) {
+			System.out.printf("%s:\n> ", cabecalhoDadosTransacao[i]);
+			entradaDadosTransacao[i] = teclado.nextLine();
+		}
+		verificarValorTransacao(entradaDadosTransacao[0]);
+
+		if (entradaDadosTransacao[1].equals(MenuUsuario.BOLETO)) {
+			String[] cabecalhoDadosBoleto = {
+					"Digite o dia de vencimento do boleto " + FORMATO_DATAS + " ]",
+					"Digite o valor da multa por dias do boleto",
+			};
+			String[] entradaDadosBoleto = new String[cabecalhoDadosBoleto.length];
+			for (int i = 0; i < cabecalhoDadosBoleto.length; i++) {
+				System.out.printf("%s:\n> ", cabecalhoDadosBoleto[i]);
+				entradaDadosBoleto[i] = teclado.nextLine();
+			}
+
+			InterfaceUsuario.setDadosTransacao(new DadosTransacao(
+					Double.parseDouble(entradaDadosTransacao[0]),
+					entradaDadosBoleto[0],
+					Integer.parseInt(entradaDadosBoleto[1]),
+					MenuUsuario.BOLETO,
+					InterfaceUsuario.getClienteAtual().getIdentificacao())
+			);
+		} else if (entradaDadosTransacao[1].equals(MenuUsuario.PIX)) {
+			String[] cabecalhoDadosPix = {
+					"Digite o tipo da chave inserida [FORMATOS DISPONIVEIS]: " + CHAVES_DISPONIVEIS,
+					"Digite a chave",
+			};
+			String[] entradaDadosPix = new String[cabecalhoDadosPix.length];
+			for (int i = 0; i < cabecalhoDadosPix.length; i++) {
+				System.out.printf("%s:\n> ", cabecalhoDadosPix[i]);
+				entradaDadosPix[i] = teclado.nextLine();
+			}
+
+			InterfaceUsuario.setDadosTransacao(new DadosTransacao(
+					Double.parseDouble(entradaDadosTransacao[0]),
+					MenuUsuario.PIX,
+					InterfaceUsuario.getClienteAtual().getIdentificacao(),
+					entradaDadosPix[1],
+					DadosChavesPix.IDENTIFICACAO,
+					entradaDadosPix[0]
+			));
+		}
+
+		InterfaceUsuario.getClienteAtual().criarConta();
+
+
+	}
+
 	private static void imprimirBorda(String padrao, int tam) {
 		for (int i = 0; i < tam; i++) {
 			System.out.print(padrao);
@@ -65,11 +181,13 @@ public class MenuUsuario {
 
 	private static Cliente criarCliente() throws InsercaoException {
 		imprimirBorda("-", 20);
-		System.out.print("Tipo de cliente:\n" +
-						 "[0] - Cancelar\n" +
-						 "[1] - Pessoa fisica\n" +
-						 "[2] - Pessoa juridica\n" +
-						 "> \n");
+		System.out.print("""
+				Tipo de cliente:
+				[0] - Cancelar
+				[1] - Pessoa fisica
+				[2] - Pessoa juridica
+				>\s
+				""");
 		String tipo = teclado.nextLine();
 
 		String tag = (tipo.equals("1")) ? "CPF" : "CNPJ";
@@ -131,7 +249,6 @@ public class MenuUsuario {
 			);
 		}
 		Agencia.getInstance().addCliente(cliente);
-		InterfaceUsuario.setClienteAtual(cliente);
 		return cliente;
 	}
 
@@ -180,6 +297,9 @@ public class MenuUsuario {
 		throw new TipoInvalido("O tipo de conta nao pode ser definido");
 	}
 
+	private static void verificarValorTransacao(String value) {
+		//TODO verificar o valor com try exceptions etc
+	}
 
 	private static void verificarRenda(Double renda) throws ValorInvalido {
 		if (0.0 < renda) {
@@ -203,7 +323,7 @@ public class MenuUsuario {
 		return renda;
 	}
 
-	private static <T extends Cliente> void  logar() throws LoginException {
+	private static <T extends Cliente> void logar() throws LoginException {
 		String[] cabecalho = {
 				"CPF/CNPJ",
 				"Senha",
@@ -215,7 +335,7 @@ public class MenuUsuario {
 			entrada[i] = teclado.nextLine();
 		}
 
-		Cliente cliente = Agencia.getInstance().buscarCliente(entrada[0]);
+		Cliente cliente = Agencia.buscarCliente(entrada[0]);
 		if (cliente != null) {
 			cliente.verificarSenha(entrada[1]);
 			InterfaceUsuario.setClienteAtual(cliente);
