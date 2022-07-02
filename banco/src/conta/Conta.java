@@ -2,18 +2,20 @@ package conta;
 
 import agencia.Agencia;
 import cartao.*;
-import cliente.Cliente;
 import conta.exceptions.TipoInvalido;
 import funcionalidades.exceptions.EmprestimoException;
 import historico.Historico;
 import interfaceUsuario.InterfaceUsuario;
+import interfaceUsuario.dados.DadosBoleto;
 import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosChavesPix;
 import interfaceUsuario.dados.DadosTransacao;
+import transacao.Boleto;
 import transacao.ChavePix;
 import transacao.Transacao;
 import utilsBank.GeracaoAleatoria;
 import utilsBank.databank.Data;
+import utilsBank.databank.DataBank;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -76,7 +78,6 @@ public class Conta implements Serializable {
 		return chavesPix.mudarAdicionarChavePix(dadosChavePix.getTipoChave(), dadosChavePix);
 	}
 
-
 	//TODO Interface trata caso o valor seja negativo ou zero, avisando que o mesmo esta inserindo um valor errado
 	private void aumentarSaldo(Double valor) {
 		this.saldo += valor;
@@ -111,15 +112,15 @@ public class Conta implements Serializable {
 		return false;
 	}
 
-	public boolean criarCartao(Cliente cliente, DadosCartao dadosCartao) {
+	public boolean criarCartao(String nomeTitular, DadosCartao dadosCartao) {
 		Cartao cartao;
 
 		if (this.getClass() == ContaStandard.class) {
-			cartao = new CartaoStandard(cliente, dadosCartao);
+			cartao = new CartaoStandard(nomeTitular, dadosCartao);
 		} else if (this.getClass() == ContaPremium.class) {
-			cartao = new CartaoPremium(cliente, dadosCartao);
+			cartao = new CartaoPremium(nomeTitular, dadosCartao);
 		} else if (this.getClass() == ContaDiamond.class) {
-			cartao = new CartaoDiamond(cliente, dadosCartao);
+			cartao = new CartaoDiamond(nomeTitular, dadosCartao);
 		} else {
 			throw new TipoInvalido("Tipo do cartao invalido.");
 		}
@@ -128,7 +129,23 @@ public class Conta implements Serializable {
 	}
 
 	public void pagar() {
-		transferir();
+		//Pagando um boleto existente
+		DadosBoleto dadosBoleto = InterfaceUsuario.getDadosBoleto();
+		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
+		String nossoNumero = dadosBoleto.getNossoNumero();
+		if (nossoNumero != null) {
+			Boleto boleto = Agencia.buscarBoleto(nossoNumero);
+			if (boleto != null) {
+				Double valorT = boleto.getValor();
+				if (!boleto.getDataVencimento().equals(DataBank.criarData(DataBank.SEM_HORA))) {
+					int dias = 1; //TODO trocar com o valor que o max vai resolver da comparacao
+					valorT = valorT * boleto.getMultaPorDias();
+				}
+				boleto.getContaOrigem().aumentarSaldo(valorT);
+				diminuirSaldo(valorT);
+				boleto.setFoiPago(false);
+			}
+		}
 	}
 
 	public void depositar() {

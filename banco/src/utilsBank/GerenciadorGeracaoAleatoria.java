@@ -1,6 +1,5 @@
 package utilsBank;
 
-import utilsBank.arquivo.Exception.ArquivoVazioException;
 import utilsBank.arquivo.Exception.LeituraArquivoException;
 import utilsBank.arquivo.GerenciadorArquivo;
 

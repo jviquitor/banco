@@ -4,23 +4,10 @@ import conta.Conta;
 
 public class ClientePessoa extends Cliente {
 	private final String CPF;
-	private Conta conta;
 
 	public ClientePessoa(String nome, String email, String telefone, Integer idade, Endereco end, String cpf, String senha) {
 		super(nome, email, telefone, idade, end, senha);
 		this.CPF = cpf;
-	}
-
-	public String getCpf() {
-		return CPF;
-	}
-
-	public Conta getConta() {
-		return this.conta;
-	}
-
-	public void setConta(Conta conta) {
-		this.conta = conta;
 	}
 
 	@Override

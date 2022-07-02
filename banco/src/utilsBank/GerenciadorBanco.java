@@ -1,10 +1,10 @@
 package utilsBank;
 
 import cliente.Cliente;
+import transacao.Boleto;
 import utilsBank.arquivo.Exception.LeituraArquivoException;
 import utilsBank.arquivo.GerenciadorArquivo;
 
-import java.io.FileNotFoundException;
 import java.util.HashSet;
 
 public class GerenciadorBanco {
@@ -23,5 +23,9 @@ public class GerenciadorBanco {
 
 	public static boolean intToBoolean(int value) {
 		return value != 0;
+	}
+
+	public static HashSet<Boleto> inicializarBoletos() {
+		return GerenciadorArquivo.listarSetBoleto(GerenciadorArquivo.PATH_BOLETOS);
 	}
 }

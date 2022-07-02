@@ -34,7 +34,7 @@ public abstract class Cliente implements Serializable {
 		this.idade = idade;
 		this.end = end;
 		this.quantidadeDeChavesAtuais = 0;
-		this.conta = this.criarConta();
+		this.conta = criarConta();
 		this.senha = senha;
 	}
 
@@ -42,7 +42,9 @@ public abstract class Cliente implements Serializable {
 		return nome;
 	}
 
-	public abstract Conta getConta();
+	public Conta getConta() {
+		return this.conta;
+	}
 
 	public void setConta(Conta conta) {
 		this.conta = conta;
@@ -55,6 +57,14 @@ public abstract class Cliente implements Serializable {
 	public abstract String getIdentificacao();
 
 	public abstract boolean equals(Cliente outroCliente);
+
+	public String getStringIdentificacao() {
+		return "identificacao";
+	}
+
+	private void setRenda(Double renda) {
+		this.renda = renda;
+	}
 
 	public Conta criarConta() {
 		this.renda = MenuUsuario.menuCriacaoConta();
@@ -75,9 +85,9 @@ public abstract class Cliente implements Serializable {
 				throw new TipoInvalido("Por favor, escolha um tipo de conta valido");
 			}
 			if (dadosConta.hasCartaoCredito()) {
-				conta.criarCartao(this, dadosCartao);
+				conta.criarCartao(nome, dadosCartao);
 			} else if (dadosConta.hasCartaoDebito()) {
-				conta.criarCartao(this, dadosCartao);
+				conta.criarCartao(nome, dadosCartao);
 			}
 		}
 		return conta;

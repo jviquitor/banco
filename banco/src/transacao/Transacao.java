@@ -18,17 +18,15 @@ public class Transacao implements Serializable {
 	private Cliente destino; //@Lembrando DESTINO EH O DESTINATARIO DO DINHEIRO, QUEM RECEBE
 	private Cliente origem; //@Lembrando Origem EH QUEM MANDOU TAL COISA
 	private Data dataAgendada;
-	private Pagavel tipoDeTransacao;
 
 	public Transacao(DadosTransacao dadosTransacao) {
 		this.valor = dadosTransacao.getValor();
 		this.nossoNumero = GeracaoAleatoria.gerarNossosNumeros(25);
 		this.dataEmissaoTransacao = DataBank.criarData(DataBank.COM_HORA);
 		this.idPagamento = Agencia.ID_AGENCIA + Agencia.CODIGO_MOEDA + GeracaoAleatoria.gerarNumeros(4) +
-				this.nossoNumero + dadosTransacao.getDataVencimentoString() + dataEmissaoTransacao.toString(DataBank.SEM_HORA);
-		this.destino = dadosTransacao.getCobrador();
-		this.origem = dadosTransacao.getPagador();
-		this.tipoDeTransacao = dadosTransacao.getTipoDaTransacao();
+				this.nossoNumero + dataEmissaoTransacao.toString(DataBank.SEM_HORA);
+		this.destino = dadosTransacao.getdestino();
+		this.origem = dadosTransacao.getorigem();
 	}
 
 	public Transacao(DadosTransacao dadosTransacao, Data dataAgendada) {
@@ -40,15 +38,18 @@ public class Transacao implements Serializable {
 		System.out.println(transacao.toString());
 	}
 
+	public String getNossoNumero() {
+		return nossoNumero;
+	}
+
 	@Override
 	public String toString() {
 		return "Transacao " +
 				"valor =" + valor +
 				", idPagamento ='" + idPagamento + '\'' +
 				", dataEmissaoTransacao =" + dataEmissaoTransacao.toString(DataBank.COM_HORA) +
-				", Cobrador =" + destino.toString() +
-				", Pagador =" + origem.toString() +
-				", tipoDeTransacao=" + tipoDeTransacao.toString();
+				", destino =" + destino.toString() +
+				", origem =" + origem.toString();
 	}
 
 	public Data getDataAgendada() {

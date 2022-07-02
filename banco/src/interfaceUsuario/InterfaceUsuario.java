@@ -3,10 +3,7 @@ package interfaceUsuario;
 import cliente.Cliente;
 import conta.Conta;
 import funcionalidades.exceptions.EmprestimoException;
-import interfaceUsuario.dados.DadosCartao;
-import interfaceUsuario.dados.DadosChavesPix;
-import interfaceUsuario.dados.DadosConta;
-import interfaceUsuario.dados.DadosTransacao;
+import interfaceUsuario.dados.*;
 import utilsBank.databank.Data;
 import utilsBank.databank.DataBank;
 
@@ -16,6 +13,7 @@ public class InterfaceUsuario {
 	private static Cliente clienteAtual;
 	private static DadosTransacao dadosTransacao;
 	private static DadosChavesPix dadosChavePix;
+	private static DadosBoleto dadosBoleto;
 
 	public static DadosTransacao getDadosTransacao() {
 		return dadosTransacao;
@@ -23,6 +21,14 @@ public class InterfaceUsuario {
 
 	public static void setDadosTransacao(DadosTransacao dadosTransacao) {
 		InterfaceUsuario.dadosTransacao = dadosTransacao;
+	}
+
+	public static DadosBoleto getDadosBoleto() {
+		return dadosBoleto;
+	}
+
+	public static void setDadosBoleto(DadosBoleto dadosBoleto) {
+		InterfaceUsuario.dadosBoleto = dadosBoleto;
 	}
 
 	public static DadosChavesPix getDadosChavePix() {

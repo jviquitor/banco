@@ -1,7 +1,6 @@
 package cartao;
 
 import agencia.Agencia;
-import cliente.Cliente;
 import interfaceUsuario.dados.DadosCartao;
 import utilsBank.GeracaoAleatoria;
 import utilsBank.databank.Data;
@@ -18,11 +17,11 @@ public abstract class Cartao implements Serializable {
 	protected String tipoCartao; // @Lembrando, tipo se refere ao tipo de conta
 	protected FuncaoCartao funcaoCartao; // @Lembrando Se refere a ser debito ou credito
 
-	protected Cartao(Cliente cliente, DadosCartao dadosCartao) {
+	protected Cartao(String nomeTitular, DadosCartao dadosCartao) {
 		this.numeroCartao = Agencia.ID_AGENCIA + GeracaoAleatoria.gerarNumeroCartao();
 		this.cvc = Integer.parseInt(GeracaoAleatoria.gerarNumeros(3));
 		this.apelidoCartao = dadosCartao.getApelidoCartao();
-		this.nomeTitular = cliente.getNome();
+		this.nomeTitular = nomeTitular;
 		//Possível implementação de método para somar datas (na classe Data)
 		this.validade = DataBank.criarData(DataBank.SEM_HORA);
 		this.funcaoCartao = dadosCartao.getFuncaoCartao();

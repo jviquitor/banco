@@ -50,8 +50,7 @@ public class ChavePix implements Serializable {
 				this.identificacao = dadosChavesPix.getIdentificacao();
 				break;
 			case DadosChavesPix.CHAVE_ALEATORIA:
-				String value = GeracaoAleatoria.gerarChaveAleatoria(GeracaoAleatoria.TAMANHO_CHAVE_ALEATORIA);
-				this.chaveAleatoria = value;
+				this.chaveAleatoria = GeracaoAleatoria.gerarChaveAleatoria(GeracaoAleatoria.TAMANHO_CHAVE_ALEATORIA);
 				break;
 		}
 		return true;

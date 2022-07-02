@@ -2,7 +2,7 @@ package utilsBank.arquivo;
 
 import cliente.Cliente;
 import conta.Conta;
-import utilsBank.arquivo.Exception.ArquivoVazioException;
+import transacao.Boleto;
 import utilsBank.arquivo.Exception.EscritaArquivoException;
 import utilsBank.arquivo.Exception.LeituraArquivoException;
 
@@ -18,8 +18,9 @@ public class GerenciadorArquivo {
 	public static final String PATH_CHAVES_GERADAS_ALEATORIA = "banco/chaves_geradas_aleatoria.dat";
 	public static final String PATH_CHAVES_GERADAS_NUMERO_CARTAO = "banco/geradas_numero_cartao.dat";
 	public static final String PATH_CHAVES_ID_CONTA = "banco/chaves_id_conta.dat";
+	public static final String PATH_BOLETOS = "banco/boletos.dat";
 
-	public static ArrayList<Conta> listar(String path) throws RuntimeException, LeituraArquivoException {
+	public static ArrayList<Conta> listar(String path) throws RuntimeException {
 		try {
 			ObjectInputStream arquivo = new ObjectInputStream(new FileInputStream(path));
 			ArrayList<Conta> dados = (ArrayList<Conta>) arquivo.readObject();
@@ -42,7 +43,7 @@ public class GerenciadorArquivo {
 		}
 	}
 
-	public static HashSet<Cliente> listarSet(String path) throws RuntimeException, LeituraArquivoException {
+	public static HashSet<Cliente> listarSet(String path) throws RuntimeException {
 		try {
 			ObjectInputStream arquivo = new ObjectInputStream(new FileInputStream(path));
 			HashSet<Cliente> dados = (HashSet<Cliente>) arquivo.readObject();
@@ -64,6 +65,27 @@ public class GerenciadorArquivo {
 		}
 	}
 
+	public static HashSet<Boleto> listarSetBoleto(String path) throws RuntimeException {
+		try {
+			ObjectInputStream arquivo = new ObjectInputStream(new FileInputStream(path));
+			HashSet<Boleto> dados = (HashSet<Boleto>) arquivo.readObject();
+			arquivo.close();
+			if (dados.size() > 0) {
+				return dados;
+			}
+			/* Lista vazia */
+			return new HashSet<>();
+		} catch (FileNotFoundException ex) {
+			/* Arquivo nao encontrado */
+			return new HashSet<>();
+		} catch (IOException ex) {
+			/* Arquivo nao pode ser acessado */
+			throw new LeituraArquivoException("Arquivo nao pode ser acessado");
+		} catch (ClassNotFoundException ex) {
+			/* Classe invalida */
+			throw new LeituraArquivoException("Classe invalida");
+		}
+	}
 
 	public static HashSet<String> listarSetGeracaoAleatoria(String path) throws LeituraArquivoException {
 		try {
@@ -125,7 +147,7 @@ public class GerenciadorArquivo {
 		}
 	}
 
-	public static <T extends Collection, Serializable> T tryListar(String path) throws RuntimeException, LeituraArquivoException {
+	public static <T extends Collection, Serializable> T tryListar(String path) throws RuntimeException {
 		try {
 			ObjectInputStream arquivo = new ObjectInputStream(new FileInputStream(path));
 			T dados = (T) arquivo.readObject();

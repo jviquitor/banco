@@ -1,10 +1,11 @@
 package agencia;
 
-import funcionalidades.exceptions.EmprestimoException;
 import agencia.exceptions.InsercaoException;
 import cliente.Cliente;
 import conta.Conta;
+import funcionalidades.exceptions.EmprestimoException;
 import interfaceUsuario.dados.DadosChavesPix;
+import transacao.Boleto;
 import utilsBank.GerenciadorBanco;
 
 import java.util.Objects;
@@ -15,6 +16,7 @@ public class Agencia {
 	public static final String CODIGO_MOEDA = "9";
 	private static final Agencia instance = new Agencia();
 	private static final Set<Cliente> clientes = GerenciadorBanco.inicializarClientes();
+	private static final Set<Boleto> boletos = GerenciadorBanco.inicializarBoletos();
 	private Double rendaAgencia;
 
 	private Agencia() {
@@ -23,12 +25,6 @@ public class Agencia {
 
 	public static Agencia getInstance() {
 		return instance;
-	}
-
-	public void addCliente(Cliente cliente) throws InsercaoException {
-		if (!clientes.add(cliente)) {
-			throw new InsercaoException("Cliente ja existe");
-		}
 	}
 
 	public static Cliente buscarCliente(String chave) {
@@ -63,6 +59,21 @@ public class Agencia {
 			}
 		}
 		return null;
+	}
+
+	public static Boleto buscarBoleto(String nossoNumero) {
+		for (Boleto boleto : boletos) {
+			if (boleto.getNossoNumero().equals(nossoNumero)) {
+				return boleto;
+			}
+		}
+		return null;
+	}
+
+	public void addCliente(Cliente cliente) throws InsercaoException {
+		if (!clientes.add(cliente)) {
+			throw new InsercaoException("Cliente ja existe");
+		}
 	}
 
 	public void pegarEmprestimo(double valor) throws EmprestimoException {
