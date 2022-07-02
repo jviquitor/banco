@@ -48,6 +48,10 @@ public class GerenciamentoCartao implements Serializable {
 		return listaDeCartao;
 	}
 
+	public Double getLimiteMaximo() {
+		return limiteMaximo;
+	}
+
 	protected void setLimiteMaximo(Double limiteMaximo) {
 		this.limiteMaximo = limiteMaximo;
 	}

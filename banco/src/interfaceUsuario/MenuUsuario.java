@@ -1,12 +1,14 @@
 package interfaceUsuario;
 
 import agencia.Agencia;
+import funcionalidades.exceptions.EmprestimoException;
 import agencia.exceptions.InsercaoException;
 import cliente.Cliente;
 import cliente.ClienteEmpresa;
 import cliente.ClientePessoa;
 import cliente.Endereco;
 import cliente.exceptions.LoginException;
+import conta.Conta;
 import conta.exceptions.TipoInvalido;
 import interfaceUsuario.Exceptions.ValorInvalido;
 import interfaceUsuario.dados.DadosCartao;
@@ -77,10 +79,11 @@ public class MenuUsuario {
 				System.out.println("[1] - Transferir");
 				System.out.println("[2] - Pagar");
 				System.out.println("[3] - Depositar");
-				System.out.println("[4] - Agendar transferencia");
-				System.out.println("[5] - Pagar fatura");
-				System.out.println("[6] - Criar chave Pix");
-				System.out.println("[7] - Modificar chave Pix");
+				System.out.println("[4] - Emprestimo");
+				System.out.println("[5] - Agendar transferencia");
+				System.out.println("[6] - Pagar fatura");
+				System.out.println("[7] - Criar chave Pix");
+				System.out.println("[8] - Modificar chave Pix");
 				imprimirBorda("=", 30);
 				System.out.print("\n> ");
 				try {
@@ -102,6 +105,8 @@ public class MenuUsuario {
 							MenuDadosTransacao(DEPOSITO);
 							cliente.getConta().depositar();
 							break;
+						case "4":
+							menuEmprestimo();
 						default:
 							//Opção inválida
 					}
@@ -181,13 +186,11 @@ public class MenuUsuario {
 
 	private static Cliente criarCliente() throws InsercaoException {
 		imprimirBorda("-", 20);
-		System.out.print("""
-				Tipo de cliente:
-				[0] - Cancelar
-				[1] - Pessoa fisica
-				[2] - Pessoa juridica
-				>\s
-				""");
+		System.out.print("Tipo de cliente:\n" +
+						 "[0] - Cancelar\n" +
+						 "[1] - Pessoa fisica\n" +
+						 "[2] - Pessoa juridica\n" +
+						 "> \n");
 		String tipo = teclado.nextLine();
 
 		String tag = (tipo.equals("1")) ? "CPF" : "CNPJ";
@@ -321,6 +324,57 @@ public class MenuUsuario {
 			}
 		}
 		return renda;
+	}
+
+	private static void menuEmprestimo() throws EmprestimoException {
+		Conta contaAtual = InterfaceUsuario.usuarioAtualConta();
+		imprimirBorda("-", 20);
+		System.out.println("[0] - Cancelar");
+		System.out.printf("[1] - Pagar parcela (%.2f)\n", contaAtual.getParcelaEmprestimo());
+		System.out.printf("[2] - Pagar total (%.2f)\n", contaAtual.getEmprestimo());
+		imprimirBorda("-", 20);
+		System.out.print("\n> ");
+		try {
+			String op = teclado.nextLine();
+			switch (op) {
+				case "0":
+					break;
+				case "1":
+					contaAtual.pagarParcelaEmprestimo();
+					break;
+				case "2":
+					contaAtual.pagarEmprestimo();
+				default:
+					//Opção inválida
+			}
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+	}
+
+	private static void gerarEmprestimo() throws EmprestimoException {
+		String[] cabecalho = {
+				"Valor do emprestimo: ",
+				"Quantidade de parcelas (ate 12x): ",
+		};
+		String[] entrada = new String[cabecalho.length];
+		for (int i = 0; i < cabecalho.length; i++) {
+			entrada[i] = teclado.nextLine();
+		}
+		int parcelas = Integer.parseInt(entrada[1]);
+		Double valor = Double.parseDouble(entrada[0]);
+		Conta contaAtual = InterfaceUsuario.usuarioAtualConta();
+		if (contaAtual.getCarteira().getLimiteMaximo() >= valor) {
+			if (0 < parcelas && parcelas <= 12 && !contaAtual.hasEmprestimo()) {
+				Agencia.getInstance().pegarEmprestimo(valor);
+				contaAtual.setEmprestimo(valor);
+				contaAtual.setParcelaEmprestimo(valor/parcelas);
+			} else {
+				throw new EmprestimoException();
+			}
+		} else {
+			throw new EmprestimoException("Seu limite e insuficiente para esse emprestimo");
+		}
 	}
 
 	private static <T extends Cliente> void logar() throws LoginException {

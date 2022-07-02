@@ -10,7 +10,6 @@ public class ContaStandard extends Conta {
 
 	public ContaStandard(DadosConta dados) {
 		super();
-		this.dinheiroDisponivelEmprestimo = dados.getRendaAtual() * FATOR_EMPRESTIMO;
 		this.carteira.setLimiteMaximo(CartaoStandard.LIMITE_MAX);
 	}
 

@@ -86,20 +86,17 @@ public class InterfaceUsuario {
 		return true;
 	}
 
-	public static void pedirEmprestimo() {
+	public static void pedirEmprestimo() throws EmprestimoException {
 		if (InterfaceUsuario.usuarioAtualConta().hasEmprestimo()) {
 			throw new EmprestimoException("Essa conta ja pediu emprestimo.");
 		}
 		InterfaceUsuario.usuarioAtualConta().setEmprestimo(getValorUsuarioDesejaPedir());
 	}
 
-	public static void pagarEmprestimo() {
+	public static void pagarEmprestimo() throws EmprestimoException {
 		Conta conta = InterfaceUsuario.usuarioAtualConta();
 		if (!conta.hasEmprestimo()) {
 			throw new EmprestimoException("Essa conta nao possui emprestimo");
-		}
-		if (conta.getEmprestimo() > conta.getSaldo()) {
-			throw new EmprestimoException("Saldo insuficiente");
 		}
 		conta.pagarEmprestimo();
 	}

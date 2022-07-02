@@ -10,7 +10,6 @@ public class ContaDiamond extends ContaPremium {
 
 	public ContaDiamond(DadosConta dados) {
 		super(dados);
-		this.dinheiroDisponivelEmprestimo = dados.getRendaAtual() * FATOR_EMPRESTIMO;
 		this.carteira.setLimiteMaximo(CartaoDiamond.LIMITE_MAX);
 	}
 }

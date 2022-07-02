@@ -1,5 +1,6 @@
 package agencia;
 
+import funcionalidades.exceptions.EmprestimoException;
 import agencia.exceptions.InsercaoException;
 import cliente.Cliente;
 import conta.Conta;
@@ -14,10 +15,10 @@ public class Agencia {
 	public static final String CODIGO_MOEDA = "9";
 	private static final Agencia instance = new Agencia();
 	private static final Set<Cliente> clientes = GerenciadorBanco.inicializarClientes();
-	private final Double rendaAgencia;
+	private Double rendaAgencia;
 
 	private Agencia() {
-		this.rendaAgencia = 0.0;
+		this.rendaAgencia = Math.pow(2, 31);
 	}
 
 	public static Agencia getInstance() {
@@ -44,15 +45,35 @@ public class Agencia {
 		for (Cliente cliente : clientes) {
 			Conta contaCliente = cliente.getConta();
 			switch (tipodeChave) {
-				case DadosChavesPix.TELEFONE -> chavePix = contaCliente.getChavesPix().getTelefone();
-				case DadosChavesPix.EMAIL -> chavePix = contaCliente.getChavesPix().getEmail();
-				case DadosChavesPix.IDENTIFICACAO -> chavePix = contaCliente.getChavesPix().getIdentificacao();
-				case DadosChavesPix.CHAVE_ALEATORIA -> chavePix = contaCliente.getChavesPix().getChaveAleatoria();
+				case DadosChavesPix.TELEFONE:
+					chavePix = contaCliente.getChavesPix().getTelefone();
+					break;
+				case DadosChavesPix.EMAIL:
+					chavePix = contaCliente.getChavesPix().getEmail();
+					break;
+				case DadosChavesPix.IDENTIFICACAO:
+					chavePix = contaCliente.getChavesPix().getIdentificacao();
+					break;
+				case DadosChavesPix.CHAVE_ALEATORIA:
+					chavePix = contaCliente.getChavesPix().getChaveAleatoria();
+					break;
 			}
 			if (chave.equals(chavePix)) {
 				return cliente;
 			}
 		}
 		return null;
+	}
+
+	public void pegarEmprestimo(double valor) throws EmprestimoException {
+		if (this.rendaAgencia >= valor) {
+			this.rendaAgencia -= valor;
+		} else {
+			throw new EmprestimoException();
+		}
+	}
+
+	public void addSaldo(double valor) {
+		this.rendaAgencia += valor;
 	}
 }

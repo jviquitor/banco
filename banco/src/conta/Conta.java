@@ -1,8 +1,10 @@
 package conta;
 
+import agencia.Agencia;
 import cartao.*;
 import cliente.Cliente;
 import conta.exceptions.TipoInvalido;
+import funcionalidades.exceptions.EmprestimoException;
 import historico.Historico;
 import interfaceUsuario.InterfaceUsuario;
 import interfaceUsuario.dados.DadosCartao;
@@ -23,7 +25,6 @@ public class Conta implements Serializable {
 	protected String idConta;
 	protected Double saldo;
 	protected Double dinheiroGuardado;
-	protected Double dinheiroDisponivelEmprestimo;
 
 	protected List<Transacao> transacoesRealizadas;
 	protected List<Transacao> transacoesAgendadas;
@@ -36,6 +37,7 @@ public class Conta implements Serializable {
 	protected ChavePix chavesPix;
 
 	protected Double emprestimo;
+	protected Double parcelaEmprestimo;
 
 	protected Conta() {
 		this.idConta = GeracaoAleatoria.gerarIdConta(GeracaoAleatoria.TAMANHO_ID_CONTA);
@@ -48,6 +50,7 @@ public class Conta implements Serializable {
 		this.historico = new Historico();
 		this.carteira = new GerenciamentoCartao();
 		this.emprestimo = 0.0;
+		this.parcelaEmprestimo = 0.0;
 	}
 
 	public ChavePix getChavesPix() {
@@ -134,9 +137,38 @@ public class Conta implements Serializable {
 		transferir();
 	}
 
-	public void pagarEmprestimo() {
-		this.saldo -= this.emprestimo;
-		this.emprestimo = 0.0;
+	public void pagarEmprestimo() throws EmprestimoException {
+		if (this.emprestimo <= this.saldo) {
+			Agencia.getInstance().addSaldo(this.emprestimo);
+			this.saldo -= this.emprestimo;
+			this.emprestimo = 0.0;
+			this.parcelaEmprestimo = 0.0;
+		} else {
+			throw new EmprestimoException("Saldo insuficiente");
+		}
+	}
+
+	public void pagarParcelaEmprestimo() throws EmprestimoException {
+		Double parcela;
+		if (this.emprestimo < this.parcelaEmprestimo) {
+			parcela = this.emprestimo;
+		} else {
+			parcela = this.parcelaEmprestimo;
+		}
+		if (parcela <= this.saldo) {
+			Agencia.getInstance().addSaldo(parcela);
+			this.saldo -= parcela;
+			this.emprestimo -= parcela;
+			if (this.emprestimo == 0) {
+				this.parcelaEmprestimo = 0.0;
+			}
+		} else {
+			throw new EmprestimoException("Saldo insuficiente");
+		}
+	}
+
+	public GerenciamentoCartao getCarteira() {
+		return this.carteira;
 	}
 
 	public boolean agendarTransacao() {
@@ -177,6 +209,14 @@ public class Conta implements Serializable {
 
 	public void setEmprestimo(Double valor) {
 		this.emprestimo = valor;
+	}
+
+	public Double getParcelaEmprestimo() {
+		return this.parcelaEmprestimo;
+	}
+
+	public void setParcelaEmprestimo(Double valor) {
+		this.parcelaEmprestimo = valor;
 	}
 
 	public void aumentarFatura(Double valor) {
