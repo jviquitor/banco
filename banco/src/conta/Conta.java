@@ -25,19 +25,17 @@ public class Conta implements Serializable {
 	protected String idConta;
 	protected Double saldo;
 	protected Double dinheiroGuardado;
+	protected Double emprestimo;
+	protected Double parcelaEmprestimo;
 
 	protected List<Transacao> transacoesRealizadas;
 	protected List<Transacao> transacoesAgendadas;
 	protected List<Transacao> transacoesRecebidas;
 	protected List<Transacao> notificacoes;
+
 	protected Historico historico;
-
 	protected GerenciamentoCartao carteira;
-
 	protected ChavePix chavesPix;
-
-	protected Double emprestimo;
-	protected Double parcelaEmprestimo;
 
 	protected Conta() {
 		this.idConta = GeracaoAleatoria.gerarIdConta(GeracaoAleatoria.TAMANHO_ID_CONTA);

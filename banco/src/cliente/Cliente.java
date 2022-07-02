@@ -20,19 +20,18 @@ public abstract class Cliente implements Serializable {
 	private final String telefone;
 	private final Integer idade;
 	private final Endereco end;
-	//private Boolean isOnline;
-	private final Double renda;
+	private final String senha;
 	protected Conta conta;
-	private String senha;
+	//private Boolean isOnline;
+	private Double renda;
 	private Integer quantidadeDeChavesAtuais;
 
-	public Cliente(String nome, String email, String telefone, Integer idade, Endereco end, Double renda, String senha) {
+	public Cliente(String nome, String email, String telefone, Integer idade, Endereco end, String senha) {
 		this.nome = nome;
 		this.email = email;
 		this.telefone = telefone;
 		this.idade = idade;
 		this.end = end;
-		this.renda = renda;
 		this.quantidadeDeChavesAtuais = 0;
 		this.conta = this.criarConta();
 		this.senha = senha;
@@ -57,6 +56,7 @@ public abstract class Cliente implements Serializable {
 	public abstract boolean equals(Cliente outroCliente);
 
 	public Conta criarConta() {
+		this.renda = MenuUsuario.menuCriacaoConta();
 		DadosConta dadosConta = InterfaceUsuario.getDadosConta();
 		DadosCartao dadosCartao = InterfaceUsuario.getDadosCartao();
 		Conta conta;
@@ -65,17 +65,17 @@ public abstract class Cliente implements Serializable {
 			throw new DadosInvalidosException("Dados inseridos incorretamente, Por favor, logue novamente!");
 		} else {
 			if (dadosConta.getTipoDaConta().equalsIgnoreCase(MenuUsuario.DIAMOND)) {
-				conta = new ContaDiamond(dadosConta);
+				conta = new ContaDiamond();
 			} else if (dadosConta.getTipoDaConta().equalsIgnoreCase(MenuUsuario.PREMIUM)) {
-				conta = new ContaPremium(dadosConta);
+				conta = new ContaPremium();
 			} else if (dadosConta.getTipoDaConta().equalsIgnoreCase(MenuUsuario.STANDARD)) {
-				conta = new ContaStandard(dadosConta);
+				conta = new ContaStandard();
 			} else {
 				throw new TipoInvalido("Por favor, escolha um tipo de conta valido");
 			}
 			if (dadosConta.hasCartaoCredito()) {
 				conta.criarCartao(this, dadosCartao);
-			} else if (dadosConta.hasCartaoDebit()) {
+			} else if (dadosConta.hasCartaoDebito()) {
 				conta.criarCartao(this, dadosCartao);
 			}
 		}

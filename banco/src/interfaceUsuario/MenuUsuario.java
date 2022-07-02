@@ -1,7 +1,6 @@
 package interfaceUsuario;
 
 import agencia.Agencia;
-import funcionalidades.exceptions.EmprestimoException;
 import agencia.exceptions.InsercaoException;
 import cliente.Cliente;
 import cliente.ClienteEmpresa;
@@ -10,6 +9,7 @@ import cliente.Endereco;
 import cliente.exceptions.LoginException;
 import conta.Conta;
 import conta.exceptions.TipoInvalido;
+import funcionalidades.exceptions.EmprestimoException;
 import interfaceUsuario.Exceptions.ValorInvalido;
 import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosChavesPix;
@@ -29,6 +29,8 @@ public class MenuUsuario {
 	public static final String FORMATO_DATAS = "31/12/2002";
 	public static final String BOLETO = "boleto";
 	public static final String PIX = "pix";
+	public static final String DEBITO = "debito";
+	public static final String CREDITO = "credito";
 	public static final String CHAVES_DISPONIVEIS = "chave_aleatoria | telefone | email | identificacao (CPF OU CNPJ)";
 	private static final Scanner teclado = new Scanner(System.in);
 	private static final double RENDA_MINIMA = 200.0;
@@ -56,7 +58,6 @@ public class MenuUsuario {
 						break;
 					case "2":
 						InterfaceUsuario.setClienteAtual(criarCliente());
-						menuCriacaoConta();
 						break;
 					default:
 						//Opção inválida
@@ -205,7 +206,6 @@ public class MenuUsuario {
 				"Email",
 				"Telefone",
 				"Idade",
-				"Renda",
 				tag,
 				"Senha",
 		};
@@ -235,9 +235,8 @@ public class MenuUsuario {
 					entradaGeral[2],
 					Integer.parseInt(entradaGeral[3]),
 					endereco,
-					Double.parseDouble(entradaGeral[4]),
-					entradaGeral[5],
-					entradaGeral[6]
+					entradaGeral[4],
+					entradaGeral[5]
 			);
 		} else {
 			cliente = new ClienteEmpresa(
@@ -246,47 +245,72 @@ public class MenuUsuario {
 					entradaGeral[2],
 					Integer.parseInt(entradaGeral[3]),
 					endereco,
-					Double.parseDouble(entradaGeral[4]),
-					entradaGeral[5],
-					entradaGeral[6]
+					entradaGeral[4],
+					entradaGeral[5]
 			);
 		}
 		Agencia.getInstance().addCliente(cliente);
 		return cliente;
 	}
 
-	private static void menuCriacaoConta() {
+	private static String[] UsuarioEntradas(String[] cabecalhoUsuario) {
 		imprimirBorda("-", 20);
+		String[] entradas = new String[cabecalhoUsuario.length];
+
+		for (int i = 0; i < cabecalhoUsuario.length; i++) {
+			System.out.printf("%s:\n> ", cabecalhoUsuario[i]);
+			entradas[i] = teclado.nextLine();
+		}
+
+		return entradas;
+	}
+
+	private static boolean verificarEntradasCartao(String[] entradas) {
+		return entradas[1].equals("0") || entradas[1].equals("1");
+	}
+
+	public static Double menuCriacaoConta() {
 		Double renda = inserirRenda();
 		boolean debitoAutomatico = false;
+
 		String[] cabecalhoCartoesGeral = {
-				"Digite um apelido para seu novo cartao",
-				"Deseja Cartao de Credito? [1] SIM [0] NAO",
-				"Deseja Cartao de Debito? [1] SIM [0] NAO",
+				"Digite um apelido para seu novo cartao", //entrada[0]
+				"[DIGITE] [1]: PARA SEU CARTAO SER DE CREDITO | DIGITE [0] PARA SEU NOVO CARTAO SER DE DEBITO.", //entrada[1]
 		};
 
-		String[] entradaCartoesGeral = new String[cabecalhoCartoesGeral.length];
-		for (int i = 0; i < cabecalhoCartoesGeral.length; i++) {
-			System.out.printf("%s:\n> ", cabecalhoCartoesGeral[i]);
-			entradaCartoesGeral[i] = teclado.nextLine();
+		String[] entradas = UsuarioEntradas(cabecalhoCartoesGeral);
+
+		while (!verificarEntradasCartao(entradas)) {
+			entradas = UsuarioEntradas(cabecalhoCartoesGeral);
 		}
-		if (Integer.parseInt(entradaCartoesGeral[1]) == 0) {
+
+		String FuncaoCartao = EscolhendoFuncaoDoCartao(entradas[1]);
+
+		if (FuncaoCartao.equals(CREDITO)) {
 			System.out.println("Deseja debito automatico? [1] SIM [0] NAO");
+			//TODO tratar caso o usuario n coloque nem 1 nem 0
 			debitoAutomatico = GerenciadorBanco.intToBoolean(Integer.parseInt(teclado.nextLine()));
 		}
+
 		InterfaceUsuario.setDadosConta(new DadosConta(
 				tipoDeContaPelaRenda(renda),
-				renda,
-				GerenciadorBanco.intToBoolean(Integer.parseInt(entradaCartoesGeral[0])),
-				GerenciadorBanco.intToBoolean(Integer.parseInt(entradaCartoesGeral[1])),
+				GerenciadorBanco.intToBoolean(Integer.parseInt(entradas[1])),
 				debitoAutomatico)
 		);
 		InterfaceUsuario.setDadosCartao(new DadosCartao(
-				entradaCartoesGeral[0],
-				entradaCartoesGeral[1],
-				entradaCartoesGeral[2]
+				entradas[0], //Apelido do cartao
+				FuncaoCartao
 		));
-		InterfaceUsuario.getClienteAtual().criarConta();
+		return renda;
+	}
+
+	private static String EscolhendoFuncaoDoCartao(String entrada) {
+		if (entrada.equals("0")) {
+			return CREDITO;
+		} else if (entrada.equals("1")) {
+			return DEBITO;
+		}
+		throw new TipoInvalido("Nenhum valor correto para a funcao do cartao!");
 	}
 
 	private static String tipoDeContaPelaRenda(Double renda) {
@@ -305,7 +329,7 @@ public class MenuUsuario {
 	}
 
 	private static void verificarRenda(Double renda) throws ValorInvalido {
-		if (0.0 < renda) {
+		if (renda < 0.0) {
 			throw new ValorInvalido("[ERRO] Valor negativo para sua renda");
 		} else if (renda < RENDA_MINIMA) {
 			throw new ValorInvalido("[RENDA MINIMA NAO PERMITIDA] As regras da Agencia nao permite essa renda, por favor, consulte nossos termos de uso!");

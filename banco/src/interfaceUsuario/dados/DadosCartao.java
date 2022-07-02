@@ -11,7 +11,7 @@ public class DadosCartao {
 	private final String apelidoCartao;
 	private final String funcaoCartao;
 
-	public DadosCartao(String apelidoCartao, String nomeTitular, String funcaoCartao) {
+	public DadosCartao(String apelidoCartao, String funcaoCartao) {
 		this.apelidoCartao = apelidoCartao;
 		this.funcaoCartao = funcaoCartao;
 	}
@@ -19,7 +19,6 @@ public class DadosCartao {
 	public String getApelidoCartao() {
 		return apelidoCartao;
 	}
-
 
 	public FuncaoCartao getFuncaoCartao() {
 		List<String> debito = new ArrayList<>(Arrays.asList("debito", "débito"));

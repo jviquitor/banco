@@ -10,8 +10,8 @@ public class ClienteEmpresa extends Cliente {
 	private final String CNPJ;
 
 
-	public ClienteEmpresa(String nome, String email, String telefone, Integer idade, Endereco end, Double renda, String cnpj, String senha) {
-		super(nome, email, telefone, idade, end, renda, senha);
+	public ClienteEmpresa(String nome, String email, String telefone, Integer idade, Endereco end, String cnpj, String senha) {
+		super(nome, email, telefone, idade, end, senha);
 		this.CNPJ = cnpj;
 	}
 

@@ -15,7 +15,7 @@ public class GerenciadorGeracaoAleatoria {
 			return new HashSet<>();
 		} catch (LeituraArquivoException ex) {
 			//TODO Tratar erro
-			throw new RuntimeException();
+			throw new RuntimeException("Leitura dos arquivos invalido");
 		}
 	}
 
