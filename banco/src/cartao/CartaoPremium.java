@@ -1,6 +1,7 @@
 package cartao;
 
 import cliente.Cliente;
+import interfaceUsuario.VerificadorEntrada;
 import interfaceUsuario.dados.DadosCartao;
 
 public class CartaoPremium extends CartaoStandard {
@@ -9,6 +10,6 @@ public class CartaoPremium extends CartaoStandard {
 
 	public CartaoPremium(Cliente cliente, DadosCartao dadosCartao) {
 		super(cliente, dadosCartao);
-		this.tipoCartao = "premium";
+		this.tipoCartao = VerificadorEntrada.PREMIUM;
 	}
 }

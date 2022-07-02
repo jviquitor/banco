@@ -4,6 +4,7 @@ import cliente.Cliente;
 import utilsBank.arquivo.Exception.LeituraArquivoException;
 import utilsBank.arquivo.GerenciadorArquivo;
 
+import java.io.FileNotFoundException;
 import java.util.HashSet;
 
 public class GerenciadorBanco {
@@ -12,12 +13,8 @@ public class GerenciadorBanco {
 	private final int QUANTIDADE_DE_CHAVES_MAX = 4;
 
 	//
-	public static HashSet<Cliente> inicializarClientes() {
-		try {
-			return GerenciadorArquivo.listarSet(GerenciadorArquivo.PATH_CLIENTES);
-		} catch (LeituraArquivoException ex) {
-			return new HashSet<>();
-		}
+	public static HashSet<Cliente> inicializarClientes() throws LeituraArquivoException {
+		return GerenciadorArquivo.listarSet(GerenciadorArquivo.PATH_CLIENTES);
 	}
 
 	public static void salvandoClientes(HashSet<Cliente> clientes) {

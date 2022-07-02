@@ -51,10 +51,10 @@ public class GerenciadorArquivo {
 				return dados;
 			}
 			/* Lista vazia */
-			throw new LeituraArquivoException("Conjunto vazio");
+			return new HashSet<>();
 		} catch (FileNotFoundException ex) {
 			/* Arquivo nao encontrado */
-			throw new LeituraArquivoException("Arquivo nao encontrado");
+			return new HashSet<>();
 		} catch (IOException ex) {
 			/* Arquivo nao pode ser acessado */
 			throw new LeituraArquivoException("Arquivo nao pode ser acessado");
@@ -65,7 +65,7 @@ public class GerenciadorArquivo {
 	}
 
 
-	public static HashSet<String> listarSetGeracaoAleatoria(String path) throws LeituraArquivoException, ArquivoVazioException {
+	public static HashSet<String> listarSetGeracaoAleatoria(String path) throws LeituraArquivoException {
 		try {
 			ObjectInputStream arquivo = new ObjectInputStream(new FileInputStream(path));
 			HashSet<String> dados = (HashSet<String>) arquivo.readObject();
@@ -74,10 +74,10 @@ public class GerenciadorArquivo {
 				return dados;
 			}
 			/* Lista vazia */
-			throw new ArquivoVazioException();
+			return new HashSet<>();
 		} catch (FileNotFoundException ex) {
 			/* Arquivo nao encontrado */
-			throw new LeituraArquivoException("Arquivo nao encontrado");
+			return new HashSet<>();
 		} catch (IOException ex) {
 			/* Arquivo nao pode ser acessado */
 			throw new LeituraArquivoException("Arquivo nao pode ser acessado");

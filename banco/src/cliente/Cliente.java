@@ -9,6 +9,7 @@ import conta.exceptions.DadosInvalidosException;
 import conta.exceptions.TipoInvalido;
 import interfaceUsuario.InterfaceUsuario;
 import interfaceUsuario.MenuUsuario;
+import interfaceUsuario.VerificadorEntrada;
 import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosConta;
 
@@ -64,11 +65,11 @@ public abstract class Cliente implements Serializable {
 		if (dadosConta == null || dadosCartao == null) {
 			throw new DadosInvalidosException("Dados inseridos incorretamente, Por favor, logue novamente!");
 		} else {
-			if (dadosConta.getTipoDaConta().equalsIgnoreCase(MenuUsuario.DIAMOND)) {
+			if (dadosConta.getTipoDaConta().equalsIgnoreCase(VerificadorEntrada.DIAMOND)) {
 				conta = new ContaDiamond();
-			} else if (dadosConta.getTipoDaConta().equalsIgnoreCase(MenuUsuario.PREMIUM)) {
+			} else if (dadosConta.getTipoDaConta().equalsIgnoreCase(VerificadorEntrada.PREMIUM)) {
 				conta = new ContaPremium();
-			} else if (dadosConta.getTipoDaConta().equalsIgnoreCase(MenuUsuario.STANDARD)) {
+			} else if (dadosConta.getTipoDaConta().equalsIgnoreCase(VerificadorEntrada.STANDARD)) {
 				conta = new ContaStandard();
 			} else {
 				throw new TipoInvalido("Por favor, escolha um tipo de conta valido");

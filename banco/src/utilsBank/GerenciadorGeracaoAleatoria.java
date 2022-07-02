@@ -11,11 +11,9 @@ public class GerenciadorGeracaoAleatoria {
 	public static HashSet<String> inicializarGeracaoAleatoria(String path) {
 		try {
 			return GerenciadorArquivo.listarSetGeracaoAleatoria(path);
-		} catch (ArquivoVazioException ex) {
-			return new HashSet<>();
 		} catch (LeituraArquivoException ex) {
 			//TODO Tratar erro
-			throw new RuntimeException("Leitura dos arquivos invalido");
+			throw new RuntimeException("Deu erro");
 		}
 	}
 

@@ -36,7 +36,7 @@ public class GeracaoAleatoria {
 		StringBuilder numberRandom;
 
 		numberRandom = new StringBuilder();
-		for (int i = 0; i < NUMERO_CARTAO_SEM_AGENCIA; i++) {
+		for (int i = 0; i < quantidade; i++) {
 			numberRandom.append(random.nextInt(10));
 		}
 

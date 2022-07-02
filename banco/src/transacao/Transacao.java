@@ -15,8 +15,8 @@ public class Transacao implements Serializable {
 	private String nossoNumero;
 	private String idPagamento;
 	private Data dataEmissaoTransacao;
-	private Cliente cobrador; //@Lembrando Cobrador cobrara o dinheiro de alguem recebe o dinheiro
-	private Cliente pagador; //@Lembrando Pagador pagara o dinheiro cobrado pelo cobrador LEMBRANDO QUE SE O PAGADOR FOR NULO DEVE SER UM BOLETO O TIPO DE TRANSACAO
+	private Cliente destino; //@Lembrando DESTINO EH O DESTINATARIO DO DINHEIRO, QUEM RECEBE
+	private Cliente origem; //@Lembrando Origem EH QUEM MANDOU TAL COISA
 	private Data dataAgendada;
 	private Pagavel tipoDeTransacao;
 
@@ -26,8 +26,8 @@ public class Transacao implements Serializable {
 		this.dataEmissaoTransacao = DataBank.criarData(DataBank.COM_HORA);
 		this.idPagamento = Agencia.ID_AGENCIA + Agencia.CODIGO_MOEDA + GeracaoAleatoria.gerarNumeros(4) +
 				this.nossoNumero + dadosTransacao.getDataVencimentoString() + dataEmissaoTransacao.toString(DataBank.SEM_HORA);
-		this.cobrador = dadosTransacao.getCobrador();
-		this.pagador = dadosTransacao.getPagador();
+		this.destino = dadosTransacao.getCobrador();
+		this.origem = dadosTransacao.getPagador();
 		this.tipoDeTransacao = dadosTransacao.getTipoDaTransacao();
 	}
 
@@ -46,8 +46,8 @@ public class Transacao implements Serializable {
 				"valor =" + valor +
 				", idPagamento ='" + idPagamento + '\'' +
 				", dataEmissaoTransacao =" + dataEmissaoTransacao.toString(DataBank.COM_HORA) +
-				", Cobrador =" + cobrador.toString() +
-				", Pagador =" + pagador.toString() +
+				", Cobrador =" + destino.toString() +
+				", Pagador =" + origem.toString() +
 				", tipoDeTransacao=" + tipoDeTransacao.toString();
 	}
 
@@ -55,15 +55,15 @@ public class Transacao implements Serializable {
 		return dataAgendada;
 	}
 
-	public Conta getContaPagador() {
-		return pagador.getConta();
+	public Conta getContaOrigem() {
+		return origem.getConta();
 	}
 
 	public Double getValor() {
 		return valor;
 	}
 
-	public Conta getContaCobrador() {
-		return cobrador.getConta();
+	public Conta getContaDestino() {
+		return destino.getConta();
 	}
 }

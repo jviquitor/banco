@@ -91,15 +91,15 @@ public class Conta implements Serializable {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
 		Transacao transacao = new Transacao(dadosTransacao);
 		Double valorT = transacao.getValor();
-		transacao.getContaCobrador().aumentarSaldo(valorT);
-		transacao.getContaPagador().diminuirSaldo(valorT);
+		transacao.getContaDestino().aumentarSaldo(valorT);
+		transacao.getContaOrigem().diminuirSaldo(valorT);
 
 	}
 
 	public void transferir(Transacao transacao) {
 		Double valorT = transacao.getValor();
-		transacao.getContaCobrador().aumentarSaldo(valorT);
-		transacao.getContaPagador().diminuirSaldo(valorT);
+		transacao.getContaDestino().aumentarSaldo(valorT);
+		transacao.getContaOrigem().diminuirSaldo(valorT);
 	}
 
 	public boolean hasCartao(FuncaoCartao funcaoCartao) {

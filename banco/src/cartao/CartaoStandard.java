@@ -1,6 +1,7 @@
 package cartao;
 
 import cliente.Cliente;
+import interfaceUsuario.VerificadorEntrada;
 import interfaceUsuario.dados.DadosCartao;
 
 public class CartaoStandard extends Cartao {
@@ -9,6 +10,6 @@ public class CartaoStandard extends Cartao {
 
 	public CartaoStandard(Cliente cliente, DadosCartao dadosCartao) {
 		super(cliente, dadosCartao);
-		this.tipoCartao = "standard";
+		this.tipoCartao = VerificadorEntrada.STANDARD;
 	}
 }
