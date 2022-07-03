@@ -63,4 +63,17 @@ public class Data implements Serializable {
 		}
 		return this.toString();
 	}
+
+	public boolean equals(Data outra) {
+  		return outra.ano == this.ano && outra.mes == this.mes && outra.dia == this.dia;
+}
+
+	public boolean depoisDe(Data outra) {
+		return !this.equals(outra) && ((this.ano > outra.ano) || (this.ano == outra.ano && (this.mes > outra.mes ||
+				(this.mes == outra.mes && this.dia > outra.dia))));
+	}
+
+	public boolean antesDe(Data outra) {
+		return !this.equals(outra) && !this.depoisDe(outra);
+	}
 }
