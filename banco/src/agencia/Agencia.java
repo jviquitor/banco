@@ -83,6 +83,11 @@ public class Agencia {
 			throw new EmprestimoException();
 		}
 	}
+	public static void imprimirClientes() {
+		for (Cliente cliente: clientes) {
+			System.out.println(cliente);
+		}
+	}
 
 	public void addSaldo(double valor) {
 		this.rendaAgencia += valor;

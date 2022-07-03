@@ -141,8 +141,7 @@ public class MenuUsuario {
 
 		String[] entradaDadosTransacao = UsuarioEntradas(cabecalhoDadosTransacao);
 
-		while (!VerificadorEntrada.verificarDadosTransacao(entradaDadosTransacao[0])) {
-			//TODO o verificar Dados transacao precisa verificar se o valor da transacao e o tipo da transacao esta correto
+		while (!VerificadorEntrada.verificarDadosTransacao(entradaDadosTransacao[0], tipoOperacao)) {
 			entradaDadosTransacao = UsuarioEntradas(cabecalhoDadosTransacao);
 		}
 
@@ -233,10 +232,10 @@ public class MenuUsuario {
 					entradaGeral[5]
 			);
 		}
+		//todo max, resolver o problema do add cliente e tratar a exception
 		Agencia.getInstance().addCliente(cliente);
 		return cliente;
 	}
-
 	public static Double menuCriacaoConta() {
 		Double renda = inserirRenda();
 		boolean debitoAutomatico = false;
@@ -248,16 +247,20 @@ public class MenuUsuario {
 
 		String[] entradas = UsuarioEntradas(cabecalhoCartoesGeral);
 
-		while (!VerificadorEntrada.verificarEntradasCartao(entradas)) {
+		while (!VerificadorEntrada.verificarEntradasZeroUm(entradas)) {
 			entradas = UsuarioEntradas(cabecalhoCartoesGeral);
 		}
 
 		String FuncaoCartao = EscolhendoFuncaoDoCartao(entradas[1]);
-
+		String entrada;
 		if (FuncaoCartao.equals(CREDITO)) {
 			System.out.println("Deseja debito automatico? [1] SIM [0] NAO");
-			//TODO tratar caso o usuario n coloque nem 1 nem 0
-			debitoAutomatico = GerenciadorBanco.intToBoolean(Integer.parseInt(teclado.nextLine()));
+			entrada = teclado.nextLine();
+			while (!VerificadorEntrada.verificarEntradasZeroUm(entrada)) {
+				System.out.println("Por favor, insira corretamente a opcao!");
+				entrada = teclado.nextLine();
+			}
+			debitoAutomatico = GerenciadorBanco.intToBoolean(Integer.parseInt(entrada));
 		}
 
 		InterfaceUsuario.setDadosConta(new DadosConta(

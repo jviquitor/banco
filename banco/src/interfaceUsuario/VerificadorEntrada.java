@@ -12,13 +12,25 @@ public class VerificadorEntrada {
 	protected static final double RENDA_MAXIMA_PREMIUM = 30000.0;
 	protected static final double RENDA_MINIMA_DIAMOND = 30001.0;
 
-	protected static boolean verificarEntradasCartao(String[] entradas) {
+	protected static boolean verificarEntradasZeroUm(String[] entradas) {
 		return entradas[1].equals("0") || entradas[1].equals("1");
 	}
-
-	protected static boolean verificarDadosTransacao(String entrada) {
-		//TODO verificar o valor com try exceptions etc
-		return true;
+	protected static boolean verificarEntradasZeroUm(String entrada) {
+		return entrada.equals("0") || entrada.equals("1");
+	}
+	protected static boolean verificarDadosTransacao(String entrada, String tipoOperacao) {
+		if (!tipoOperacao.equals(MenuUsuario.PAGAMENTO)) {
+			int value = -1;
+			try {
+				value = Integer.parseInt(entrada);
+			} catch (Exception exception) {
+				System.out.println("Por favor, coloque um valor valido.");
+				value = Integer.parseInt(entrada);
+			}
+			return value > 0.0;
+		} else  {
+			return true;
+		}
 	}
 
 	protected static void verificarRenda(Double renda) throws ValorInvalido {
