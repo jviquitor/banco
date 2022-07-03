@@ -16,6 +16,7 @@ import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosConta;
 import interfaceUsuario.dados.DadosTransacao;
 import utilsBank.GerenciadorBanco;
+import utilsBank.arquivo.Exception.EscritaArquivoException;
 
 import java.util.Scanner;
 
@@ -168,7 +169,7 @@ public class MenuUsuario {
 		//TODO fazer a criacao do corpo do boleto new boleto
 	}
 
-	private static Cliente criarCliente() throws InsercaoException {
+	private static Cliente criarCliente() throws InsercaoException, EscritaArquivoException {
 		imprimirBorda("-", 20);
 		System.out.print("Tipo de cliente:\n" +
 				"[0] - Cancelar\n" +
@@ -232,7 +233,6 @@ public class MenuUsuario {
 					entradaGeral[5]
 			);
 		}
-		//todo max, resolver o problema do add cliente e tratar a exception
 		Agencia.getInstance().addCliente(cliente);
 		return cliente;
 	}

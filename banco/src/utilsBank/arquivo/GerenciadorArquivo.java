@@ -109,10 +109,10 @@ public class GerenciadorArquivo {
 		}
 	}
 
-	public static void inserir(String path, ArrayList<Conta> novosDados) throws LeituraArquivoException, EscritaArquivoException {
+	public static void salvarClientes(HashSet<Cliente> clientes) throws LeituraArquivoException, EscritaArquivoException {
 		try {
-			ObjectOutputStream arquivo = new ObjectOutputStream(new FileOutputStream(path));
-			arquivo.writeObject(novosDados);
+			ObjectOutputStream arquivo = new ObjectOutputStream(new FileOutputStream(GerenciadorArquivo.PATH_CLIENTES));
+			arquivo.writeObject(clientes);
 			arquivo.close();
 		} catch (FileNotFoundException ex) {
 			/* Diretorio nao encontrado */

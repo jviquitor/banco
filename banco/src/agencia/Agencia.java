@@ -7,7 +7,10 @@ import funcionalidades.exceptions.EmprestimoException;
 import interfaceUsuario.dados.DadosChavesPix;
 import transacao.Boleto;
 import utilsBank.GerenciadorBanco;
+import utilsBank.arquivo.Exception.EscritaArquivoException;
+import utilsBank.arquivo.GerenciadorArquivo;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -70,8 +73,19 @@ public class Agencia {
 		return null;
 	}
 
-	public void addCliente(Cliente cliente) throws InsercaoException {
-		if (!clientes.add(cliente)) {
+	public void addCliente(Cliente cliente) throws InsercaoException, EscritaArquivoException {
+		if (Agencia.buscarCliente(cliente.getIdentificacao()) == null) {
+			if (clientes.add(cliente)) {
+				try {
+					GerenciadorArquivo.salvarClientes((HashSet<Cliente>) Agencia.clientes);
+				} catch (EscritaArquivoException ex) {
+					clientes.remove(cliente);
+					throw ex;
+				}
+			} else {
+				throw new InsercaoException("Ocorreu um erro ao criar o cliente");
+			}
+		} else {
 			throw new InsercaoException("Cliente ja existe");
 		}
 	}
