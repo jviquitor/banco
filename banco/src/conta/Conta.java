@@ -137,8 +137,9 @@ public class Conta implements Serializable {
 			Boleto boleto = Agencia.buscarBoleto(nossoNumero);
 			if (boleto != null) {
 				Double valorT = boleto.getValor();
-				if (!boleto.getDataVencimento().equals(DataBank.criarData(DataBank.SEM_HORA))) {
-					int dias = 1; //TODO trocar com o valor que o max vai resolver da comparacao
+				Data dataAtual = DataBank.criarData(DataBank.SEM_HORA);
+				if (!boleto.getDataVencimento().equals(dataAtual)) {
+					int dias = dataAtual.subtrair(boleto.getDataVencimento());
 					valorT = valorT * boleto.getMultaPorDias();
 				}
 				boleto.getContaOrigem().aumentarSaldo(valorT);
