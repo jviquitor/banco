@@ -76,7 +76,8 @@ public class MenuUsuario {
 		}
 	}
 // TODO Tela dos boletos gerados
-
+//TODO Tela NOtificacao quando loga
+//TODO verificar as restricoes
 	private static void menuCliente() {
 		boolean loop = true;
 		Cliente cliente = InterfaceUsuario.getClienteAtual();
