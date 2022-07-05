@@ -44,7 +44,6 @@ public class GeracaoAleatoria {
 		return String.valueOf(numberRandom);
 	}
 
-
 	public static String gerarNumeroCartao() {
 		Random random = new Random();
 		StringBuilder numberRandom;
@@ -97,4 +96,19 @@ public class GeracaoAleatoria {
 		return numberRandom.toString();
 	}
 
+	public static void salvarNossosNumeros() {
+		GerenciadorGeracaoAleatoria.salvandoGeracaoAleatoria(GerenciadorArquivo.PATH_CHAVES_NOSSO_NUMEROS, (HashSet<String>) CHAVES_NOSSO_NUMEROS);
+	}
+
+	public static void salvarNumerosCartoes() {
+		GerenciadorGeracaoAleatoria.salvandoGeracaoAleatoria(GerenciadorArquivo.PATH_CHAVES_GERADAS_NUMERO_CARTAO, (HashSet<String>) CHAVES_GERADAS_NUMERO_CARTAO);
+	}
+
+	public static void salvarChavesAleatorias() {
+		GerenciadorGeracaoAleatoria.salvandoGeracaoAleatoria(GerenciadorArquivo.PATH_CHAVES_GERADAS_ALEATORIA, (HashSet<String>) CHAVES_GERADAS_ALEATORIA);
+	}
+
+	public static void salvarIdsContas() {
+		GerenciadorGeracaoAleatoria.salvandoGeracaoAleatoria(GerenciadorArquivo.PATH_CHAVES_ID_CONTA, (HashSet<String>) CHAVES_ID_CONTA);
+	}
 }

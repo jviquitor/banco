@@ -33,7 +33,9 @@ public class GerenciamentoCartao implements Serializable {
     */
 
 	/**
-	 * Metodo apenas utilizada para quando o cliente pagar a fatura e ter o seu limite atual atualizado conforme pagamento
+	 * Diminui o Limite usado com base no parametro informado
+	 *
+	 * @param valorPagoFatura
 	 */
 	protected void aumentarLimiteAtual(Double valorPagoFatura) {
 		this.limiteUsado -= valorPagoFatura;

@@ -1,7 +1,10 @@
 package conta;
 
 import agencia.Agencia;
-import cartao.*;
+import cartao.Cartao;
+import cartao.CartaoDiamond;
+import cartao.CartaoPremium;
+import cartao.CartaoStandard;
 import conta.exceptions.TipoInvalido;
 import conta.exceptions.TransacaoNaoRealizadaException;
 import funcionalidades.exceptions.EmprestimoException;
@@ -31,7 +34,7 @@ public class Conta implements Serializable {
 	protected final List<Transacao> transacoesRealizadas;
 	protected final List<Transacao> transacoesAgendadas;
 	protected final List<Transacao> transacoesRecebidas;
-	protected final List<Transacao> notificacoes;
+	protected Historico notificacoes;
 	protected final Historico historico;
 	protected final GerenciamentoCartao carteira;
 	protected final ChavePix chavesPix;
@@ -47,7 +50,7 @@ public class Conta implements Serializable {
 		this.transacoesRealizadas = new ArrayList<>();
 		this.transacoesAgendadas = new ArrayList<>();
 		this.transacoesRecebidas = new ArrayList<>();
-		this.notificacoes = new ArrayList<>();
+		this.notificacoes = new Historico();
 		this.historico = new Historico();
 		this.carteira = new GerenciamentoCartao();
 		this.emprestimo = 0.0;
@@ -84,6 +87,7 @@ public class Conta implements Serializable {
 
 		if (addTransacaoRealizada(transacao)) {
 			transacao.getContaDestino().addHistorico(transacao);
+			transacao.getContaDestino().addNotificacao(transacao);
 			transacao.getContaDestino().aumentarSaldo(valorT);
 			transacao.getContaOrigem().diminuirSaldo(valorT);
 			return transacao;
@@ -156,6 +160,7 @@ public class Conta implements Serializable {
 		this.diminuirSaldo(valorTratado);
 		boleto.getContaDestino().aumentarSaldo(valorTratado);
 		boleto.getContaDestino().addHistorico(boleto);
+		boleto.getContaDestino().addNotificacao(boleto);
 	}
 
 	public Transacao depositar() throws TransacaoException {
@@ -171,6 +176,7 @@ public class Conta implements Serializable {
 				transacao.getContaOrigem().diminuirSaldo(valorT);
 			}
 			transacao.getContaDestino().addHistorico(transacao);
+			transacao.getContaDestino().addNotificacao(transacao);
 			return transacao;
 		}
 		throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");

@@ -8,6 +8,7 @@ import conta.Conta;
 import funcionalidades.exceptions.EmprestimoException;
 import interfaceUsuario.dados.DadosChavesPix;
 import transacao.Boleto;
+import utilsBank.GeracaoAleatoria;
 import utilsBank.GerenciadorBanco;
 import utilsBank.arquivo.Exception.EscritaArquivoException;
 import utilsBank.arquivo.GerenciadorArquivo;
@@ -127,5 +128,10 @@ public class Agencia {
 
 	public void atualizarArquivos() throws EscritaArquivoException {
 		GerenciadorArquivo.salvarClientes((HashSet<Cliente>) Agencia.clientes);
+		GerenciadorArquivo.salvarBoletos((HashSet<Boleto>) Agencia.boletos);
+		GeracaoAleatoria.salvarChavesAleatorias();
+		GeracaoAleatoria.salvarNossosNumeros();
+		GeracaoAleatoria.salvarNumerosCartoes();
+		GeracaoAleatoria.salvarIdsContas();
 	}
 }

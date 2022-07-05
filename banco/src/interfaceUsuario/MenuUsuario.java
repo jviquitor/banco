@@ -570,53 +570,60 @@ public class MenuUsuario {
 	}
 
 	private static void gerarEmprestimo() throws EmprestimoException {
-		String[] cabecalho = {
-				"Valor do emprestimo: ",
-				"Quantidade de parcelas (ate 12x): ",
-		};
-		String[] entrada = UsuarioEntradas(cabecalho);
-
-		int parcelas = Integer.parseInt(entrada[1]);
-		Double valor = Double.parseDouble(entrada[0]);
 		Conta contaAtual = InterfaceUsuario.usuarioAtualConta();
-		if (contaAtual.getCarteira().getLimiteMaximo() >= valor) {
-			if (0 < parcelas && parcelas <= 12 && !contaAtual.hasEmprestimo()) {
-				Agencia.getInstance().pegarEmprestimo(valor);
-				contaAtual.setEmprestimo(valor);
-				contaAtual.setParcelaEmprestimo(valor / parcelas);
+		if (!contaAtual.hasEmprestimo()) {
+			String[] cabecalho = {
+					"Valor do emprestimo: ",
+					"Quantidade de parcelas (ate 12x): ",
+			};
+			String[] entrada = UsuarioEntradas(cabecalho);
+
+			int parcelas = Integer.parseInt(entrada[1]);
+			Double valor = Double.parseDouble(entrada[0]);
+			if (contaAtual.getCarteira().getLimiteMaximo() >= valor) {
+				if (0 < parcelas && parcelas <= 12 && !contaAtual.hasEmprestimo()) {
+					Agencia.getInstance().pegarEmprestimo(valor);
+					contaAtual.setEmprestimo(valor);
+					contaAtual.setParcelaEmprestimo(valor / parcelas);
+				} else {
+					throw new EmprestimoException();
+				}
 			} else {
-				throw new EmprestimoException();
+				throw new EmprestimoException("Seu limite e insuficiente para esse emprestimo");
 			}
 		} else {
-			throw new EmprestimoException("Seu limite e insuficiente para esse emprestimo");
+			throw new EmprestimoException("Voce ja possui um emprestimo");
 		}
 	}
 
-	private static void pagarEmprestimo() {
+	private static void pagarEmprestimo() throws EmprestimoException {
 		Conta contaAtual = InterfaceUsuario.usuarioAtualConta();
-		imprimirBorda("-", TAM_BORDA);
-		System.out.println("[0] - Cancelar");
-		System.out.printf("[1] - Pagar parcela (%.2f)\n", contaAtual.getParcelaEmprestimo());
-		System.out.printf("[2] - Pagar total (%.2f)\n", contaAtual.getEmprestimo());
-		imprimirBorda("-", TAM_BORDA);
-		System.out.print("\n> ");
-		try {
-			String op = teclado.nextLine();
-			switch (op) {
-				case "0":
-					break;
-				case "1":
-					contaAtual.pagarParcelaEmprestimo();
-					break;
-				case "2":
-					contaAtual.pagarEmprestimo();
-				default:
-					//Opção inválida
+		if (contaAtual.hasEmprestimo()) {
+			imprimirBorda("-", TAM_BORDA);
+			System.out.println("[0] - Cancelar");
+			System.out.printf("[1] - Pagar parcela (%.2f)\n", contaAtual.getParcelaEmprestimo());
+			System.out.printf("[2] - Pagar total (%.2f)\n", contaAtual.getEmprestimo());
+			imprimirBorda("-", TAM_BORDA);
+			System.out.print("\n> ");
+			try {
+				String op = teclado.nextLine();
+				switch (op) {
+					case "0":
+						break;
+					case "1":
+						contaAtual.pagarParcelaEmprestimo();
+						break;
+					case "2":
+						contaAtual.pagarEmprestimo();
+					default:
+						//Opção inválida
+				}
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
 			}
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
+		} else {
+			throw new EmprestimoException("Voce nao possui emprestimo");
 		}
-
 	}
 
 	private static void logar() throws LoginException, BuscaException {

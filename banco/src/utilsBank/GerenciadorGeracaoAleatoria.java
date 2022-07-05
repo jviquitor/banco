@@ -11,8 +11,7 @@ public class GerenciadorGeracaoAleatoria {
 		try {
 			return GerenciadorArquivo.listarSetGeracaoAleatoria(path);
 		} catch (LeituraArquivoException ex) {
-			//TODO Tratar erro
-			throw new RuntimeException("Deu erro");
+			throw new RuntimeException("Erro de carregamento. O banco nao foi iniciado.");
 		}
 	}
 

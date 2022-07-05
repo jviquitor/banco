@@ -123,6 +123,20 @@ public class GerenciadorArquivo {
 		}
 	}
 
+	public static void salvarBoletos(HashSet<Boleto> boletos) throws LeituraArquivoException, EscritaArquivoException {
+		try {
+			ObjectOutputStream arquivo = new ObjectOutputStream(new FileOutputStream(GerenciadorArquivo.PATH_BOLETOS));
+			arquivo.writeObject(boletos);
+			arquivo.close();
+		} catch (FileNotFoundException ex) {
+			/* Diretorio nao encontrado */
+			throw new LeituraArquivoException("Diretorio nao encontrado");
+		} catch (IOException ex) {
+			/* Arquivo nao pode ser acessado */
+			throw new EscritaArquivoException("Arquivo nao pode ser acessado");
+		}
+	}
+
 	public static void inserirSet(String path, HashSet<Cliente> novosDados) {
 		try {
 			ObjectOutputStream arquivo = new ObjectOutputStream(new FileOutputStream(path));
