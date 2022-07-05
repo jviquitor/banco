@@ -27,7 +27,7 @@ public class VerificadorEntrada {
 	}
 
 	protected static boolean verificarEntradasZeroUm(String entrada) {
-		return entrada.equals("0") || entrada.equals("1");
+		return !entrada.equals("0") && !entrada.equals("1");
 	}
 
 	protected static boolean verificarDadosTransacao(String entrada, String tipoOperacao) throws ValorInvalido {
@@ -133,13 +133,13 @@ public class VerificadorEntrada {
 	}
 
 	//TODO VERIFICAR DATA
-	private static boolean verificarData() {
+	public static boolean verificarData(String d) {
 		return true;
 	}
 
 	protected static boolean verificarDadosAgendamentoTransacao(String[] s) throws ValorInvalido {
 		if (verificarDadosTransacao(s[0], TRANSFERENCIA)) {
-			return verificarData();
+			return verificarData(s[1]);
 		}
 		return false;
 	}

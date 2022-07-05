@@ -31,11 +31,26 @@ public abstract class Cartao implements Serializable {
 		this.funcaoCartao = dadosCartao.getFuncaoCartao();
 	}
 
-	public String getTipoCartao() {
-		return this.tipoCartao;
-	}
+	@Override
+	public String toString() {
+		String toString = "";
+		toString = String.format(toString, "[CARTAO DE %s]", this.funcaoCartao.toString());
 
-	public FuncaoCartao getFuncaoCartao() {
-		return funcaoCartao;
+		if (apelidoCartao != null) {
+			toString = toString + "APELIDO: " + apelidoCartao + "\n";
+		}
+		if (cvc != null) {
+			toString = toString + "CVC: " + cvc + "\n";
+		}
+		if (validade != null) {
+			toString = toString + "VALIDADE: " + validade + "\n";
+		}
+		if (nomeTitular != null) {
+			toString = toString + "IDENTIFICACAO: " + nomeTitular + "\n";
+		}
+		if (tipoCartao != null) {
+			toString = toString + "TIPO DO CARTAO: " + tipoCartao + "\n";
+		}
+		return toString;
 	}
 }

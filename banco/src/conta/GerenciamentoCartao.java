@@ -26,11 +26,25 @@ public class GerenciamentoCartao implements Serializable {
 	protected Data getDataDebitoAutomatico() {
 		return dataDebitoAutomatico;
 	}
-    /*
-    protected Double getFatura() {
-        return limiteUsado;
-    }
-    */
+
+	/**
+	 * Retorna o valor do Limite utilizado [FATURA]
+	 *
+	 * @return Double
+	 */
+
+	public Double getFatura() {
+		return limiteUsado;
+	}
+
+	/**
+	 * Retorna o valor do limite restante para ser gasto
+	 *
+	 * @return Double
+	 */
+	public Double getLimiteRestante() {
+		return limiteMaximo - limiteUsado;
+	}
 
 	/**
 	 * Diminui o Limite usado com base no parametro informado
@@ -41,46 +55,60 @@ public class GerenciamentoCartao implements Serializable {
 		this.limiteUsado -= valorPagoFatura;
 	}
 
+	/**
+	 * Aumenta o limite usado com base no parametor informado
+	 *
+	 * @param valorGasto
+	 */
+
 	protected void diminuirLimiteAtual(Double valorGasto) {
 		this.limiteUsado += valorGasto;
 	}
 
+	/**
+	 * Recebe um Cartao e verifica se o Cartao ja foi inserido na lista do Cartao, caso nao, adiciona
+	 *
+	 * @param cartao
+	 * @return Boolean
+	 */
+
 	protected boolean adicionarNovoCartao(Cartao cartao) {
-		return listaDeCartao.add(cartao);
+		if (!listaDeCartao.contains(cartao)) {
+			return listaDeCartao.add(cartao);
+		}
+		return false;
 	}
 
 	protected List<Cartao> getListaDeCartao() {
 		return listaDeCartao;
 	}
 
+
+	/**
+	 * Retorna o limite maximo do Cartao
+	 *
+	 * @return Double
+	 */
+
 	public Double getLimiteMaximo() {
 		return limiteMaximo;
 	}
+
+	/**
+	 * Coloca o LimiteMaximo
+	 *
+	 * @param limiteMaximo
+	 */
 
 	protected void setLimiteMaximo(Double limiteMaximo) {
 		this.limiteMaximo = limiteMaximo;
 	}
 
-	/*
-	protected Double getLimiteUsado() {
-		return limiteUsado;
-	}
-
-	public void setLimiteUsado(Double limiteUsado) {
-		this.limiteUsado = limiteUsado;
-	}
-	*/
-	protected boolean isDebitoAutomatico() {
+	public boolean isDebitoAutomatico() {
 		return this.debitoAutomatico;
 	}
 
-	/*
-	protected void setDebitoAutomatico(boolean debitoAutomatico) {
-		this.debitoAutomatico = debitoAutomatico;
-	}
-	*/
-	//TODO A INterface precisa ter um local que mostra a gerencia do cartao pra ativar ou nao o debito automatico
-	protected void setDebitoAutomatico(boolean debitoAutomatico, Data dataDebitoAutomatico) {
+	public void setDebitoAutomatico(boolean debitoAutomatico, Data dataDebitoAutomatico) {
 		this.debitoAutomatico = debitoAutomatico;
 		this.dataDebitoAutomatico = dataDebitoAutomatico;
 	}

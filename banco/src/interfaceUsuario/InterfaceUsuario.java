@@ -2,7 +2,6 @@ package interfaceUsuario;
 
 import cliente.Cliente;
 import conta.Conta;
-import funcionalidades.exceptions.EmprestimoException;
 import interfaceUsuario.dados.*;
 import utilsBank.databank.Data;
 import utilsBank.databank.DataBank;
@@ -75,45 +74,18 @@ public class InterfaceUsuario {
 		InterfaceUsuario.dadosCartao = dadosCartao;
 	}
 
-	//TODO a interface ira perguntar qual o valor que o usuario ira pagar da fatura e ira tratar os casos
-	//VERIFICAR SE O VALOR EXISTE NA CONTA, VERIFICAR SE O VALOR EH NEGATIVO, VERIFICAR SE O VALOR EH IGUAL A 0, VERIFICAR SE O VALOR EH MAIOR DO QUE O VALOR DA FATURA ATUAL
-	public static Double getValorUsuarioDesejaPagar() {
-		return 1.0;
-	}
-
-	//TODO a interface ira perguntar qual o valor que o usuario irá pedir de empréstimo e tratará os casos
-	public static Double getValorUsuarioDesejaPedir() {
-		return 1.0;
-	}
-
-	public static boolean pagarFatura() {
-		Double valor = getValorUsuarioDesejaPagar();
+	public static boolean pagarFatura(Double valor) {
 		clienteAtual.getConta().pagarFatura(valor);
 		return true;
 	}
 
-	public static void pedirEmprestimo() throws EmprestimoException {
-		if (InterfaceUsuario.usuarioAtualConta().hasEmprestimo()) {
-			throw new EmprestimoException("Essa conta ja pediu emprestimo.");
-		}
-		InterfaceUsuario.usuarioAtualConta().setEmprestimo(getValorUsuarioDesejaPedir());
-	}
-
-	public static void pagarEmprestimo() throws EmprestimoException {
-		Conta conta = InterfaceUsuario.usuarioAtualConta();
-		if (!conta.hasEmprestimo()) {
-			throw new EmprestimoException("Essa conta nao possui emprestimo");
-		}
-		conta.pagarEmprestimo();
-	}
-
-	public static boolean pagamentoDebitoAutomatico() {
+	//TODO fazer pagamento debito automatico e Agendada Transacoes
+	public static boolean pagamentoDebitoAutomatico(Double v) {
 		if (clienteAtual.getConta().getDebitoAutomatico()) {
 			Data dataAtual = DataBank.criarData(DataBank.SEM_HORA); //TODO usar uma funcao que nao retorne tambem a hora
 
 			if (dataAtual.toString(new int[]{DataBank.SEM_HORA}).equals(clienteAtual.getConta().getDataDebitoAutomatico().toString(new int[]{DataBank.SEM_HORA}))) {
-				InterfaceUsuario.pagarFatura();
-				return true;
+				return InterfaceUsuario.pagarFatura(v);
 			}
 		}
 		return false; //TODO aqui pode ser uma excecao de pagamento nao realizado por algo

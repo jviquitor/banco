@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.Set;
 
 public class GeracaoAleatoria {
-	//TODO SALVAR TODAS AS GERACOES ALEATORIA NO SALVAMENTO DO ARQUIVO DA AGENCIA ATUALIZACAO
 	public static final int TAMANHO_ID_CONTA = 4;
 	public static final int TAMANHO_CHAVE_ALEATORIA = 48;
 	private static final int NUMERO_CARTAO_SEM_AGENCIA = 12;

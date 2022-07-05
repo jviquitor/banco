@@ -10,6 +10,7 @@ import conta.exceptions.TransacaoNaoRealizadaException;
 import funcionalidades.exceptions.EmprestimoException;
 import historico.Historico;
 import interfaceUsuario.InterfaceUsuario;
+import interfaceUsuario.MenuUsuario;
 import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosChavesPix;
 import interfaceUsuario.dados.DadosTransacao;
@@ -75,9 +76,19 @@ public class Conta implements Serializable {
 		this.saldo -= valor;
 	}
 
-	public void setDinheiroGuardado(Double valor) {
-		this.saldo -= valor;
-		this.dinheiroGuardado = valor;
+	public void setDinheiroGuardado(Double valor, String opcao) {
+		if (opcao.equals(MenuUsuario.GUARDAR)) {
+			this.saldo -= valor;
+			this.dinheiroGuardado = valor;
+		} else if (opcao.equals(MenuUsuario.RESGATAR)) {
+			this.saldo += valor;
+			this.dinheiroGuardado = valor;
+		}
+
+	}
+
+	public Double getDinheiroGuardado() {
+		return dinheiroGuardado;
 	}
 
 	public Transacao transferir() throws TransacaoException {
@@ -123,14 +134,10 @@ public class Conta implements Serializable {
 		return this.idConta.equals(outraConta.idConta);
 	}
 
-	//TODO MEXER NO GERENCIAMENTO DE CARTAO PARA FAZER O MENU DO USUARIO DO CARTAO (PAGAR FATURA)
-	public boolean hasCartao(FuncaoCartao funcaoCartao) {
+	public void mostrarCartoes() {
 		for (Cartao cartao : this.carteira.getListaDeCartao()) {
-			if (funcaoCartao == cartao.getFuncaoCartao()) {
-				return true;
-			}
+			System.out.println(cartao);
 		}
-		return false;
 	}
 
 	public void criarCartao(String nomeTitular, DadosCartao dadosCartao) {
@@ -245,9 +252,15 @@ public class Conta implements Serializable {
 		return saldo;
 	}
 
-	public void pagarFatura(Double valor) {
+	public boolean pagarFatura(Double valor) {
 		this.carteira.aumentarLimiteAtual(valor);
-		this.saldo -= valor; //TODO por enquanto a fatura sera descontada direto pelo valor do saldo e a interface precisa tratar caso a pessoa tenha saldo
+		this.saldo -= valor;
+		return true;
+	}
+
+	public boolean aumentarFatura(Double valor) {
+		this.carteira.diminuirLimiteAtual(valor);
+		return true;
 	}
 
 	public Double getEmprestimo() {
@@ -264,10 +277,6 @@ public class Conta implements Serializable {
 
 	public void setParcelaEmprestimo(Double valor) {
 		this.parcelaEmprestimo = valor;
-	}
-
-	public void aumentarFatura(Double valor) {
-		this.carteira.diminuirLimiteAtual(valor);
 	}
 
 	public Data getDataDebitoAutomatico() {
@@ -312,7 +321,14 @@ public class Conta implements Serializable {
 		this.historico.addTransacao(transacao);
 	}
 
-//Todo	public boolean resetNotificacoes();//Nao é abstrata
+	public void resetarNotificacoes() {
+		this.notificacoes = new Historico();
+	}
+
+	public void addNotificacao(Transacao transacao) throws TransacaoException {
+		this.notificacoes.addTransacao(transacao);
+	}
+
 //	public abstract boolean renderSaldo();
 
 }

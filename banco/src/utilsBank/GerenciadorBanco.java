@@ -30,6 +30,11 @@ public class GerenciadorBanco {
 		System.out.println(TODOS_OS_DIREITOS_RESERVADOS);
 	}
 
+	public static void imprimirErroOpcao() {
+		System.out.println("Opcao Invalida");
+		imprimirDireitos();
+	}
+
 	public static void imprimirMensagemTransferenciaAgendada() {
 		System.out.println(TRANSFERENCIA_AGENDADA);
 	}

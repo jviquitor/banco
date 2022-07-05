@@ -11,6 +11,7 @@ import cliente.exceptions.GerenteJaExistenteException;
 import cliente.exceptions.GerenteNaoEncontradoException;
 import cliente.exceptions.LoginException;
 import conta.Conta;
+import conta.GerenciamentoCartao;
 import conta.exceptions.TipoInvalido;
 import funcionalidades.exceptions.EmprestimoException;
 import interfaceUsuario.Exceptions.ValorInvalido;
@@ -21,6 +22,7 @@ import transacao.Transacao;
 import transacao.exceptions.TransacaoException;
 import utilsBank.GerenciadorBanco;
 import utilsBank.arquivo.Exception.EscritaArquivoException;
+import utilsBank.databank.DataBank;
 
 import java.util.Scanner;
 
@@ -28,6 +30,8 @@ public class MenuUsuario {
 	public static final String DEPOSITO = "do seu Deposito";
 	public static final String TRANSFERENCIA = "da sua transferencia";
 	public static final String PAGAMENTO = "do seu pagamento";
+	public static final String GUARDAR = "guardado";
+	public static final String RESGATAR = "resgatado";
 	public static final String FORMATO_DATAS = "31/12/2002";
 	public static final String DEBITO = "debito";
 	public static final String CREDITO = "credito";
@@ -71,8 +75,6 @@ public class MenuUsuario {
 			}
 		}
 	}
-//TODO BUG AGENDAR TRANSFERENCIA
-// TODO BUG BOLETO
 // TODO Tela dos boletos gerados
 
 	private static void menuCliente() {
@@ -101,11 +103,10 @@ public class MenuUsuario {
 							loop = false;
 							break;
 						case "1":
-							System.out.println("[SALDO]: " + cliente.getConta().getSaldo());
+							System.out.println("SALDO >>" + cliente.getConta().getSaldo());
 							break;
 						case "2":
-							double valor = MenuUsuarioGuardarDinheiro();
-							cliente.getConta().setDinheiroGuardado(valor);
+							menuGerenciarDinheiroGuardado(cliente);
 							break;
 						case "3":
 							MenuDadosTransacao(TRANSFERENCIA);
@@ -136,7 +137,7 @@ public class MenuUsuario {
 							GerenciadorBanco.imprimirDireitos();
 							break;
 						case "8":
-							//TODO GERENCIAMENTO DOS CARTOES FATURA ETC
+							menuGerenciarCartoes(cliente);
 							break;
 						case "9":
 							System.out.println(cliente.getConta().getChavesPix().toString());
@@ -187,7 +188,7 @@ public class MenuUsuario {
 							}
 							break;
 						default:
-							//Opção inválida
+							GerenciadorBanco.imprimirErroOpcao();
 					}
 				} catch (Exception ex) {
 					System.out.println(ex.getMessage());
@@ -202,10 +203,10 @@ public class MenuUsuario {
 		}
 	}
 
-	private static Double MenuUsuarioGuardarDinheiro() throws ValorInvalido {
+	private static Double MenuUsuarioGuardarDinheiro(String tipoOperacao) throws ValorInvalido {
 		imprimirBorda("-", TAM_BORDA);
 		String[] cabecalhoDinheiroGuardado = {
-				"Digite o valor para ser guardado!",
+				"Digite o valor para ser " + tipoOperacao + "!",
 		};
 		String[] entrada = UsuarioEntradas(cabecalhoDinheiroGuardado);
 
@@ -232,7 +233,7 @@ public class MenuUsuario {
 		imprimirBorda("=", TAM_BORDA);
 		System.out.println("[0] - Sair");
 		System.out.println("[1] - Verificar Saldo");
-		System.out.println("[2] - Guardar dinheiro");
+		System.out.println("[2] - Gerenciar dinheiro guardado");
 		System.out.println("[3] - Transferir");
 		System.out.println("[4] - Pagar");
 		System.out.println("[5] - Depositar");
@@ -243,7 +244,6 @@ public class MenuUsuario {
 		System.out.println("[10] - Modificar chave Pix");
 		System.out.println("[11] - Gerar um boleto");
 		System.out.println("[12] - Ver historico");
-		//TODO System.out.println("[13] - Mostrar dinheiro Guardado");
 
 		if (!isClientePessoa) {
 			System.out.println("[13] - Adicionar Gerentes");
@@ -307,7 +307,7 @@ public class MenuUsuario {
 		imprimirBorda("-", TAM_BORDA);
 		String[] cabecalhoDadosTransacao = {
 				"Digite o valor ",
-				"Digite a data para realizar a Transferencia"
+				"Digite a data para realizar a transferencia [FORMATO CORRETO] " + FORMATO_DATAS,
 		};
 
 		String[] entradaDadosTransacao = UsuarioEntradas(cabecalhoDadosTransacao);
@@ -350,6 +350,162 @@ public class MenuUsuario {
 		Agencia.addBoleto(boleto);
 
 		return boleto;
+	}
+
+	private static void menuGerenciarDinheiroGuardado(Cliente cliente) {
+		imprimirBorda("-", TAM_BORDA);
+		System.out.println("[0] - Cancelar");
+		System.out.println("[1] - Guardar dinheiro");
+		System.out.println("[2] - Resgatar dinheiro guardado");
+		System.out.println("[3] - Mostrar dinheiro guardado");
+		imprimirBorda("-", TAM_BORDA);
+		System.out.print("\n> ");
+		try {
+			String op = teclado.nextLine();
+			double valor;
+			switch (op) {
+				case "0":
+					break;
+				case "1":
+					valor = MenuUsuarioGuardarDinheiro(GUARDAR);
+					cliente.getConta().setDinheiroGuardado(valor, GUARDAR);
+					break;
+				case "2":
+					valor = MenuUsuarioGuardarDinheiro(RESGATAR);
+					cliente.getConta().setDinheiroGuardado(valor, RESGATAR);
+					break;
+				case "3":
+					System.out.println("VALOR GUARDADO >> " + cliente.getConta().getDinheiroGuardado());
+					break;
+				default:
+					GerenciadorBanco.imprimirErroOpcao();
+			}
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+	}
+
+	private static void menuGerenciarCartoes(Cliente cliente) {
+		imprimirBorda("-", TAM_BORDA);
+		System.out.println("[0] - Cancelar");
+		System.out.println("[1] - Mostrar Fatura");
+		System.out.println("[2] - Mostrar Limite");
+		System.out.println("[3] - Pagar Fatura");
+		System.out.println("[4] - Mostrar Cartoes [REQUER SENHA]");
+		System.out.println("[5] - Modificar Debito automatico ");
+		System.out.println("[6] - [FERRAMENTA ADMINISTRADOR] Aumentar Fatura");
+		imprimirBorda("-", TAM_BORDA);
+		System.out.print("\n> ");
+		GerenciamentoCartao carteiraCli = cliente.getConta().getCarteira();
+		try {
+			String op = teclado.nextLine();
+			switch (op) {
+				case "0":
+					break;
+				case "1":
+					System.out.println("SUA FATURA >>> " + carteiraCli.getFatura());
+					break;
+				case "2":
+					System.out.println("SEU LIMITE MAXIMO >>> " + carteiraCli.getLimiteMaximo());
+					System.out.println("SEU LIMITE GASTO >>> " + carteiraCli.getFatura());
+					System.out.println("SEU LIMITE RESTANTE >>> " + carteiraCli.getLimiteRestante());
+					break;
+				case "3":
+					String entrada;
+					do {
+						System.out.println("Deseja pagar o valor total da fatura? [1] SIM [0] NAO");
+						entrada = teclado.nextLine();
+					} while (VerificadorEntrada.verificarEntradasZeroUm(entrada));
+
+					if (GerenciadorBanco.intToBoolean(Integer.parseInt(entrada))) {
+						if (VerificadorEntrada.verificarEntradaValor(String.valueOf(carteiraCli.getFatura()))) {
+							if (cliente.getConta().pagarFatura(carteiraCli.getFatura())) {
+								System.out.println("FATURA PAGA COM SUCESSO");
+								System.out.println("SUA FATURA >>> " + carteiraCli.getFatura());
+							}
+						}
+					} else {
+						do {
+							System.out.println("Digite o valor para pagar a fatura");
+							entrada = teclado.nextLine();
+						} while (!VerificadorEntrada.verificarEntradaValor(String.valueOf(entrada)));
+						if (cliente.getConta().pagarFatura(Double.parseDouble(entrada))) {
+							System.out.println("FATURA PAGA COM SUCESSO");
+							System.out.println("SUA FATURA >>> " + carteiraCli.getFatura());
+						}
+					}
+					break;
+				case "4":
+					System.out.println("[INSIRA SUA SENHA]");
+					entrada = teclado.nextLine();
+
+					if (cliente.verificarSenha(entrada)) {
+						cliente.getConta().mostrarCartoes();
+					}
+					break;
+				case "5":
+					menuDebitoAutomatico(carteiraCli);
+					break;
+				case "6":
+					do {
+						System.out.println("[LEMBRANDO: APENAS UMA FERRAMENTA ADMINISTRATIVA PARA GERENCIAR O BANCO]]");
+						System.out.println("DIGITE O VALOR QUE FOI GASTO NO CARTAO");
+						entrada = teclado.nextLine();
+					} while (!VerificadorEntrada.verificarEntradaValor(String.valueOf(entrada)));
+
+					if (cliente.getConta().aumentarFatura(Double.parseDouble(entrada))) {
+						System.out.println("FATURA ATUALIZADA COM SUCESSO");
+						System.out.println("SUA FATURA >>> " + carteiraCli.getFatura());
+					}
+					break;
+				default:
+					GerenciadorBanco.imprimirErroOpcao();
+			}
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}
+	}
+
+	private static void menuDebitoAutomatico(GerenciamentoCartao carteiraCliente) {
+		String DEBITO_ATIVADO = "DEBITO AUTOMATICO >> ATIVADO <<\nDESEJA DESATIVAR? [1] SIM [0] NAO";
+		String DEBITO_ATIVADO_MODIFICAR = "DEBITO AUTOMATICO >> ATIVADO <<\nDESEJA MODIFICAR A DATA? [1] SIM [0] NAO";
+		String DEBITO_DESATIVADO = "DEBITO AUTOMATICO >> DESATIVADO <<\nDESEJA ATIVAR? [1] SIM [0] NAO";
+		String entrada;
+
+		if (carteiraCliente.isDebitoAutomatico()) {
+			System.out.println(DEBITO_ATIVADO);
+			entrada = teclado.nextLine();
+			while (VerificadorEntrada.verificarEntradasZeroUm(entrada)) {
+				entrada = teclado.nextLine();
+			}
+
+			if (GerenciadorBanco.intToBoolean(Integer.parseInt(entrada))) {
+				carteiraCliente.setDebitoAutomatico(false, null);
+			} else {
+				gerenciarAtivarDesativarDebito(carteiraCliente, DEBITO_ATIVADO_MODIFICAR);
+			}
+		} else {
+			gerenciarAtivarDesativarDebito(carteiraCliente, DEBITO_DESATIVADO);
+		}
+	}
+
+	private static void gerenciarAtivarDesativarDebito(GerenciamentoCartao carteiraCliente, String ESTADO_MENSAGEM) {
+		String entrada;
+		System.out.println(ESTADO_MENSAGEM);
+		entrada = teclado.nextLine();
+		while (VerificadorEntrada.verificarEntradasZeroUm(entrada)) {
+			entrada = teclado.nextLine();
+		}
+
+		if (GerenciadorBanco.intToBoolean(Integer.parseInt(entrada))) {
+			System.out.println("Digite a data para realizar o debito automatico [FORMATO CORRETO] " + FORMATO_DATAS);
+			entrada = teclado.nextLine();
+
+			while (!VerificadorEntrada.verificarData(entrada)) {
+				entrada = teclado.nextLine();
+			}
+			carteiraCliente.setDebitoAutomatico(true, DataBank.criarData(entrada, DataBank.SEM_HORA));
+		}
 	}
 
 	private static void MenuDadosGerarBoleto() {
@@ -501,7 +657,7 @@ public class MenuUsuario {
 		if (FuncaoCartao.equals(CREDITO)) {
 			System.out.println("Deseja debito automatico? [1] SIM [0] NAO");
 			entrada = teclado.nextLine();
-			while (!VerificadorEntrada.verificarEntradasZeroUm(entrada)) {
+			while (VerificadorEntrada.verificarEntradasZeroUm(entrada)) {
 				System.out.println("Por favor, insira corretamente a opcao!");
 				entrada = teclado.nextLine();
 			}
