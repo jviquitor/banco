@@ -314,22 +314,29 @@ public class MenuUsuario {
 		}
 
 		Cliente cliente;
+		int idade = Integer.parseInt(entradaGeral[3]);
 		if (tipo.equalsIgnoreCase("1")) {
+			if (idade < 18) {
+				throw new IllegalArgumentException("Idade insuficiente");
+			}
 			cliente = new ClientePessoa(
 					entradaGeral[0],
 					entradaGeral[1],
 					entradaGeral[2],
-					Integer.parseInt(entradaGeral[3]),
+					idade,
 					endereco,
 					entradaGeral[4],
 					entradaGeral[5]
 			);
 		} else {
+			if (idade < 3) {
+				throw new IllegalArgumentException("Idade insuficiente");
+			}
 			cliente = new ClienteEmpresa(
 					entradaGeral[0],
 					entradaGeral[1],
 					entradaGeral[2],
-					Integer.parseInt(entradaGeral[3]),
+					idade,
 					endereco,
 					entradaGeral[4],
 					entradaGeral[5]
@@ -486,6 +493,26 @@ public class MenuUsuario {
 		String[] entrada = UsuarioEntradas(cabecalho);
 
 		Cliente cliente = Agencia.buscarCliente(entrada[0]);
+		ClienteEmpresa clienteEmpresa = Agencia.buscarEmpresa(entrada[0]);
+		if (clienteEmpresa != null) {
+			imprimirBorda("-", TAM_BORDA);
+			System.out.println("Entrar como:");
+			System.out.println("[0] - Cancelar");
+			System.out.println("[1] - Pessoa");
+			System.out.println("[2] - Empresa");
+			imprimirBorda("-", TAM_BORDA);
+			System.out.print("> ");
+			String op = teclado.nextLine();
+			switch (op) {
+				case "1":
+					break;
+				case "2":
+					cliente = clienteEmpresa;
+					break;
+				default:
+					throw new LoginException("Login cancelado");
+			}
+		}
 		cliente.verificarSenha(entrada[1]);
 		InterfaceUsuario.setClienteAtual(cliente);
 		System.out.println("Login realizado com sucesso");

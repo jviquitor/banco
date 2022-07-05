@@ -79,6 +79,14 @@ public class Transacao implements Serializable {
 		return dataAgendada;
 	}
 
+	public boolean hasDataAgendada() {
+		return dataAgendada != null;
+	}
+
+	public Data getDataEmissaoTransacao() {
+		return this.dataEmissaoTransacao;
+	}
+
 	public Conta getContaOrigem() {
 		return origem.getConta();
 	}

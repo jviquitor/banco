@@ -3,6 +3,7 @@ package agencia;
 import agencia.exceptions.BuscaException;
 import agencia.exceptions.InsercaoException;
 import cliente.Cliente;
+import cliente.ClienteEmpresa;
 import conta.Conta;
 import funcionalidades.exceptions.EmprestimoException;
 import interfaceUsuario.dados.DadosChavesPix;
@@ -63,6 +64,17 @@ public class Agencia {
 			}
 		}
 		throw new BuscaException("Cliente nao encontrado");
+	}
+
+	public static ClienteEmpresa buscarEmpresa(String cpf) {
+		for (Cliente cliente : clientes) {
+			if (cliente instanceof ClienteEmpresa clienteEmpresa) {
+				if (clienteEmpresa.verificarGerente(cpf)) {
+					return clienteEmpresa;
+				}
+			}
+		}
+		return null;
 	}
 
 	public static Boleto buscarBoleto(String nossoNumero) throws BuscaException {

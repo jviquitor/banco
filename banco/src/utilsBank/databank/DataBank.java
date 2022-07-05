@@ -19,8 +19,8 @@ public class DataBank {
 		Calendar data = Calendar.getInstance(IDIOMA);
 		if (flag == SEM_HORA) {
 			data.set(Calendar.HOUR_OF_DAY, 0);
-			data.set(Calendar.HOUR, 0);
 			data.set(Calendar.MINUTE, 0);
+			data.set(Calendar.SECOND, 0);
 		}
 		return new Data(data);
 	}

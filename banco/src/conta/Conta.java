@@ -74,12 +74,13 @@ public class Conta implements Serializable {
 		this.saldo -= valor;
 	}
 
-	public Transacao transferir() {
+	public Transacao transferir() throws TransacaoException {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
 		Transacao transacao = new Transacao(dadosTransacao);
 		Double valorT = transacao.getValor();
 
 		if (addTransacaoRealizada(transacao)) {
+			transacao.getContaDestino().addHistorico(transacao);
 			transacao.getContaDestino().aumentarSaldo(valorT);
 			transacao.getContaOrigem().diminuirSaldo(valorT);
 			return transacao;
@@ -87,16 +88,18 @@ public class Conta implements Serializable {
 		throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
 	}
 
-	public boolean addTransacaoRealizada(Transacao t) {
+	public boolean addTransacaoRealizada(Transacao t) throws TransacaoException {
 		if (!transacoesRealizadas.contains(t)) {
+			this.historico.addTransacao(t);
 			transacoesRealizadas.add(t);
 			return true;
 		}
 		return false;
 	}
 
-	public boolean addTransacaoAgendadas(Transacao t) {
+	public boolean addTransacaoAgendadas(Transacao t) throws TransacaoException {
 		if (!transacoesAgendadas.contains(t)) {
+			this.historico.addTransacao(t);
 			transacoesAgendadas.add(t);
 			return true;
 		}
@@ -136,13 +139,16 @@ public class Conta implements Serializable {
 	}
 
 	public void pagarBoleto(Boleto boleto) throws TransacaoException {
-		Double valorTratado = boleto.getMultaPorDias() * DataBank.criarData(DataBank.SEM_HORA).calcularIntervalo(boleto.getDataVencimento());
+		int intervalo = DataBank.criarData(DataBank.SEM_HORA).calcularIntervalo(boleto.getDataVencimento());
+		Double valorTratado = (intervalo < 0) ? boleto.getMultaPorDias() * -intervalo : boleto.getMultaPorDias();
+		valorTratado += boleto.getValor();
 		if (this.saldo < valorTratado) {
 			throw new TransacaoException("Saldo insuficiente");
 		}
 		boleto.pagar();
 		this.diminuirSaldo(valorTratado);
 		boleto.getContaDestino().aumentarSaldo(valorTratado);
+		boleto.getContaDestino().addHistorico(boleto);
 	}
 
 	public Transacao depositar() {

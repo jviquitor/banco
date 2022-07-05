@@ -34,4 +34,8 @@ public class DadosBoleto {
 	public Data getDataVencimento() {
 		return DataBank.criarData(dataVencimento, DataBank.SEM_HORA);
 	}
+
+	public boolean getFoiPago() {
+		return Boolean.TRUE.equals(this.foiPago);
+	}
 }
