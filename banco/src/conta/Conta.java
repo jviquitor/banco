@@ -13,6 +13,7 @@ import interfaceUsuario.dados.DadosTransacao;
 import transacao.Boleto;
 import transacao.ChavePix;
 import transacao.Transacao;
+import transacao.exceptions.TransacaoException;
 import utilsBank.GeracaoAleatoria;
 import utilsBank.databank.Data;
 import utilsBank.databank.DataBank;
@@ -134,25 +135,14 @@ public class Conta implements Serializable {
 		this.carteira.adicionarNovoCartao(cartao);
 	}
 
-	public void pagar() {
-		//Pagando um boleto existente
-		DadosBoleto dadosBoleto = InterfaceUsuario.getDadosBoleto();
-		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
-		String nossoNumero = dadosBoleto.getNossoNumero();
-		if (nossoNumero != null) {
-			Boleto boleto = Agencia.buscarBoleto(nossoNumero);
-			if (boleto != null) {
-				Double valorT = boleto.getValor();
-				Data dataAtual = DataBank.criarData(DataBank.SEM_HORA);
-				if (!boleto.getDataVencimento().equals(dataAtual)) {
-					int dias = dataAtual.subtrair(boleto.getDataVencimento());
-					valorT = valorT * boleto.getMultaPorDias();
-				}
-				boleto.getContaOrigem().aumentarSaldo(valorT);
-				diminuirSaldo(valorT);
-				boleto.setFoiPago(false);
-			}
+	public void pagarBoleto(Boleto boleto) throws TransacaoException {
+		Double valorTratado = boleto.getMultaPorDias() * DataBank.criarData(DataBank.SEM_HORA).calcularIntervalo(boleto.getDataVencimento());
+		if (this.saldo < valorTratado) {
+			throw new TransacaoException("Saldo insuficiente");
 		}
+		boleto.pagar();
+		this.diminuirSaldo(valorTratado);
+		boleto.getContaDestino().aumentarSaldo(valorTratado);
 	}
 
 	public Transacao depositar() {

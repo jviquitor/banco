@@ -27,7 +27,7 @@ public class Transacao implements Serializable {
 		this.nossoNumero = GeracaoAleatoria.gerarNossosNumeros(25);
 		this.dataEmissaoTransacao = DataBank.criarData(DataBank.COM_HORA);
 		this.idPagamento = Agencia.ID_AGENCIA + Agencia.CODIGO_MOEDA + GeracaoAleatoria.gerarNumeros(4) +
-				this.nossoNumero + dataEmissaoTransacao.toString(DataBank.SEM_HORA);
+				this.nossoNumero + dataEmissaoTransacao.toString(new int[]{DataBank.SEM_HORA, DataBank.SEM_BARRA});
 		this.destino = dadosTransacao.getdestino();
 		this.origem = dadosTransacao.getorigem();
 		this.dataAgendada = null;

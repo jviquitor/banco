@@ -1,6 +1,7 @@
 package interfaceUsuario.dados;
 
 import agencia.Agencia;
+import agencia.exceptions.BuscaException;
 import cliente.Cliente;
 
 import java.io.Serial;
@@ -13,7 +14,7 @@ public class DadosTransacao implements Serializable {
 	private Cliente destino;  //destino o dinheiro vai para o destino
 	private Cliente origem; //origem o dinheiro sai da origem
 
-	public DadosTransacao(Double valor, String chaveDestino, String chaveorigem, String tipoChaveDestino, String tipoChaveOrigem) {
+	public DadosTransacao(Double valor, String chaveDestino, String chaveorigem, String tipoChaveDestino, String tipoChaveOrigem) throws BuscaException {
 		this.valor = valor;
 		setDestinoPix(chaveDestino, tipoChaveDestino);
 		setOrigemPix(chaveorigem, tipoChaveOrigem);
@@ -41,11 +42,11 @@ public class DadosTransacao implements Serializable {
 		this.destino = Agencia.buscarCliente(chave);
 	}
 
-	private void setDestinoPix(String chave, String tipoDaChave) {
+	private void setDestinoPix(String chave, String tipoDaChave) throws BuscaException {
 		this.destino = Agencia.buscarClientePorChavePix(tipoDaChave, chave);
 	}
 
-	private void setOrigemPix(String chave, String tipoDaChave) {
+	private void setOrigemPix(String chave, String tipoDaChave) throws BuscaException {
 		this.origem = Agencia.buscarClientePorChavePix(tipoDaChave, chave);
 	}
 

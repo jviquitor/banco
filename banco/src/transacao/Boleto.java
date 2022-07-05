@@ -2,6 +2,7 @@ package transacao;
 
 import interfaceUsuario.dados.DadosBoleto;
 import interfaceUsuario.dados.DadosTransacao;
+import transacao.exceptions.TransacaoException;
 import utilsBank.databank.Data;
 
 import java.io.Serial;
@@ -15,9 +16,9 @@ public class Boleto extends Transacao implements Serializable {
 	private final double multaPorDias;
 	private Boolean foiPago;
 
-	public Boleto(DadosTransacao dadosTransacao, DadosBoleto dadosBoleto, boolean foiPago) {
+	public Boleto(DadosTransacao dadosTransacao, DadosBoleto dadosBoleto) {
 		super(dadosTransacao);
-		this.foiPago = foiPago;
+		this.foiPago = dadosBoleto.getFoiPago();
 		this.dataVencimento = dadosBoleto.getDataVencimento();
 		this.multaPorDias = dadosBoleto.getMultaPorDias();
 	}
@@ -39,7 +40,10 @@ public class Boleto extends Transacao implements Serializable {
 				'}';
 	}
 
-	public void setFoiPago(boolean b) {
-		this.foiPago = b;
+	public void pagar() throws TransacaoException {
+		if (Boolean.TRUE.equals(foiPago)) {
+			throw new TransacaoException("Esse boleto ja foi pago");
+		}
+		this.foiPago = true;
 	}
 }

@@ -1,5 +1,6 @@
 package agencia;
 
+import agencia.exceptions.BuscaException;
 import agencia.exceptions.InsercaoException;
 import cliente.Cliente;
 import conta.Conta;
@@ -30,16 +31,16 @@ public class Agencia {
 		return instance;
 	}
 
-	public static Cliente buscarCliente(String chave) {
+	public static Cliente buscarCliente(String chave) throws BuscaException {
 		for (Cliente cliente : clientes) {
 			if (Objects.equals(cliente.getIdentificacao(), chave)) {
 				return cliente;
 			}
 		}
-		return null;
+		throw new BuscaException("Cliente nao encontrado");
 	}
 
-	public static Cliente buscarClientePorChavePix(String tipodeChave, String chave) {
+	public static Cliente buscarClientePorChavePix(String tipodeChave, String chave) throws BuscaException {
 		String chavePix = null;
 		for (Cliente cliente : clientes) {
 			Conta contaCliente = cliente.getConta();
@@ -61,36 +62,55 @@ public class Agencia {
 				return cliente;
 			}
 		}
-		return null;
+		throw new BuscaException("Cliente nao encontrado");
 	}
 
-	public static Boleto buscarBoleto(String nossoNumero) {
+	public static Boleto buscarBoleto(String nossoNumero) throws BuscaException {
 		for (Boleto boleto : boletos) {
 			if (boleto.getNossoNumero().equals(nossoNumero)) {
 				return boleto;
 			}
 		}
-		return null;
+		throw new BuscaException("Boleto nao encontrado");
 	}
 
-	public void addCliente(Cliente cliente) throws InsercaoException, EscritaArquivoException {
-		if (Agencia.buscarCliente(cliente.getIdentificacao()) == null) {
-			if (clientes.add(cliente)) {
-				try {
-					GerenciadorArquivo.salvarClientes((HashSet<Cliente>) Agencia.clientes);
-				} catch (EscritaArquivoException ex) {
-					clientes.remove(cliente);
-					throw ex;
-				}
-			} else {
-				throw new InsercaoException("Ocorreu um erro ao criar o cliente");
+	public static void addBoleto(Boleto boleto) {
+		boletos.add(boleto);
+	}
+
+	public static void imprimirClientes() {
+		for (Cliente cliente : clientes) {
+			System.out.println(cliente);
+		}
+	}
+
+	public void pegarEmprestimo(double valor) throws EmprestimoException {
+		if (this.rendaAgencia >= valor) {
+			this.rendaAgencia -= valor;
+		} else {
+			throw new EmprestimoException();
+		}
+	}
+
+	public void addCliente(Cliente cliente) throws InsercaoException, EscritaArquivoException, BuscaException {
+		Agencia.buscarCliente(cliente.getIdentificacao());
+		if (clientes.add(cliente)) {
+			try {
+				GerenciadorArquivo.salvarClientes((HashSet<Cliente>) Agencia.clientes);
+			} catch (EscritaArquivoException ex) {
+				clientes.remove(cliente);
+				throw ex;
 			}
 		} else {
-			throw new InsercaoException("Cliente ja existe");
+			throw new InsercaoException("Ocorreu um erro ao criar o cliente");
 		}
 	}
 
 	public void addSaldo(double valor) {
 		this.rendaAgencia += valor;
+	}
+
+	public void atualizarArquivos() throws EscritaArquivoException {
+		GerenciadorArquivo.salvarClientes((HashSet<Cliente>) Agencia.clientes);
 	}
 }

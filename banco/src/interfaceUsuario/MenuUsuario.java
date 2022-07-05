@@ -1,6 +1,7 @@
 package interfaceUsuario;
 
 import agencia.Agencia;
+import agencia.exceptions.BuscaException;
 import agencia.exceptions.InsercaoException;
 import cliente.Cliente;
 import cliente.ClienteEmpresa;
@@ -109,7 +110,6 @@ public class MenuUsuario {
 						case "3":
 							//TODO BOLETO ARRUMAR O TOSTRING PFV
 							MenuDadosPagarBoleto();
-							cliente.getConta().pagar();
 							break;
 						case "4":
 							MenuDadosTransacao(DEPOSITO);
@@ -148,7 +148,13 @@ public class MenuUsuario {
 							//Opção inválida
 					}
 				} catch (Exception ex) {
-					System.out.println(ex.getCause());
+					System.out.println(ex.getMessage());
+				} finally {
+					try {
+						Agencia.getInstance().atualizarArquivos();
+					} catch (EscritaArquivoException ex) {
+						System.out.println("Ocorreu um erro ao atualizar os nosso banco de dados. Verifique sua conexao e tente novamente.");
+					}
 				}
 			}
 		}
@@ -165,8 +171,8 @@ public class MenuUsuario {
 		return entradas;
 	}
 
-	public static String[] MenuDadosTransacao(String tipoOperacao) {
-		imprimirBorda("-", 20);
+	public static void MenuDadosTransacao(String tipoOperacao) throws BuscaException {
+		imprimirBorda("-", 30);
 
 		String[] cabecalhoDadosTransacao = {
 				"Digite o valor " + tipoOperacao,
@@ -202,9 +208,12 @@ public class MenuUsuario {
 		}
 	}
 
-	public static void MenuDadosPagarBoleto() {
-		String[] entradaDadosTransacao = MenuDadosTransacao(PAGAMENTO);
-		//TODO fazer a criacao do corpo do boleto new boleto
+	public static void MenuDadosPagarBoleto() throws BuscaException, TransacaoException {
+		System.out.print("Numero do boleto: \n> ");
+		String numBoleto = teclado.nextLine();
+		Boleto boleto = Agencia.buscarBoleto(numBoleto);
+		Conta origem = InterfaceUsuario.usuarioAtualConta();
+		origem.pagarBoleto(boleto);
 	}
 
 	public static void MenuDadosGerarBoleto() {
@@ -258,7 +267,7 @@ public class MenuUsuario {
 
 	}
 
-	private static Cliente criarCliente() throws InsercaoException, EscritaArquivoException {
+	private static Cliente criarCliente() throws InsercaoException, EscritaArquivoException, RuntimeException, BuscaException {
 		imprimirBorda("-", 20);
 		System.out.print("Tipo de cliente:\n" +
 				"[0] - Cancelar\n" +
@@ -329,6 +338,7 @@ public class MenuUsuario {
 		Agencia.getInstance().addCliente(cliente);
 		return cliente;
 	}
+
 	public static Double menuCriacaoConta() {
 		Double renda = inserirRenda();
 		boolean debitoAutomatico = false;

@@ -39,11 +39,18 @@ public class Data implements Serializable {
 		);
 	}
 
-	public String toString(int flag) {
-		if (flag == DataBank.SEM_HORA) {
-			return this.toString().split(" ")[0];
+	public String toString(int[] flags) {
+		String text = this.toString();
+		for (int flag : flags) {
+			switch (flag) {
+				case DataBank.SEM_HORA:
+					text = text.split(" ")[0];
+					break;
+				case DataBank.SEM_BARRA:
+					text = text.replace("/", "");
+			}
 		}
-		return this.toString();
+		return text;
 	}
 
 	public boolean equals(Data outra) {

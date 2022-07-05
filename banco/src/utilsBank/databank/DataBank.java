@@ -7,6 +7,7 @@ import java.util.Locale;
 public class DataBank {
 	public static final int SEM_HORA = 0;
 	public static final int COM_HORA = 1;
+	public static final int SEM_BARRA = 2;
 	private static final Locale IDIOMA = new Locale("pt", "BR");
 	private static final int FORMATO = DateFormat.SHORT;
 

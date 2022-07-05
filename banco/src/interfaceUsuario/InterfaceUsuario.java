@@ -111,7 +111,7 @@ public class InterfaceUsuario {
 		if (clienteAtual.getConta().getDebitoAutomatico()) {
 			Data dataAtual = DataBank.criarData(DataBank.SEM_HORA); //TODO usar uma funcao que nao retorne tambem a hora
 
-			if (dataAtual.toString(DataBank.SEM_HORA).equals(clienteAtual.getConta().getDataDebitoAutomatico().toString(DataBank.SEM_HORA))) {
+			if (dataAtual.toString(new int[]{DataBank.SEM_HORA}).equals(clienteAtual.getConta().getDataDebitoAutomatico().toString(new int[]{DataBank.SEM_HORA}))) {
 				InterfaceUsuario.pagarFatura();
 				return true;
 			}
