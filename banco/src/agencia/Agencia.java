@@ -92,7 +92,7 @@ public class Agencia {
 
 	public static void imprimirClientes() {
 		for (Cliente cliente : clientes) {
-			System.out.println(cliente);
+			System.out.println(cliente.allInfos());
 		}
 	}
 
@@ -105,16 +105,19 @@ public class Agencia {
 	}
 
 	public void addCliente(Cliente cliente) throws InsercaoException, EscritaArquivoException, BuscaException {
-		Agencia.buscarCliente(cliente.getIdentificacao());
-		if (clientes.add(cliente)) {
-			try {
-				GerenciadorArquivo.salvarClientes((HashSet<Cliente>) Agencia.clientes);
-			} catch (EscritaArquivoException ex) {
-				clientes.remove(cliente);
-				throw ex;
+		try {
+			Agencia.buscarCliente(cliente.getIdentificacao());
+		} catch (BuscaException e) {
+			if (clientes.add(cliente)) {
+				try {
+					GerenciadorArquivo.salvarClientes((HashSet<Cliente>) Agencia.clientes);
+				} catch (EscritaArquivoException ex) {
+					clientes.remove(cliente);
+					throw ex;
+				}
+			} else {
+				throw new InsercaoException("Ocorreu um erro ao criar o cliente");
 			}
-		} else {
-			throw new InsercaoException("Ocorreu um erro ao criar o cliente");
 		}
 	}
 

@@ -14,12 +14,12 @@ import java.io.Serializable;
 public class Transacao implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 5L;
-	private Double valor;
-	private String nossoNumero;
-	private String idPagamento;
-	private Data dataEmissaoTransacao;
+	protected Double valor;
+	protected String nossoNumero;
+	protected String idPagamento;
+	protected Data dataEmissaoTransacao;
+	protected Cliente origem; //@Lembrando Origem EH QUEM MANDOU TAL COISA
 	private Cliente destino; //@Lembrando DESTINO EH O DESTINATARIO DO DINHEIRO, QUEM RECEBE
-	private Cliente origem; //@Lembrando Origem EH QUEM MANDOU TAL COISA
 	private Data dataAgendada;
 
 	public Transacao(DadosTransacao dadosTransacao) {

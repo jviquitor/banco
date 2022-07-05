@@ -12,13 +12,14 @@ import java.io.Serializable;
 public abstract class Cartao implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 6L;
-	protected String numeroCartao;
-	protected Integer cvc;
-	protected String apelidoCartao;
+	protected final String numeroCartao;
+	protected final Integer cvc;
+	protected final String apelidoCartao;
+	protected final Data validade;
+	protected final FuncaoCartao funcaoCartao; // @Lembrando Se refere a ser debito ou credito
 	protected String nomeTitular;
-	protected Data validade;
 	protected String tipoCartao; // @Lembrando, tipo se refere ao tipo de conta
-	protected FuncaoCartao funcaoCartao; // @Lembrando Se refere a ser debito ou credito
+
 
 	protected Cartao(String nomeTitular, DadosCartao dadosCartao) {
 		this.numeroCartao = Agencia.ID_AGENCIA + GeracaoAleatoria.gerarNumeroCartao();

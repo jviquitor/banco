@@ -1,5 +1,7 @@
 package cliente;
 
+import cliente.exceptions.GerenteJaExistenteException;
+import cliente.exceptions.GerenteNaoEncontradoException;
 import conta.Conta;
 
 import java.util.HashSet;
@@ -15,28 +17,22 @@ public class ClienteEmpresa extends Cliente {
 		this.CNPJ = cnpj;
 	}
 
-	//TODO MENU DO CLIENTE EMPRESA ISA @AMANHA
-	public String getCnpj() {
-		return CNPJ;
+	public boolean addGerentes(String identificacao) throws GerenteJaExistenteException {
+		if (!GERENTES_EMPRESA.contains(identificacao)) {
+			return GERENTES_EMPRESA.add(identificacao);
+		}
+		throw new GerenteJaExistenteException("O gerente ja existe");
 	}
 
-	public boolean addGerentes(String identificacao) {
-		return GERENTES_EMPRESA.add(identificacao);
+	public boolean removerGerentes(String identificacao) throws GerenteNaoEncontradoException {
+		if (GERENTES_EMPRESA.contains(identificacao)) {
+			return GERENTES_EMPRESA.remove(identificacao);
+		}
+		throw new GerenteNaoEncontradoException("O gerente nao foi encontrado, logo nao foi possivel a remocao!");
 	}
 
-	public Boolean verificarGerente(String chave) {
+	public boolean verificarGerente(String chave) {
 		return GERENTES_EMPRESA.contains(chave);
-	}
-
-	private String clienteAllInfos() {
-		String toString = "[CLIENTE]\n";
-		if (nome != null) {
-			toString = toString + "NOME: " + nome + "\n";
-		}
-		if (CNPJ != null) {
-			toString = toString + "CPF: " + CNPJ + "\n";
-		}
-		return getString(toString);
 	}
 
 	@Override
@@ -47,7 +43,6 @@ public class ClienteEmpresa extends Cliente {
 		}
 		return getString(toString);
 	}
-
 
 	@Override
 	public Conta getConta() {

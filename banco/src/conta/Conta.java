@@ -27,20 +27,18 @@ import java.util.Objects;
 public class Conta implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 2L;
-	protected String idConta;
+	protected final String idConta;
+	protected final List<Transacao> transacoesRealizadas;
+	protected final List<Transacao> transacoesAgendadas;
+	protected final List<Transacao> transacoesRecebidas;
+	protected final List<Transacao> notificacoes;
+	protected final Historico historico;
+	protected final GerenciamentoCartao carteira;
+	protected final ChavePix chavesPix;
 	protected Double saldo;
 	protected Double dinheiroGuardado;
 	protected Double emprestimo;
 	protected Double parcelaEmprestimo;
-
-	protected List<Transacao> transacoesRealizadas;
-	protected List<Transacao> transacoesAgendadas;
-	protected List<Transacao> transacoesRecebidas;
-	protected List<Transacao> notificacoes;
-
-	protected Historico historico;
-	protected GerenciamentoCartao carteira;
-	protected ChavePix chavesPix;
 
 	protected Conta() {
 		this.idConta = GeracaoAleatoria.gerarIdConta(GeracaoAleatoria.TAMANHO_ID_CONTA);
@@ -72,6 +70,11 @@ public class Conta implements Serializable {
 
 	private void diminuirSaldo(Double valor) {
 		this.saldo -= valor;
+	}
+
+	public void setDinheiroGuardado(Double valor) {
+		this.saldo -= valor;
+		this.dinheiroGuardado = valor;
 	}
 
 	public Transacao transferir() throws TransacaoException {
@@ -110,6 +113,10 @@ public class Conta implements Serializable {
 		Double valorT = transacao.getValor();
 		transacao.getContaDestino().aumentarSaldo(valorT);
 		transacao.getContaOrigem().diminuirSaldo(valorT);
+	}
+
+	public boolean equals(Conta outraConta) {
+		return this.idConta.equals(outraConta.idConta);
 	}
 
 	//TODO MEXER NO GERENCIAMENTO DE CARTAO PARA FAZER O MENU DO USUARIO DO CARTAO (PAGAR FATURA)
@@ -151,13 +158,19 @@ public class Conta implements Serializable {
 		boleto.getContaDestino().addHistorico(boleto);
 	}
 
-	public Transacao depositar() {
+	public Transacao depositar() throws TransacaoException {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
 		Transacao transacao = new Transacao(dadosTransacao);
 		Double valorT = transacao.getValor();
 
 		if (addTransacaoRealizada(transacao)) {
-			transacao.getContaDestino().aumentarSaldo(valorT);
+			if (transacao.getContaDestino().equals(transacao.getContaOrigem())) {
+				transacao.getContaDestino().aumentarSaldo(valorT);
+			} else {
+				transacao.getContaDestino().aumentarSaldo(valorT);
+				transacao.getContaOrigem().diminuirSaldo(valorT);
+			}
+			transacao.getContaDestino().addHistorico(transacao);
 			return transacao;
 		}
 		throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
@@ -197,11 +210,10 @@ public class Conta implements Serializable {
 		return this.carteira;
 	}
 
-	public Transacao agendarTransacao() {
+	public Transacao agendarTransacao() throws TransacaoException {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
 		Data dataAgendada = InterfaceUsuario.getDataAgendada();
 		Transacao transacao = new Transacao(dadosTransacao, dataAgendada);
-		transacoesAgendadas.add(transacao);
 		if (addTransacaoAgendadas(transacao)) {
 			return transacao;
 		}
@@ -285,7 +297,16 @@ public class Conta implements Serializable {
 	public boolean hasEmprestimo() {
 		return this.emprestimo > 0.0;
 	}
-//	public boolean resetNotificacoes();//Nao é abstrata
+
+	public ArrayList<Transacao> getHistorico() {
+		return this.historico.getTransacoes();
+	}
+
+	public void addHistorico(Transacao transacao) throws TransacaoException {
+		this.historico.addTransacao(transacao);
+	}
+
+//Todo	public boolean resetNotificacoes();//Nao é abstrata
 //	public abstract boolean renderSaldo();
 
 }

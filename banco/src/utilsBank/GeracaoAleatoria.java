@@ -68,7 +68,7 @@ public class GeracaoAleatoria {
 			String chaveAleatoria;
 			do {
 				chaveAleatoria = "";
-				for (int i = 0; i < 1; i++) {
+				for (int i = 0; i < tamanhoChave; i++) {
 					chaveAleatoria += caracteres.charAt(aleatorio.nextInt(36));
 				}
 			} while (!CHAVES_GERADAS_ALEATORIA.add(chaveAleatoria));

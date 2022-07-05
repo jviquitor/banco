@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class Boleto extends Transacao implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 10L;
-	private final String NOME_DA_TRANSACAO = "boleto";
+	private static final String NOME_DA_TRANSACAO = "Boleto";
 	private final Data dataVencimento;
 	private final double multaPorDias;
 	private Boolean foiPago;
@@ -33,11 +33,37 @@ public class Boleto extends Transacao implements Serializable {
 
 	@Override
 	public String toString() {
-		return "[BOLETO'] {" +
-				", [DATA DE VENCIMENTO] = " + dataVencimento +
-				", [MULTA POR DIAS NAO PAGO] = " + multaPorDias +
-				", [BOLETO PAGO]" + foiPago +
-				'}';
+		String toString = "[" + NOME_DA_TRANSACAO + "]\n";
+		if (valor != null) {
+			toString = toString + "VALOR: " + valor + "\n";
+		}
+		if (nossoNumero != null) {
+			toString = toString + "NUMERO DO BOLETO: " + nossoNumero + "\n";
+		}
+		if (origem != null) {
+			toString = toString + "ORIGEM DO BOLETO:  " + origem + "\n\n";
+		}
+		if (getDataAgendada() == null && dataEmissaoTransacao != null) {
+			toString = toString + "DATA EMISSAO DO BOLETO: " + dataEmissaoTransacao + "\n";
+		}
+		if (dataVencimento != null) {
+			toString = toString + "VENCIMENTO: " + dataVencimento + "\n";
+		}
+		if (multaPorDias != 0) {
+			toString = toString + "MULTA POR DIAS: " + multaPorDias + "\n";
+		}
+		if (foiPago != null) {
+			if (foiPago) {
+				toString = toString + "BOLETO PAGO!\n";
+				if (idPagamento != null) {
+					toString = toString + "IDENTIFICACAO DE PAGAMENTO: " + idPagamento + "\n";
+				}
+			} else {
+				toString = toString + "BOLETO NAO PAGO!\n";
+			}
+
+		}
+		return toString;
 	}
 
 	public void pagar() throws TransacaoException {

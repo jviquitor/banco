@@ -55,6 +55,17 @@ public abstract class Cliente implements Serializable {
 
 	public abstract boolean equals(Cliente outroCliente);
 
+	public String allInfos() {
+		String toString = "[CLIENTE]\n";
+		if (nome != null) {
+			toString = toString + "NOME: " + nome + "\n";
+		}
+		if (getIdentificacao() != null) {
+			toString = toString + "IDENTIFICACAO: " + getIdentificacao() + "\n";
+		}
+		return getString(toString);
+	}
+
 	public String getStringIdentificacao() {
 		return "identificacao";
 	}
@@ -67,14 +78,8 @@ public abstract class Cliente implements Serializable {
 		if (email != null) {
 			toString = toString + "EMAIL: " + email + "\n";
 		}
-		if (idade != null) {
-			toString = toString + "IDADE:" + idade + "\n";
-		}
 		if (end != null) {
-			toString = toString + "ENDERECO: " + end + "\n";
-		}
-		if (renda != null) {
-			toString = toString + "RENDA: " + renda + "\n";
+			toString = toString + "ENDERECO: " + end;
 		}
 
 		return toString;

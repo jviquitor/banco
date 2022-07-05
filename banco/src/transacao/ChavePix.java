@@ -36,24 +36,6 @@ public class ChavePix implements Serializable {
 		return true;
 	}
 
-	/*public ChavePix criarChavePix(String tipoChave, DadosChavesPix dadosChavesPix) {
-		switch (tipoChave) {
-			case DadosChavesPix.TELEFONE:
-				return new ChavePix(dadosChavesPix.getTelefone(), null, null, null);
-			case DadosChavesPix.EMAIL:
-				return new ChavePix(null, null, dadosChavesPix.getEmail(), null);
-		}
-		throw new RuntimeException("Erro ao criar a chave pix, verifique os valores e tente novamente");
-	}*/
-
-	/*public ChavePix criarChavePix(String chave) {
-		if (chave.equals(DadosChavesPix.CHAVE_ALEATORIA)) {
-			String value = GeracaoAleatoria.gerarChaveAleatoria(GeracaoAleatoria.TAMANHO_CHAVE_ALEATORIA);
-			return new ChavePix(null, value, null, null);
-		}
-		throw new RuntimeException("Erro ao criar a chave pix, verifique os valores e tente novamente");
-	}*/
-
 	@Override
 	public String toString() {
 		String toString = "[CHAVES PIX]\n";

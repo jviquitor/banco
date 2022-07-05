@@ -16,11 +16,19 @@ public class Endereco implements Serializable {
 		this.complemento = complemento;
 	}
 
-	//todo to string endereco
 	public Endereco(Integer CEP, Integer numeroCasa) {
 		this.CEP = CEP;
 		this.numeroCasa = numeroCasa;
 		this.complemento = null;
+	}
+
+	@Override
+	public String toString() {
+		String toString = "\n";
+		if (CEP != null) {
+			toString = toString + "CEP: " + CEP + "\n";
+		}
+		return toString;
 	}
 
 	protected void setComplemento(String complemento) {
