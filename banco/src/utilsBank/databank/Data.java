@@ -1,10 +1,13 @@
 package utilsBank.databank;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 
 public class Data implements Serializable {
+	@Serial
+	private static final long serialVersionUID = 4L;
 	private final Calendar calendar;
 	private final int dia;
 	private final int mes;
@@ -21,30 +24,6 @@ public class Data implements Serializable {
 		this.hora = data.get(Calendar.HOUR_OF_DAY);
 		this.minuto = data.get(Calendar.MINUTE);
 		this.segundo = data.get(Calendar.SECOND);
-	}
-
-	public int getDia() {
-		return dia;
-	}
-
-	public int getMes() {
-		return mes;
-	}
-
-	public int getAno() {
-		return ano;
-	}
-
-	public int getHora() {
-		return hora;
-	}
-
-	public int getMinuto() {
-		return minuto;
-	}
-
-	public int getSegundo() {
-		return segundo;
 	}
 
 	@Override
@@ -68,8 +47,8 @@ public class Data implements Serializable {
 	}
 
 	public boolean equals(Data outra) {
-  		return this.calendar.compareTo(outra.calendar) == 0;
-}
+		return this.calendar.compareTo(outra.calendar) == 0;
+	}
 
 	public boolean depoisDe(Data outra) {
 		return this.calendar.compareTo(outra.calendar) > 0;
@@ -79,7 +58,7 @@ public class Data implements Serializable {
 		return this.calendar.compareTo(outra.calendar) < 0;
 	}
 
-	public int subtrair(Data outra) {
+	public int calcularIntervalo(Data outra) {
 		return (int) ChronoUnit.DAYS.between(this.calendar.toInstant(), outra.calendar.toInstant());
 	}
 }

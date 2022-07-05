@@ -6,9 +6,12 @@ import utilsBank.GeracaoAleatoria;
 import utilsBank.databank.Data;
 import utilsBank.databank.DataBank;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public abstract class Cartao implements Serializable {
+	@Serial
+	private static final long serialVersionUID = 6L;
 	protected String numeroCartao;
 	protected Integer cvc;
 	protected String apelidoCartao;

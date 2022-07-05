@@ -1,7 +1,5 @@
 package cliente;
 
-import conta.Conta;
-
 public class ClientePessoa extends Cliente {
 	private final String CPF;
 
@@ -10,13 +8,26 @@ public class ClientePessoa extends Cliente {
 		this.CPF = cpf;
 	}
 
+	private String clienteAllInfos() {
+		String toString = "[CLIENTE]\n";
+		if (nome != null) {
+			toString = toString + "NOME: " + nome + "\n";
+		}
+		if (CPF != null) {
+			toString = toString + "CPF: " + CPF + "\n";
+		}
+		return getString(toString);
+	}
+
 	@Override
 	public String toString() {
-		return "Pessoa {" +
-				"Nome = " + this.getNome() +
-				"CPF ='" + CPF + '\'' + //TODO esconder CPF NE
-				'}';
+		String toString = "[CLIENTE]\n";
+		if (nome != null) {
+			toString = toString + "NOME: " + nome + "\n";
+		}
+		return getString(toString);
 	}
+
 
 	public String getIdentificacao() {
 		return this.CPF;

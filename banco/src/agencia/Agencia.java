@@ -90,19 +90,6 @@ public class Agencia {
 		}
 	}
 
-	public void pegarEmprestimo(double valor) throws EmprestimoException {
-		if (this.rendaAgencia >= valor) {
-			this.rendaAgencia -= valor;
-		} else {
-			throw new EmprestimoException();
-		}
-	}
-	public static void imprimirClientes() {
-		for (Cliente cliente: clientes) {
-			System.out.println(cliente);
-		}
-	}
-
 	public void addSaldo(double valor) {
 		this.rendaAgencia += valor;
 	}

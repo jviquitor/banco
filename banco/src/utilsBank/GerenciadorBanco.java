@@ -10,15 +10,12 @@ import java.util.HashSet;
 public class GerenciadorBanco {
 	//Classe para gerenciar o inicio do programa do banco
 	//Chega e guarda todos os clientes numa estrutura para a agencia
-	private final int QUANTIDADE_DE_CHAVES_MAX = 4;
+	private static final String TODOS_OS_DIREITOS_RESERVADOS = "© TODOS OS DIREITOS RESERVADOS AO BIC";
+	private static final String TRANSFERENCIA_AGENDADA = "Sua transferencia foi agendada com sucesso. Obrigada";
 
 	//
 	public static HashSet<Cliente> inicializarClientes() throws LeituraArquivoException {
 		return GerenciadorArquivo.listarSet(GerenciadorArquivo.PATH_CLIENTES);
-	}
-
-	public static void salvandoClientes(HashSet<Cliente> clientes) {
-		GerenciadorArquivo.inserirSet(GerenciadorArquivo.PATH_CLIENTES, clientes);
 	}
 
 	public static boolean intToBoolean(int value) {
@@ -27,5 +24,13 @@ public class GerenciadorBanco {
 
 	public static HashSet<Boleto> inicializarBoletos() {
 		return GerenciadorArquivo.listarSetBoleto(GerenciadorArquivo.PATH_BOLETOS);
+	}
+
+	public static void imprimirDireitos() {
+		System.out.println(TODOS_OS_DIREITOS_RESERVADOS);
+	}
+
+	public static void imprimirMensagemTransferenciaAgendada() {
+		System.out.println(TRANSFERENCIA_AGENDADA);
 	}
 }

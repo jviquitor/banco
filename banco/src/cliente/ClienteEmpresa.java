@@ -15,6 +15,7 @@ public class ClienteEmpresa extends Cliente {
 		this.CNPJ = cnpj;
 	}
 
+	//TODO MENU DO CLIENTE EMPRESA ISA @AMANHA
 	public String getCnpj() {
 		return CNPJ;
 	}
@@ -27,13 +28,26 @@ public class ClienteEmpresa extends Cliente {
 		return GERENTES_EMPRESA.contains(chave);
 	}
 
+	private String clienteAllInfos() {
+		String toString = "[CLIENTE]\n";
+		if (nome != null) {
+			toString = toString + "NOME: " + nome + "\n";
+		}
+		if (CNPJ != null) {
+			toString = toString + "CPF: " + CNPJ + "\n";
+		}
+		return getString(toString);
+	}
+
 	@Override
 	public String toString() {
-		return "Empresa {" +
-				"Nome = " + this.getNome() +
-				"CNPJ = '" + CNPJ + '\'' + //TODO ESCONDER CNPJ NE
-				'}';
+		String toString = "[CLIENTE]\n";
+		if (nome != null) {
+			toString = toString + "NOME: " + nome + "\n";
+		}
+		return getString(toString);
 	}
+
 
 	@Override
 	public Conta getConta() {

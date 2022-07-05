@@ -31,7 +31,6 @@ public class DadosBoleto {
 		return multaPorDias;
 	}
 
-
 	public Data getDataVencimento() {
 		return DataBank.criarData(dataVencimento, DataBank.SEM_HORA);
 	}

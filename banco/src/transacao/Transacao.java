@@ -8,9 +8,12 @@ import utilsBank.GeracaoAleatoria;
 import utilsBank.databank.Data;
 import utilsBank.databank.DataBank;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Transacao implements Serializable {
+	@Serial
+	private static final long serialVersionUID = 5L;
 	private Double valor;
 	private String nossoNumero;
 	private String idPagamento;
@@ -27,29 +30,49 @@ public class Transacao implements Serializable {
 				this.nossoNumero + dataEmissaoTransacao.toString(DataBank.SEM_HORA);
 		this.destino = dadosTransacao.getdestino();
 		this.origem = dadosTransacao.getorigem();
+		this.dataAgendada = null;
 	}
 
 	public Transacao(DadosTransacao dadosTransacao, Data dataAgendada) {
 		Transacao transacao = new Transacao(dadosTransacao);
 		transacao.dataAgendada = dataAgendada;
+		transacao.dataEmissaoTransacao = dataAgendada;
 	}
 
-	public void gerarComprovante(Transacao transacao) {
-		System.out.println(transacao.toString());
+	public void gerarComprovante() {
+		System.out.println(this);
 	}
 
 	public String getNossoNumero() {
 		return nossoNumero;
 	}
 
+	public boolean equals(Transacao outroT) {
+		return this.getNossoNumero().equals(outroT.nossoNumero);
+	}
+
 	@Override
 	public String toString() {
-		return "Transacao " +
-				"valor =" + valor +
-				", idPagamento ='" + idPagamento + '\'' +
-				", dataEmissaoTransacao =" + dataEmissaoTransacao.toString(DataBank.COM_HORA) +
-				", destino =" + destino.toString() +
-				", origem =" + origem.toString();
+		String toString = "[TRANSACAO]\n";
+		if (valor != null) {
+			toString = toString + "VALOR: " + valor + "\n";
+		}
+		if (idPagamento != null) {
+			toString = toString + "IDENTIFICACAO DA TRANSACAO: " + idPagamento + "\n";
+		}
+		if (origem != null) {
+			toString = toString + "ORIGEM DA TRANSACAO:  " + origem + "\n";
+		}
+		if (destino != null) {
+			toString = toString + "DESTINO DA TRANSACAO:  " + destino + "\n";
+		}
+		if (dataAgendada != null) {
+			toString = toString + "DATA AGENDADA PARA A TRANSACAO: " + dataAgendada + "\n";
+		}
+		if (dataAgendada == null && dataEmissaoTransacao != null) {
+			toString = toString + "DATA EMISSAO DA TRANSACAO: " + dataEmissaoTransacao + "\n";
+		}
+		return toString;
 	}
 
 	public Data getDataAgendada() {

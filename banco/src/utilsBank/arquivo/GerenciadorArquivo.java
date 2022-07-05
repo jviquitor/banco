@@ -8,7 +8,6 @@ import utilsBank.arquivo.Exception.LeituraArquivoException;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 
 //TODO Criar exceptions para os casos inválidos
@@ -58,6 +57,7 @@ public class GerenciadorArquivo {
 			return new HashSet<>();
 		} catch (IOException ex) {
 			/* Arquivo nao pode ser acessado */
+			System.out.println(ex.getMessage());
 			throw new LeituraArquivoException("Arquivo nao pode ser acessado");
 		} catch (ClassNotFoundException ex) {
 			/* Classe invalida */
@@ -147,37 +147,4 @@ public class GerenciadorArquivo {
 		}
 	}
 
-	public static <T extends Collection, Serializable> T tryListar(String path) throws RuntimeException {
-		try {
-			ObjectInputStream arquivo = new ObjectInputStream(new FileInputStream(path));
-			T dados = (T) arquivo.readObject();
-			arquivo.close();
-			if (dados.size() > 0) {
-				return dados;
-			}
-			/* Lista vazia */
-			throw new LeituraArquivoException("Lista vazia");
-		} catch (FileNotFoundException ex) {
-			/* Arquivo nao encontrado */
-			throw new RuntimeException("Arquivo nao encontrado");
-		} catch (IOException ex) {
-			/* Arquivo nao pode ser acessado */
-			throw new RuntimeException("Arquivo nao pode ser acessado");
-		} catch (ClassNotFoundException ex) {
-			/* Classe invalida */
-			throw new RuntimeException("Classe invalida");
-		}
-	}
-
-	public static <T extends Serializable> void tryInserir(String path, T colecao) {
-		try {
-			ObjectOutputStream arquivo = new ObjectOutputStream(new FileOutputStream(path));
-			arquivo.writeObject(colecao);
-			arquivo.close();
-		} catch (FileNotFoundException ex) {
-			/* Diretorio nao encontrado */
-		} catch (IOException ex) {
-			/* Arquivo nao pode ser acessado */
-		}
-	}
 }

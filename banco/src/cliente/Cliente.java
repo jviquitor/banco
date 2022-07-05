@@ -13,19 +13,21 @@ import interfaceUsuario.VerificadorEntrada;
 import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosConta;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public abstract class Cliente implements Serializable {
-	private final String nome;
-	private final String email;
-	private final String telefone;
-	private final Integer idade;
-	private final Endereco end;
+	@Serial
+	private static final long serialVersionUID = 1L;
+	protected final String nome;
+	protected final String email;
+	protected final String telefone;
+	protected final Integer idade;
+	protected final Endereco end;
 	private final String senha;
 	protected Conta conta;
 	//private Boolean isOnline;
-	private Double renda;
-	private Integer quantidadeDeChavesAtuais;
+	protected Double renda;
 
 	public Cliente(String nome, String email, String telefone, Integer idade, Endereco end, String senha) {
 		this.nome = nome;
@@ -33,7 +35,6 @@ public abstract class Cliente implements Serializable {
 		this.telefone = telefone;
 		this.idade = idade;
 		this.end = end;
-		this.quantidadeDeChavesAtuais = 0;
 		this.conta = criarConta();
 		this.senha = senha;
 	}
@@ -50,10 +51,6 @@ public abstract class Cliente implements Serializable {
 		this.conta = conta;
 	}
 
-	public void setQuantidadeDeChavesAtuais() {
-		this.quantidadeDeChavesAtuais++;
-	}
-
 	public abstract String getIdentificacao();
 
 	public abstract boolean equals(Cliente outroCliente);
@@ -62,8 +59,25 @@ public abstract class Cliente implements Serializable {
 		return "identificacao";
 	}
 
-	private void setRenda(Double renda) {
-		this.renda = renda;
+	public void setChavesPix() {
+		this.getConta().getChavesPix().setIdentificacao(this.getIdentificacao());
+	}
+
+	protected String getString(String toString) {
+		if (email != null) {
+			toString = toString + "EMAIL: " + email + "\n";
+		}
+		if (idade != null) {
+			toString = toString + "IDADE:" + idade + "\n";
+		}
+		if (end != null) {
+			toString = toString + "ENDERECO: " + end + "\n";
+		}
+		if (renda != null) {
+			toString = toString + "RENDA: " + renda + "\n";
+		}
+
+		return toString;
 	}
 
 	public Conta criarConta() {

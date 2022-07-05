@@ -4,11 +4,13 @@ import interfaceUsuario.dados.DadosBoleto;
 import interfaceUsuario.dados.DadosTransacao;
 import utilsBank.databank.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Boleto extends Transacao implements Serializable {
-
-	private final String nomeDaTransacao = "boleto";
+	@Serial
+	private static final long serialVersionUID = 10L;
+	private final String NOME_DA_TRANSACAO = "boleto";
 	private final Data dataVencimento;
 	private final double multaPorDias;
 	private Boolean foiPago;
@@ -30,7 +32,11 @@ public class Boleto extends Transacao implements Serializable {
 
 	@Override
 	public String toString() {
-		return nomeDaTransacao;
+		return "[BOLETO'] {" +
+				", [DATA DE VENCIMENTO] = " + dataVencimento +
+				", [MULTA POR DIAS NAO PAGO] = " + multaPorDias +
+				", [BOLETO PAGO]" + foiPago +
+				'}';
 	}
 
 	public void setFoiPago(boolean b) {

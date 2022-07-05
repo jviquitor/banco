@@ -3,10 +3,10 @@ package conta;
 import agencia.Agencia;
 import cartao.*;
 import conta.exceptions.TipoInvalido;
+import conta.exceptions.TransacaoNaoRealizadaException;
 import funcionalidades.exceptions.EmprestimoException;
 import historico.Historico;
 import interfaceUsuario.InterfaceUsuario;
-import interfaceUsuario.dados.DadosBoleto;
 import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosChavesPix;
 import interfaceUsuario.dados.DadosTransacao;
@@ -17,13 +17,15 @@ import utilsBank.GeracaoAleatoria;
 import utilsBank.databank.Data;
 import utilsBank.databank.DataBank;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Conta implements Serializable {
-
+	@Serial
+	private static final long serialVersionUID = 2L;
 	protected String idConta;
 	protected Double saldo;
 	protected Double dinheiroGuardado;
@@ -51,58 +53,62 @@ public class Conta implements Serializable {
 		this.carteira = new GerenciamentoCartao();
 		this.emprestimo = 0.0;
 		this.parcelaEmprestimo = 0.0;
+		this.chavesPix = new ChavePix(null, null, null, null);
 	}
 
 	public ChavePix getChavesPix() {
 		return chavesPix;
 	}
 
-	private void setChavesPix(ChavePix chavesPix) {
-		this.chavesPix = chavesPix;
-	}
-
-	public boolean criarChavePix() {
-		DadosChavesPix dadosChavePix = InterfaceUsuario.getDadosChavePix();
-		ChavePix chavePix;
-		if (dadosChavePix.isChaveAleatoria()) {
-			chavePix = ChavePix.criarChavePix(DadosChavesPix.CHAVE_ALEATORIA);
-		} else {
-			chavePix = ChavePix.criarChavePix(dadosChavePix.getTipoChave(), dadosChavePix);
-		}
-		setChavesPix(chavePix);
-		return true;
-	}
-
-	public boolean adicionarChavePix() {
+	public boolean modificarChavePix() {
 		DadosChavesPix dadosChavePix = InterfaceUsuario.getDadosChavePix();
 		return chavesPix.mudarAdicionarChavePix(dadosChavePix.getTipoChave(), dadosChavePix);
 	}
 
-	//TODO Interface trata caso o valor seja negativo ou zero, avisando que o mesmo esta inserindo um valor errado
-	private void aumentarSaldo(Double valor) {
+	public void aumentarSaldo(Double valor) {
 		this.saldo += valor;
 	}
 
-	//TODO Interface trata caso o valor seja maior que o saldo disponivel na conta
 	private void diminuirSaldo(Double valor) {
 		this.saldo -= valor;
 	}
 
-	public void transferir() {
+	public Transacao transferir() {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
 		Transacao transacao = new Transacao(dadosTransacao);
 		Double valorT = transacao.getValor();
-		transacao.getContaDestino().aumentarSaldo(valorT);
-		transacao.getContaOrigem().diminuirSaldo(valorT);
 
+		if (addTransacaoRealizada(transacao)) {
+			transacao.getContaDestino().aumentarSaldo(valorT);
+			transacao.getContaOrigem().diminuirSaldo(valorT);
+			return transacao;
+		}
+		throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
 	}
 
-	public void transferir(Transacao transacao) {
+	public boolean addTransacaoRealizada(Transacao t) {
+		if (!transacoesRealizadas.contains(t)) {
+			transacoesRealizadas.add(t);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean addTransacaoAgendadas(Transacao t) {
+		if (!transacoesAgendadas.contains(t)) {
+			transacoesAgendadas.add(t);
+			return true;
+		}
+		return false;
+	}
+
+	private void transferir(Transacao transacao) {
 		Double valorT = transacao.getValor();
 		transacao.getContaDestino().aumentarSaldo(valorT);
 		transacao.getContaOrigem().diminuirSaldo(valorT);
 	}
 
+	//TODO MEXER NO GERENCIAMENTO DE CARTAO PARA FAZER O MENU DO USUARIO DO CARTAO (PAGAR FATURA)
 	public boolean hasCartao(FuncaoCartao funcaoCartao) {
 		for (Cartao cartao : this.carteira.getListaDeCartao()) {
 			if (funcaoCartao == cartao.getFuncaoCartao()) {
@@ -112,7 +118,7 @@ public class Conta implements Serializable {
 		return false;
 	}
 
-	public boolean criarCartao(String nomeTitular, DadosCartao dadosCartao) {
+	public void criarCartao(String nomeTitular, DadosCartao dadosCartao) {
 		Cartao cartao;
 
 		if (this.getClass() == ContaStandard.class) {
@@ -125,7 +131,7 @@ public class Conta implements Serializable {
 			throw new TipoInvalido("Tipo do cartao invalido.");
 		}
 
-		return this.carteira.adicionarNovoCartao(cartao);
+		this.carteira.adicionarNovoCartao(cartao);
 	}
 
 	public void pagar() {
@@ -149,8 +155,16 @@ public class Conta implements Serializable {
 		}
 	}
 
-	public void depositar() {
-		transferir();
+	public Transacao depositar() {
+		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
+		Transacao transacao = new Transacao(dadosTransacao);
+		Double valorT = transacao.getValor();
+
+		if (addTransacaoRealizada(transacao)) {
+			transacao.getContaDestino().aumentarSaldo(valorT);
+			return transacao;
+		}
+		throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
 	}
 
 	public void pagarEmprestimo() throws EmprestimoException {
@@ -165,7 +179,7 @@ public class Conta implements Serializable {
 	}
 
 	public void pagarParcelaEmprestimo() throws EmprestimoException {
-		Double parcela;
+		double parcela;
 		if (this.emprestimo < this.parcelaEmprestimo) {
 			parcela = this.emprestimo;
 		} else {
@@ -187,12 +201,15 @@ public class Conta implements Serializable {
 		return this.carteira;
 	}
 
-	public boolean agendarTransacao() {
+	public Transacao agendarTransacao() {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
 		Data dataAgendada = InterfaceUsuario.getDataAgendada();
 		Transacao transacao = new Transacao(dadosTransacao, dataAgendada);
 		transacoesAgendadas.add(transacao);
-		return true;
+		if (addTransacaoAgendadas(transacao)) {
+			return transacao;
+		}
+		throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
 	}
 
 	//TODO: a Interface eh responsavel por checar o CADA DIA esta corretamente para chamar essa funcao
@@ -241,6 +258,28 @@ public class Conta implements Serializable {
 
 	public Data getDataDebitoAutomatico() {
 		return this.carteira.getDataDebitoAutomatico();
+	}
+
+	@Override
+	public String toString() {
+		String toString = "[CONTA] \n";
+		if (idConta != null) {
+			toString = toString + "ID_CONTA: " + idConta + "\n";
+		}
+		if (saldo != null) {
+			toString = toString + "SALDO " + saldo + "\n";
+		}
+		if (dinheiroGuardado != null) {
+			toString = toString + "DINHEIRO GUARDADO" + dinheiroGuardado + "\n";
+		}
+		if (emprestimo != null) {
+			toString = toString + "EMPRESTIMO " + emprestimo + "\n";
+		}
+		if (chavesPix != null) {
+			toString = toString + "" + chavesPix + "\n";
+		}
+		toString = toString + "© TODOS OS DIREITOS RESERVADOS AO BIC  " + "\n";
+		return toString;
 	}
 
 	public boolean getDebitoAutomatico() {
