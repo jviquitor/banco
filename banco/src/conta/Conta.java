@@ -101,8 +101,6 @@ public class Conta implements Serializable {
 		Double valorT = transacao.getValor();
 
 		if (addTransacaoRealizada(transacao)) {
-			transacao.getContaDestino().addHistorico(transacao);
-			transacao.getContaDestino().addNotificacao(transacao);
 			transacao.getContaDestino().aumentarSaldo(valorT);
 			transacao.getContaOrigem().diminuirSaldo(valorT);
 			return transacao;
@@ -113,6 +111,7 @@ public class Conta implements Serializable {
 	public boolean addTransacaoRealizada(Transacao t) throws TransacaoException {
 		if (!transacoesRealizadas.contains(t)) {
 			this.historico.addTransacao(t);
+			this.notificacoes.addTransacao(t);
 			transacoesRealizadas.add(t);
 			return true;
 		}
@@ -186,8 +185,6 @@ public class Conta implements Serializable {
 				transacao.getContaDestino().aumentarSaldo(valorT);
 				transacao.getContaOrigem().diminuirSaldo(valorT);
 			}
-			transacao.getContaDestino().addHistorico(transacao);
-			transacao.getContaDestino().addNotificacao(transacao);
 			return transacao;
 		}
 		throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
@@ -331,6 +328,14 @@ public class Conta implements Serializable {
 
 	public void addNotificacao(Transacao transacao) throws TransacaoException {
 		this.notificacoes.addTransacao(transacao);
+	}
+
+	public boolean hasNotificacoes() {
+		return this.notificacoes.getTransacoes().size() > 0;
+	}
+
+	public ArrayList<Transacao> getNotificacoes() {
+		return this.notificacoes.getTransacoes();
 	}
 
 //	public abstract boolean renderSaldo();

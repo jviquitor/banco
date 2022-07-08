@@ -11,6 +11,7 @@ import cliente.Endereco;
 import cliente.exceptions.GerenteJaExistenteException;
 import cliente.exceptions.GerenteNaoEncontradoException;
 import cliente.exceptions.LoginException;
+import cliente.exceptions.TiposClientes;
 import conta.Conta;
 import conta.GerenciamentoCartao;
 import funcionalidades.exceptions.EmprestimoException;
@@ -101,7 +102,6 @@ public class MenuUsuario {
 					Transacao t;
 					switch (value) {
 						case "0":
-							System.out.println("Obrigada por acessar ao nosso Internet Banking!");
 							loop = false;
 							break;
 						case "1":
@@ -187,6 +187,12 @@ public class MenuUsuario {
 							}
 							break;
 						case "13":
+							mostrarBoletos();
+							break;
+						case "14":
+							mostrarNotificacoes();
+							break;
+						case "15":
 							if (!isClientePessoa) {
 								String identificacaoNovoGerente = MenuIdentificarNovoGerente();
 								assert cliente instanceof ClienteEmpresa;
@@ -199,7 +205,7 @@ public class MenuUsuario {
 								}
 							}
 							break;
-						case "14":
+						case "16":
 							if (!isClientePessoa) {
 								String identificacaoNovoGerente = MenuIdentificarNovoGerente();
 								assert cliente instanceof ClienteEmpresa;
@@ -269,10 +275,12 @@ public class MenuUsuario {
 		System.out.println("[10] - Modificar chave Pix");
 		System.out.println("[11] - Gerar um boleto");
 		System.out.println("[12] - Ver historico");
+		System.out.println("[13] - Ver boletos gerados");
+		System.out.println("[14] - Ver notificacoes");
 
 		if (!isClientePessoa) {
-			System.out.println("[13] - Adicionar Gerentes");
-			System.out.println("[14] - Remover Gerentes");
+			System.out.println("[15] - Adicionar Gerentes");
+			System.out.println("[16] - Remover Gerentes");
 
 		}
 		imprimirBorda("=", TAM_BORDA);
@@ -546,7 +554,7 @@ public class MenuUsuario {
 		}
 	}
 
-	private static void MenuDadosGerarBoleto() {
+	private static void MenuDadosGerarBoleto() throws ValorInvalido {
 		String[] cabecalho = {
 				"Valor",
 				"Data de vencimento [EXEMPLO DE FORMATO CORRETO: " + FORMATO_DATAS + "]",
@@ -598,18 +606,31 @@ public class MenuUsuario {
 
 	private static Cliente criarCliente() throws InsercaoException, EscritaArquivoException, RuntimeException, BuscaException, ValorInvalido {
 		imprimirBorda("-", TAM_BORDA);
-		System.out.print("Tipo de cliente:\n" +
-				"[0] - Cancelar\n" +
-				"[1] - Pessoa fisica\n" +
-				"[2] - Pessoa juridica\n" +
-				"> \n");
-		String tipo = teclado.nextLine();
+		String entrada = "-1";
+		do {
+			System.out.print("Tipo de cliente:\n" +
+					"[0] - Cancelar\n" +
+					"[1] - Pessoa fisica\n" +
+					"[2] - Pessoa juridica\n" +
+					"> \n");
+			entrada = teclado.nextLine();
+		} while (!VerificadorEntrada.verificarTipo(entrada));
 
-		if (!tipo.equals("1") && !tipo.equals("2")) {
-			throw new RuntimeException("Criacao cancelada");
+		TiposClientes tipo;
+		switch (entrada) {
+			case "0":
+				throw new RuntimeException("Criacao de cliente cancelada.");
+			case "1":
+				tipo = TiposClientes.CLIENTE_PESSOA;
+				break;
+			case "2":
+				tipo = TiposClientes.CLIENTE_EMPRESA;
+				break;
+			default:
+				throw new RuntimeException("Ocorreu um erro");
 		}
 
-		String tag = (tipo.equals("1")) ? "CPF" : "CNPJ";
+		String tag = (tipo == TiposClientes.CLIENTE_PESSOA) ? "CPF" : "CNPJ";
 
 		String[] cabecalhoEndereco = {
 				"CEP",
@@ -644,10 +665,7 @@ public class MenuUsuario {
 
 		Cliente cliente;
 		int idade = Integer.parseInt(entradaGeral[3]);
-		if (tipo.equalsIgnoreCase("1")) {
-			if (idade < 18) {
-				throw new IllegalArgumentException("Idade insuficiente");
-			}
+		if (tipo == TiposClientes.CLIENTE_PESSOA) {
 			cliente = new ClientePessoa(
 					entradaGeral[0],
 					entradaGeral[1],
@@ -658,9 +676,6 @@ public class MenuUsuario {
 					entradaGeral[5]
 			);
 		} else {
-			if (idade < 3) {
-				throw new IllegalArgumentException("Idade insuficiente");
-			}
 			cliente = new ClienteEmpresa(
 					entradaGeral[0],
 					entradaGeral[1],
@@ -671,6 +686,7 @@ public class MenuUsuario {
 					entradaGeral[5]
 			);
 		}
+
 		Agencia.getInstance().addCliente(cliente);
 		return cliente;
 	}
@@ -844,6 +860,26 @@ public class MenuUsuario {
 		cliente.verificarSenha(entrada[1]);
 		InterfaceUsuario.setClienteAtual(cliente);
 		System.out.println("Login realizado com sucesso");
+	}
+
+	private static void mostrarNotificacoes() {
+		Conta contaAtual = InterfaceUsuario.usuarioAtualConta();
+		if (contaAtual.hasNotificacoes()) {
+			for (Transacao notificacao : contaAtual.getNotificacoes()) {
+				System.out.println(notificacao);
+			}
+		} else {
+			System.out.println("Voce nao possui nenhuma notificacao");
+		}
+	}
+
+	private static void mostrarBoletos() {
+		Conta contaAtual = InterfaceUsuario.usuarioAtualConta();
+		for (Transacao transacao : contaAtual.getHistorico().getTransacoes()) {
+			if (transacao instanceof Boleto boleto && !boleto.isPago()) {
+				System.out.println(boleto);
+			}
+		}
 	}
 
 	private static void imprimirBorda(String padrao, int tam) {

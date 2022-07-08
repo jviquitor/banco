@@ -8,11 +8,13 @@ import conta.Conta;
 import funcionalidades.exceptions.EmprestimoException;
 import interfaceUsuario.dados.DadosChavesPix;
 import transacao.Boleto;
+import transacao.Transacao;
 import utilsBank.GeracaoAleatoria;
 import utilsBank.GerenciadorBanco;
 import utilsBank.arquivo.Exception.EscritaArquivoException;
 import utilsBank.arquivo.GerenciadorArquivo;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -20,9 +22,10 @@ import java.util.Set;
 public class Agencia {
 	public static final String ID_AGENCIA = "6721";
 	public static final String CODIGO_MOEDA = "9";
-	private static final Agencia instance = new Agencia();
-	private static final Set<Cliente> clientes = GerenciadorBanco.inicializarClientes();
-	private static final Set<Boleto> boletos = GerenciadorBanco.inicializarBoletos();
+	private static Agencia instance;
+	private static Set<Cliente> clientes;
+	private static Set<Boleto> boletos;
+	private static ArrayList<Transacao> transacoesAgendadas;
 	private Double rendaAgencia;
 
 	private Agencia() {
@@ -30,6 +33,12 @@ public class Agencia {
 	}
 
 	public static Agencia getInstance() {
+		if (instance == null) {
+			clientes = GerenciadorBanco.inicializarClientes();
+			boletos = GerenciadorBanco.inicializarBoletos();
+			transacoesAgendadas = GerenciadorBanco.inicializarTransacoes();
+			instance = new Agencia();
+		}
 		return instance;
 	}
 

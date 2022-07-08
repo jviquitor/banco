@@ -72,4 +72,8 @@ public class Boleto extends Transacao implements Serializable {
 		}
 		this.foiPago = true;
 	}
+
+	public boolean isPago() {
+		return this.foiPago;
+	}
 }

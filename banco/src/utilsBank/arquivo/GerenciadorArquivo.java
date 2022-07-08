@@ -3,6 +3,7 @@ package utilsBank.arquivo;
 import cliente.Cliente;
 import conta.Conta;
 import transacao.Boleto;
+import transacao.Transacao;
 import utilsBank.arquivo.Exception.EscritaArquivoException;
 import utilsBank.arquivo.Exception.LeituraArquivoException;
 
@@ -18,6 +19,7 @@ public class GerenciadorArquivo {
 	public static final String PATH_CHAVES_GERADAS_NUMERO_CARTAO = "banco/geradas_numero_cartao.dat";
 	public static final String PATH_CHAVES_ID_CONTA = "banco/chaves_id_conta.dat";
 	public static final String PATH_BOLETOS = "banco/boletos.dat";
+	public static final String PATH_TRANSACOES = "banco/transacoes.dat";
 
 	public static ArrayList<Conta> listar(String path) throws RuntimeException {
 		try {
@@ -158,6 +160,28 @@ public class GerenciadorArquivo {
 			/* Diretorio nao encontrado */
 		} catch (IOException ex) {
 			/* Arquivo nao pode ser acessado */
+		}
+	}
+
+	public static ArrayList<Transacao> listarTransacoes(String path) {
+		try {
+			ObjectInputStream arquivo = new ObjectInputStream(new FileInputStream(path));
+			ArrayList<Transacao> dados = (ArrayList<Transacao>) arquivo.readObject();
+			arquivo.close();
+			if (dados.size() > 0) {
+				return dados;
+			}
+			/* Lista vazia */
+			return new ArrayList<>();
+		} catch (FileNotFoundException ex) {
+			/* Arquivo nao encontrado */
+			return new ArrayList<>();
+		} catch (IOException ex) {
+			/* Arquivo nao pode ser acessado */
+			throw new LeituraArquivoException("Arquivo nao pode ser acessado");
+		} catch (ClassNotFoundException ex) {
+			/* Classe invalida */
+			throw new LeituraArquivoException("Classe invalida");
 		}
 	}
 

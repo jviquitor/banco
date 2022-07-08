@@ -2,9 +2,11 @@ package utilsBank;
 
 import cliente.Cliente;
 import transacao.Boleto;
+import transacao.Transacao;
 import utilsBank.arquivo.Exception.LeituraArquivoException;
 import utilsBank.arquivo.GerenciadorArquivo;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class GerenciadorBanco {
@@ -16,6 +18,10 @@ public class GerenciadorBanco {
 	//
 	public static HashSet<Cliente> inicializarClientes() throws LeituraArquivoException {
 		return GerenciadorArquivo.listarSet(GerenciadorArquivo.PATH_CLIENTES);
+	}
+
+	public static ArrayList<Transacao> inicializarTransacoes() throws LeituraArquivoException {
+		return GerenciadorArquivo.listarTransacoes(GerenciadorArquivo.PATH_TRANSACOES);
 	}
 
 	public static boolean intToBoolean(int value) {

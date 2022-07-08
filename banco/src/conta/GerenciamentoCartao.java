@@ -17,7 +17,6 @@ public class GerenciamentoCartao implements Serializable {
 	private boolean debitoAutomatico = false;
 	private Data dataDebitoAutomatico;
 
-	//TODO construtor singleton
 	protected GerenciamentoCartao() {
 		this.listaDeCartao = new ArrayList<>();
 	}
