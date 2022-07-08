@@ -7,6 +7,8 @@ public class DataBank {
 	public static final int SEM_HORA = 0;
 	public static final int COM_HORA = 1;
 	public static final int SEM_BARRA = 2;
+	public static final int SEM_ANO = 4;
+	public static final int SEM_MES = 6;
 	private static final Locale IDIOMA = new Locale("pt", "BR");
 
 	/**
@@ -19,6 +21,7 @@ public class DataBank {
 			data.set(Calendar.HOUR_OF_DAY, 0);
 			data.set(Calendar.MINUTE, 0);
 			data.set(Calendar.SECOND, 0);
+			data.set(Calendar.MILLISECOND, 0);
 		}
 		return new Data(data);
 	}
