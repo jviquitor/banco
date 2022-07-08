@@ -36,7 +36,7 @@ public class Transacao implements Serializable {
 	public Transacao(DadosTransacao dadosTransacao, Data dataAgendada) {
 		Transacao transacao = new Transacao(dadosTransacao);
 		transacao.dataAgendada = dataAgendada;
-		transacao.dataEmissaoTransacao = dataAgendada;
+		transacao.dataEmissaoTransacao = DataBank.criarData(DataBank.COM_HORA);
 	}
 
 	public void gerarComprovante() {
@@ -97,5 +97,10 @@ public class Transacao implements Serializable {
 
 	public Conta getContaDestino() {
 		return destino.getConta();
+	}
+
+	public void atualizar() {
+		this.dataEmissaoTransacao = this.dataAgendada;
+		this.dataAgendada = null;
 	}
 }

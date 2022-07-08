@@ -244,9 +244,21 @@ public class Conta implements Serializable {
 		return null;
 	}
 
-	public boolean realizarTransacaoAgendada(Transacao transacao) {
+	public boolean realizarTransacaoAgendada(Transacao transacao) throws TransacaoException {
+		if (transacao.getDataAgendada() == null) {
+			throw new TransacaoException("Essa transacao ja foi realizada");
+		}
 		transferir(transacao);
+		transacao.atualizar();
 		return true;
+	}
+
+	public void apagarTransacaoAgendada(Transacao transacao) throws TransacaoException {
+		try {
+			this.transacoesAgendadas.remove(transacao);
+		} catch (Exception ex) {
+			throw new TransacaoException("Transacao nao encontrada");
+		}
 	}
 
 	public Double getSaldo() {

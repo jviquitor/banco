@@ -314,7 +314,7 @@ public class MenuUsuario {
 		}
 
 		if (tipoOperacao.equals(TRANSFERENCIA)) {
-			printUtils.avisoPix();
+			PrintUtils.avisoPix();
 			String[] cabecalhoDados = {
 					"Digite o tipo da chave inserida [FORMATOS DISPONIVEIS]: " + CHAVES_DISPONIVEIS,
 					"Digite a chave",
@@ -350,7 +350,7 @@ public class MenuUsuario {
 			entradaDadosTransacao = UsuarioEntradas(cabecalhoDadosTransacao);
 		}
 
-		printUtils.avisoPix();
+		PrintUtils.avisoPix();
 		String[] cabecalhoDados = {
 				"Digite o tipo da chave inserida [FORMATOS DISPONIVEIS]: " + CHAVES_DISPONIVEIS,
 				"Digite a chave",
