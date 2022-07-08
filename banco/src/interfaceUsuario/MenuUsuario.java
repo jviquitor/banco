@@ -50,6 +50,7 @@ public class MenuUsuario {
 			System.out.println("[2] - Criar conta");
 			imprimirBorda("=", TAM_BORDA);
 			System.out.print("\n> ");
+			Agencia.imprimirClientes();
 			try {
 				switch (teclado.nextLine()) {
 					case "0":
@@ -79,7 +80,36 @@ public class MenuUsuario {
 
 	// TODO TESTAR Tela dos boletos gerados
 //TODO verificar as restricoes
+	//TODO Testar Gerenciador Cartao prestar atencaao na data
 //TODO fazer pagamento debito automatico e Agendada Transacoes
+	private static void imprimirMenu(boolean isClientePessoa) {
+		imprimirBorda("=", TAM_BORDA);
+		System.out.println("[0] - Sair");
+		System.out.println("[1] - Verificar Saldo");
+		System.out.println("[2] - Gerenciar dinheiro guardado");
+		System.out.println("[3] - Transferir");
+		System.out.println("[4] - Pagar");
+		System.out.println("[5] - Depositar");
+		System.out.println("[6] - Emprestimo");
+		System.out.println("[7] - Agendar transferencia");
+		System.out.println("[8] - Gerenciar Cartoes");
+		System.out.println("[9] - Mostrar chaves Pix");
+		System.out.println("[10] - Modificar chave Pix");
+		System.out.println("[11] - Gerar um boleto");
+		System.out.println("[12] - Ver historico");
+		System.out.println("[13] - Ver boletos gerados");
+		System.out.println("[14] - Ver notificacoes");
+
+		if (!isClientePessoa) {
+			System.out.println("[15] - Adicionar Gerentes");
+			System.out.println("[16] - Remover Gerentes");
+
+		}
+		imprimirBorda("=", TAM_BORDA);
+		System.out.print("\n> ");
+
+	}
+
 	private static void menuCliente() {
 		boolean loop = true;
 		Cliente cliente = InterfaceUsuario.getClienteAtual();
@@ -113,7 +143,6 @@ public class MenuUsuario {
 						case "3":
 							MenuDadosTransacao(TRANSFERENCIA);
 							t = cliente.getConta().transferir();
-
 							t.gerarComprovante();
 							GerenciadorBanco.imprimirDireitos();
 							break;
@@ -260,34 +289,6 @@ public class MenuUsuario {
 		return entrada[0];
 	}
 
-	private static void imprimirMenu(boolean isClientePessoa) {
-		imprimirBorda("=", TAM_BORDA);
-		System.out.println("[0] - Sair");
-		System.out.println("[1] - Verificar Saldo");
-		System.out.println("[2] - Gerenciar dinheiro guardado");
-		System.out.println("[3] - Transferir");
-		System.out.println("[4] - Pagar");
-		System.out.println("[5] - Depositar");
-		System.out.println("[6] - Emprestimo");
-		System.out.println("[7] - Agendar transferencia");
-		System.out.println("[8] - Gerenciar Cartoes");
-		System.out.println("[9] - Mostrar chaves Pix");
-		System.out.println("[10] - Modificar chave Pix");
-		System.out.println("[11] - Gerar um boleto");
-		System.out.println("[12] - Ver historico");
-		System.out.println("[13] - Ver boletos gerados");
-		System.out.println("[14] - Ver notificacoes");
-
-		if (!isClientePessoa) {
-			System.out.println("[15] - Adicionar Gerentes");
-			System.out.println("[16] - Remover Gerentes");
-
-		}
-		imprimirBorda("=", TAM_BORDA);
-		System.out.print("\n> ");
-
-	}
-
 	private static String[] UsuarioEntradas(String[] cabecalhoUsuario) {
 		String[] entradas = new String[cabecalhoUsuario.length];
 
@@ -348,7 +349,6 @@ public class MenuUsuario {
 		while (!VerificadorEntrada.verificarDadosAgendamentoTransacao(entradaDadosTransacao)) {
 			entradaDadosTransacao = UsuarioEntradas(cabecalhoDadosTransacao);
 		}
-
 
 		printUtils.avisoPix();
 		String[] cabecalhoDados = {
@@ -650,8 +650,6 @@ public class MenuUsuario {
 		do {
 			entradaEndereco = UsuarioEntradas(cabecalhoEndereco);
 		} while (!VerificadorEntrada.verificarEndereco(entradaEndereco));
-
-		entradaGeral = UsuarioEntradas(cabecalhoGeral);
 
 		do {
 			entradaGeral = UsuarioEntradas(cabecalhoGeral);

@@ -47,14 +47,6 @@ public class InterfaceUsuario {
 		InterfaceUsuario.clienteAtual = clienteAtual;
 	}
 
-	public static Data getDataAgendada() {
-		return DataBank.criarData(InterfaceUsuario.chamarUsuarioParaEscolherDataAgendada(), DataBank.SEM_HORA);
-	}
-
-	public static String chamarUsuarioParaEscolherDataAgendada() {
-		return "01/02/2002";
-	}
-
 	public static Conta usuarioAtualConta() {
 		return clienteAtual.getConta();
 	}
@@ -79,7 +71,7 @@ public class InterfaceUsuario {
 		clienteAtual.pagarFatura(valor);
 		return true;
 	}
-
+//TODO PAGAMENTO DEBITO AUTOMATICO
 	public static boolean pagamentoDebitoAutomatico(Double v) throws PagamentoNaoRealizadoException {
 		if (clienteAtual.getConta().getDebitoAutomatico()) {
 			Data dataAtual = DataBank.criarData(DataBank.SEM_HORA);

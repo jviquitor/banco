@@ -3,6 +3,8 @@ package interfaceUsuario.dados;
 import agencia.Agencia;
 import agencia.exceptions.BuscaException;
 import cliente.Cliente;
+import utilsBank.databank.Data;
+import utilsBank.databank.DataBank;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -11,7 +13,7 @@ public class DadosTransacao implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 9L;
 	private final Double valor;
-	private final String dataAgendada;
+	private final Data dataAgendada;
 	private Cliente destino;  //destino o dinheiro vai para o destino
 	private Cliente origem; //origem o dinheiro sai da origem
 
@@ -31,7 +33,7 @@ public class DadosTransacao implements Serializable {
 
 	public DadosTransacao(Double valor, String chaveDestino, String chaveorigem, String tipoChaveDestino, String tipoChaveOrigem, String dataAgendada) throws BuscaException {
 		this.valor = valor;
-		this.dataAgendada = dataAgendada;
+		this.dataAgendada = DataBank.criarData(dataAgendada, DataBank.SEM_HORA);
 		setDestinoPix(chaveDestino, tipoChaveDestino);
 		setOrigemPix(chaveorigem, tipoChaveOrigem);
 	}
@@ -50,6 +52,9 @@ public class DadosTransacao implements Serializable {
 		this.dataAgendada = null;
 	}
 
+	public Data getDataAgendada() {
+		return this.dataAgendada;
+	}
 
 	private void setDestinoBoleto(String chave) throws BuscaException {
 		this.destino = Agencia.buscarCliente(chave);

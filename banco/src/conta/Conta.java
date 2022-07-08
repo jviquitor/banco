@@ -226,7 +226,7 @@ public class Conta implements Serializable {
 
 	public Transacao agendarTransacao() throws TransacaoException {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
-		Data dataAgendada = InterfaceUsuario.getDataAgendada();
+		Data dataAgendada = dadosTransacao.getDataAgendada();
 		Transacao transacao = new Transacao(dadosTransacao, dataAgendada);
 		if (addTransacaoAgendadas(transacao)) {
 			return transacao;

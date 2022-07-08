@@ -20,14 +20,13 @@ public class VerificadorEntrada {
 	protected static final double RENDA_MAXIMA_PREMIUM = 30000.0;
 	protected static final double RENDA_MINIMA_DIAMOND = 30001.0;
 	protected static final String[] ENTRADAS_CHAVE_PIX = {"chave_aleatoria", "telefone", "email"};
-	protected static final int DIGITOS_MAXIMO_TELEFONE = 9;
+	protected static final int DIGITOS_MAXIMO_TELEFONE = 12;
 	protected static final int QUANTIDADE_IDENTIFICACAO_VALIDA = 14;
-	private static final Pattern NAO_APENAS_ALFABETO = Pattern.compile("/[^a-z-A-Z]/gm");
-	private static final Pattern POSSIVEL_SENHA = Pattern.compile("/[^a-z-A-Z]/gm");
+	private static final Pattern NAO_APENAS_ALFABETO = Pattern.compile("[^a-zA-Z\s]");
 	private static final Pattern HAS_WHITESPACE = Pattern.compile("\s");
 	private static final Pattern QUALQUER_NAO_DIGITO = Pattern.compile("/\\D+/");
 	private static final String EMAIL_PATTERN =
-			"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+			"^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
 					+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final Pattern EMAIL_VERIFICADOR = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
 	private static final int TAMANHO_MINIMO_SENHA = 3;
@@ -197,9 +196,9 @@ public class VerificadorEntrada {
 	public static boolean verificarData(String d) {
 		if (d.contains("/")) {
 			String[] d_data = d.split("/");
-			for (int i = 0; i < d_data.length; i++) {
+			for (String d_datum : d_data) {
 				try {
-					Integer.parseInt(d_data[i]);
+					Integer.parseInt(d_datum);
 				} catch (NumberFormatException ex) {
 					return false;
 				}
@@ -229,10 +228,12 @@ public class VerificadorEntrada {
 		try {
 			Integer.parseInt(entradaEndereco[0]);
 			Integer.parseInt(entradaEndereco[1]);
-			if (entradaEndereco[0].length() == TAMANHO_CEP) {
-				return true;
+			if (!(entradaEndereco[0].length() == TAMANHO_CEP)) {
+				throw new ValorInvalido("CEP INVALIDO");
 			}
+			return true;
 		} catch (Exception ignored) {
+
 		}
 		return false;
 	}
@@ -242,6 +243,19 @@ public class VerificadorEntrada {
 	}
 
 	protected static boolean verificarInformacoesCliente(String[] entradaGeral, TiposClientes tiposClientes) throws ValorInvalido {
+		/*		String[] cabecalhoEndereco = {
+				"CEP",
+				"Numero da Residencia",
+				"Complemento (Opcional)",
+		};
+		String[] cabecalhoGeral = {
+				"Nome completo",
+				"Email",
+				"Telefone",
+				"Idade",
+				tag,
+				"Senha",
+		};*/
 		for (int i = 0; i < entradaGeral.length; i++) {
 			if (entradaGeral[i].isBlank()) {
 				throw new ValorInvalido("Nenhum dos campos podem ser vazios. Tente novamente");
@@ -280,7 +294,7 @@ public class VerificadorEntrada {
 		if (HAS_WHITESPACE.matcher(s).find()) {
 			return false;
 		}
-		return s.length() > TAMANHO_MINIMO_SENHA;
+		return s.length() >= TAMANHO_MINIMO_SENHA;
 	}
 
 	private static boolean verificarIdentificacao(String s, TiposClientes tiposClientes) {
