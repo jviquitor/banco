@@ -50,11 +50,11 @@ public class DadosTransacao implements Serializable {
 	}
 
 	private void setDestinoPix(String chave, String tipoDaChave) throws BuscaException {
-		this.destino = Agencia.buscarClientePorChavePix(tipoDaChave, chave);
+		this.destino = Agencia.getInstance().buscarClientePorChavePix(tipoDaChave, chave);
 	}
 
 	private void setOrigemPix(String chave, String tipoDaChave) throws BuscaException {
-		this.origem = Agencia.buscarClientePorChavePix(tipoDaChave, chave);
+		this.origem = Agencia.getInstance().buscarClientePorChavePix(tipoDaChave, chave);
 	}
 
 

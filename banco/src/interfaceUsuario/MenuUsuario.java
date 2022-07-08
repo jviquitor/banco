@@ -371,10 +371,10 @@ public class MenuUsuario {
 	private static void MenuPagarBoleto() throws BuscaException, TransacaoException {
 		System.out.print("Numero do boleto: \n> ");
 		String numBoleto = teclado.nextLine();
-		Boleto boleto = Agencia.buscarBoleto(numBoleto);
+		Boleto boleto = Agencia.getInstance().buscarBoleto(numBoleto);
 		Conta origem = InterfaceUsuario.usuarioAtualConta();
 		origem.pagarBoleto(boleto, InterfaceUsuario.getClienteAtual());
-		Agencia.apagarBoleto(boleto);
+		Agencia.getInstance().apagarBoleto(boleto);
 	}
 
 	private static Boleto criarBoleto() {
@@ -382,7 +382,7 @@ public class MenuUsuario {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
 
 		Boleto boleto = new Boleto(dadosTransacao, dadosBoleto);
-		Agencia.addBoleto(boleto);
+		Agencia.getInstance().addBoleto(boleto);
 
 		return boleto;
 	}
@@ -891,10 +891,10 @@ public class MenuUsuario {
 
 		String[] entrada = UsuarioEntradas(cabecalho);
 
-		ClienteEmpresa clienteEmpresa = Agencia.buscarEmpresa(entrada[0]);
+		ClienteEmpresa clienteEmpresa = Agencia.getInstance().buscarEmpresa(entrada[0]);
 		Cliente cliente = null;
 		try {
-			cliente = Agencia.buscarCliente(entrada[0]);
+			cliente = Agencia.getInstance().buscarCliente(entrada[0]);
 		} catch (BuscaException ex) {
 			if (clienteEmpresa == null) {
 				throw ex;
@@ -938,7 +938,7 @@ public class MenuUsuario {
 	}
 
 	private static void mostrarBoletos() throws BuscaException {
-		HashSet<Boleto> boletosGerados = Agencia.buscarBoletosConta(InterfaceUsuario.usuarioAtualConta());
+		HashSet<Boleto> boletosGerados = Agencia.getInstance().buscarBoletosConta(InterfaceUsuario.usuarioAtualConta());
 		if (boletosGerados.size() <= 0) {
 			throw new BuscaException("Voce nao possui boletos gerados");
 		}

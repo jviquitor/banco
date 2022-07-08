@@ -33,7 +33,7 @@ public class VerificadorDiario extends Thread {
 	}
 
 	public void verificarTransacoesAgendadas(Data dataAtual) {
-		ArrayList<Transacao> transacoesAgendadas = Agencia.getTransacoes();
+		ArrayList<Transacao> transacoesAgendadas = Agencia.getInstance().getTransacoes();
 		for (Transacao transacao : transacoesAgendadas) {
 			if (!transacao.getDataAgendada().depoisDe(dataAtual)) {
 				Conta origem = transacao.getContaOrigem();
@@ -48,6 +48,10 @@ public class VerificadorDiario extends Thread {
 				}
 			}
 		}
+	}
+
+	public void verificarFaturas(Data dataAtual) {
+		
 	}
 
 	@Override

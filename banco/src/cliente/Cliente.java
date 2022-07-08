@@ -73,6 +73,10 @@ public abstract class Cliente implements Serializable {
 		return true;
 	}
 
+	public void aumentarFatura(Double valor) {
+		this.getConta().aumentarFatura(valor);
+	}
+
 	public void setChavesPix() {
 		this.getConta().getChavesPix().setIdentificacao(this.getIdentificacao());
 	}

@@ -25,27 +25,34 @@ public class Agencia {
 	public static final String ID_AGENCIA = "6721";
 	public static final String CODIGO_MOEDA = "9";
 	private static Agencia instance;
-	private static Set<Cliente> clientes;
-	private static Set<Boleto> boletos;
-	private static ArrayList<Transacao> transacoesAgendadas;
+	private final Set<Cliente> clientes;
+	private final Set<Boleto> boletos;
+	private final ArrayList<Transacao> transacoesAgendadas;
 	private Double rendaAgencia;
 
 	private Agencia() {
 		this.rendaAgencia = Math.pow(2, 31);
+		this.clientes = GerenciadorBanco.inicializarClientes();
+		this.boletos = GerenciadorBanco.inicializarBoletos();
+		this.transacoesAgendadas = GerenciadorBanco.inicializarTransacoes();
 	}
 
 	public static Agencia getInstance() {
 		if (instance == null) {
-			clientes = GerenciadorBanco.inicializarClientes();
-			boletos = GerenciadorBanco.inicializarBoletos();
-			transacoesAgendadas = GerenciadorBanco.inicializarTransacoes();
 			instance = new Agencia();
 		}
 		return instance;
 	}
 
-	public static Cliente buscarCliente(String chave) throws BuscaException {
-		for (Cliente cliente : clientes) {
+	/**
+	 * Busca um cliente com a chave de identificação
+	 *
+	 * @param chave a identificação, sendo CPF ou CNPJ
+	 * @return cliente - que contém o paramêtro buscada
+	 * @throws BuscaException caso o cliente não for encontrado
+	 */
+	public Cliente buscarCliente(String chave) throws BuscaException {
+		for (Cliente cliente : this.clientes) {
 			if (Objects.equals(cliente.getIdentificacao(), chave)) {
 				return cliente;
 			}
@@ -61,7 +68,7 @@ public class Agencia {
 	 */
 	public Cliente buscarClientePorChavePix(String tipodeChave, String chave) throws BuscaException {
 		String chavePix = null;
-		for (Cliente cliente : clientes) {
+		for (Cliente cliente : this.clientes) {
 			Conta contaCliente = cliente.getConta();
 			switch (tipodeChave) {
 				case DadosChavesPix.TELEFONE:
@@ -101,8 +108,15 @@ public class Agencia {
 		return null;
 	}
 
-	public static Boleto buscarBoleto(String nossoNumero) throws BuscaException {
-		for (Boleto boleto : boletos) {
+	/**
+	 * Busca o boleto requerido pelo paramêtro
+	 *
+	 * @param nossoNumero Identificação do boleto
+	 * @return boleto
+	 * @throws BuscaException caso o boleto não for encontrado
+	 */
+	public Boleto buscarBoleto(String nossoNumero) throws BuscaException {
+		for (Boleto boleto : this.boletos) {
 			if (boleto.getNossoNumero().equals(nossoNumero)) {
 				return boleto;
 			}
@@ -118,7 +132,7 @@ public class Agencia {
 	 */
 	public HashSet<Boleto> buscarBoletosConta(Conta conta) {
 		HashSet<Boleto> boletosConta = new HashSet<>();
-		for (Boleto boleto : boletos) {
+		for (Boleto boleto : this.boletos) {
 			if (boleto.getContaDestino().getIdConta().equals(conta.getIdConta())) {
 				boletosConta.add(boleto);
 			}
@@ -127,22 +141,41 @@ public class Agencia {
 		return boletosConta;
 	}
 
-	public static void addBoleto(Boleto boleto) {
-		boletos.add(boleto);
+	/**
+	 * Adiciona o boleto na lista de boletos da agência
+	 *
+	 * @param boleto que será adicionado
+	 */
+
+	public void addBoleto(Boleto boleto) {
+		this.boletos.add(boleto);
 	}
 
-	public static void apagarBoleto(Boleto boleto) {
-		boletos.remove(boleto);
+	/**
+	 * Apaga o boleto da lista de boletos
+	 *
+	 * @param boleto boleto a ser removido
+	 */
+	public void apagarBoleto(Boleto boleto) {
+		this.boletos.remove(boleto);
 	}
 
-	public static void imprimirClientes() {
-		for (Cliente cliente : clientes) {
+	/**
+	 * Apenas um metódo para ver todos os clientes com suas informações.
+	 */
+	public void imprimirClientes() {
+		for (Cliente cliente : this.clientes) {
 			System.out.println(cliente.allInfos());
 		}
 	}
 
-	public static ArrayList<Transacao> getTransacoes() {
-		return transacoesAgendadas;
+	/**
+	 * Retorna as transações agendadas da agência
+	 *
+	 * @return {@link ArrayList<Transacao>}
+	 */
+	public ArrayList<Transacao> getTransacoes() {
+		return this.transacoesAgendadas;
 	}
 
 	/**
@@ -171,13 +204,17 @@ public class Agencia {
 		}
 	}
 
+	public Set<Cliente> getClientes() {
+		return this.clientes;
+	}
+
 	public void addCliente(Cliente cliente) throws InsercaoException, EscritaArquivoException {
 		try {
-			Agencia.buscarCliente(cliente.getIdentificacao());
+			this.buscarCliente(cliente.getIdentificacao());
 		} catch (BuscaException e) {
 			if (clientes.add(cliente)) {
 				try {
-					GerenciadorArquivo.salvarClientes((HashSet<Cliente>) Agencia.clientes);
+					GerenciadorArquivo.salvarClientes((HashSet<Cliente>) this.clientes);
 				} catch (EscritaArquivoException ex) {
 					clientes.remove(cliente);
 					throw ex;
@@ -193,8 +230,8 @@ public class Agencia {
 	}
 
 	public void atualizarArquivos() throws EscritaArquivoException {
-		GerenciadorArquivo.salvarClientes((HashSet<Cliente>) Agencia.clientes);
-		GerenciadorArquivo.salvarBoletos((HashSet<Boleto>) Agencia.boletos);
+		GerenciadorArquivo.salvarClientes((HashSet<Cliente>) this.clientes);
+		GerenciadorArquivo.salvarBoletos((HashSet<Boleto>) this.boletos);
 		GeracaoAleatoria.salvarChavesAleatorias();
 		GeracaoAleatoria.salvarNossosNumeros();
 		GeracaoAleatoria.salvarNumerosCartoes();
