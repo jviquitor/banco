@@ -33,7 +33,7 @@ public class GerenciadorArquivo {
 			return DataBank.criarData("01/01/2000", DataBank.SEM_HORA);
 		} catch (FileNotFoundException ex) {
 			/* Arquivo nao encontrado */
-			throw new RuntimeException("Arquivo nao encontrado");
+			return DataBank.criarData("01/01/2000", DataBank.SEM_HORA);
 		} catch (IOException ex) {
 			/* Arquivo nao pode ser acessado */
 			throw new RuntimeException("Arquivo nao pode ser acessado");

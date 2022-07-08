@@ -87,7 +87,7 @@ public class GerenciamentoCartao implements Serializable {
 
 
 	public boolean isDebitoAutomatico() {
-		return this.debitoAutomatico;
+		return this.debitoAutomatico && this.dataDebitoAutomatico > 0;
 	}
 
 	public void setDebitoAutomatico(boolean debitoAutomatico, int dataDebitoAutomatico) {
