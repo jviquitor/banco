@@ -5,6 +5,7 @@ import cartao.Cartao;
 import cartao.CartaoDiamond;
 import cartao.CartaoPremium;
 import cartao.CartaoStandard;
+import cliente.Cliente;
 import conta.exceptions.TipoInvalido;
 import conta.exceptions.TransacaoNaoRealizadaException;
 import funcionalidades.exceptions.EmprestimoException;
@@ -172,14 +173,14 @@ public class Conta implements Serializable {
 		this.carteira.adicionarNovoCartao(cartao);
 	}
 
-	public void pagarBoleto(Boleto boleto) throws TransacaoException {
+	public void pagarBoleto(Boleto boleto, Cliente origem) throws TransacaoException {
 		int intervalo = DataBank.criarData(DataBank.SEM_HORA).calcularIntervalo(boleto.getDataVencimento());
 		Double valorTratado = (intervalo < 0) ? boleto.getMultaPorDias() * -intervalo : boleto.getMultaPorDias();
 		valorTratado += boleto.getValor();
 		if (this.saldo < valorTratado) {
 			throw new TransacaoException("Saldo insuficiente");
 		}
-		boleto.pagar();
+		boleto.pagar(origem);
 		this.diminuirSaldo(valorTratado);
 		boleto.getContaDestino().aumentarSaldo(valorTratado);
 		adicionarHistoricoNotificacao(boleto);
@@ -283,8 +284,10 @@ public class Conta implements Serializable {
 		return emprestimo;
 	}
 
-	public void setEmprestimo(Double valor) {
+	public void criarEmprestimo(Double valor, Integer parcelas) {
 		this.emprestimo = valor;
+		this.parcelaEmprestimo = valor / parcelas;
+		this.aumentarSaldo(valor);
 	}
 
 	public Double getParcelaEmprestimo() {

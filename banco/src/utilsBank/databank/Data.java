@@ -6,12 +6,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 
 public class Data implements Serializable {
+	public static final int DIA = 0;
+	public static final int MES = 1;
+	public static final int ANO = 2;
 	@Serial
 	private static final long serialVersionUID = 4L;
 	private final Calendar calendar;
-	private final int dia;
-	private final int mes;
-	private final int ano;
 	private final int hora;
 	private final int minuto;
 	private final int segundo;
@@ -47,7 +47,13 @@ public class Data implements Serializable {
 		for (int flag : flags) {
 			switch (flag) {
 				case DataBank.SEM_HORA:
-					text = text.split(" ")[0];
+					text = this.toString().split(" ")[0];
+					break;
+				case DataBank.SEM_ANO:
+					text = this.toString().split("/")[0] + "/" + this.toString().split("/")[1];
+					break;
+				case DataBank.SEM_MES:
+					text = this.toString().split("/")[0];
 					break;
 				case DataBank.SEM_BARRA:
 					text = text.replace("/", "");
@@ -58,7 +64,31 @@ public class Data implements Serializable {
 	}
 
 	public boolean equals(Data outra) {
-		return this.calendar.compareTo(outra.calendar) == 0;
+		return this.dia == outra.dia && this.mes == outra.mes && this.ano == outra.ano;
+	}
+
+	@SuppressWarnings("unused")
+	public boolean equals(Data outra, int[] flags) {
+		for (int flag : flags) {
+			switch (flag) {
+				case Data.DIA:
+					if (this.dia != outra.dia) {
+						return false;
+					}
+					break;
+				case Data.MES:
+					if (this.mes != outra.mes) {
+						return false;
+					}
+					break;
+				case Data.ANO:
+					if (this.ano != outra.ano) {
+						return false;
+					}
+					break;
+			}
+		}
+		return true;
 	}
 
 	public boolean depoisDe(Data outra) {
@@ -71,5 +101,19 @@ public class Data implements Serializable {
 
 	public int calcularIntervalo(Data outra) {
 		return (int) ChronoUnit.DAYS.between(this.calendar.toInstant(), outra.calendar.toInstant());
+	}
+
+	public void somar(int valor, int flag) {
+		switch (flag) {
+			case Data.DIA:
+				this.dia += valor;
+				break;
+			case Data.MES:
+				this.mes += valor;
+				break;
+			case Data.ANO:
+				this.ano += valor;
+				break;
+		}
 	}
 }

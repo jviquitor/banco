@@ -23,6 +23,7 @@ import transacao.exceptions.TransacaoException;
 import utilsBank.GerenciadorBanco;
 import utilsBank.arquivo.exception.EscritaArquivoException;
 
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class MenuUsuario {
@@ -372,7 +373,8 @@ public class MenuUsuario {
 		String numBoleto = teclado.nextLine();
 		Boleto boleto = Agencia.buscarBoleto(numBoleto);
 		Conta origem = InterfaceUsuario.usuarioAtualConta();
-		origem.pagarBoleto(boleto);
+		origem.pagarBoleto(boleto, InterfaceUsuario.getClienteAtual());
+		Agencia.apagarBoleto(boleto);
 	}
 
 	private static Boleto criarBoleto() {
@@ -517,6 +519,61 @@ public class MenuUsuario {
 				System.out.println(ex.getMessage());
 			}
 		}
+	}
+
+	private static void menuCriarMostrarCartoes(Cliente cliente) {
+		imprimirBorda("=");
+		String entrada;
+		boolean loop = true;
+		while (loop) {
+			try {
+				System.out.println("[GERENCIAMENTO CARTOES]");
+				System.out.println("[0] - Cancelar");
+				System.out.println("[1] - Mostrar Cartoes");
+				System.out.println("[2] - Adicionar Cartao");
+				entrada = teclado.nextLine();
+				switch (entrada) {
+					case "0":
+						loop = false;
+						break;
+					case "1":
+						cliente.getConta().mostrarCartoes();
+						break;
+					case "2":
+						MenuCriacaoCartao();
+						cliente.getConta().criarCartao(cliente.getNome(), InterfaceUsuario.getDadosCartao());
+						break;
+				}
+			} catch (Exception ignore) {
+			}
+		}
+	}
+
+	private static void MenuCriacaoCartao() throws ValorInvalido {
+		String[] cabecalhoCartoesGeral = {
+				"ESCOLHA O APELIDO DO SEU NOVO CARTAO DE CREDITO", //entrada[0]
+		};
+
+		String[] entradas = UsuarioEntradas(cabecalhoCartoesGeral);
+
+		while (!VerificadorEntrada.verificarApelido(entradas)) {
+			entradas = UsuarioEntradas(cabecalhoCartoesGeral);
+		}
+
+		InterfaceUsuario.setDadosCartao(new DadosCartao(
+				entradas[0] //Apelido do cartao
+		));
+	}
+
+	private static void MenuSetDebitoAutomatico(GerenciamentoCartao carteira) {
+		System.out.println("DIGITE O DIA PARA DEBITAR AUTOMATICAMENTE [01 - 08]");
+		String entrada = teclado.nextLine();
+
+		while (!VerificadorEntrada.verificarDataDebitoAuto(entrada)) {
+			System.out.println("DIA INVALIDO, POR FAVOR, INSIRA CORRETAMENTE UM DIA ENTRE [01 - 08]");
+			entrada = teclado.nextLine();
+		}
+		carteira.setDebitoAutomatico(true, Integer.parseInt(entrada));
 	}
 
 	private static void menuDebitoAutomatico(GerenciamentoCartao carteiraCliente) {
@@ -706,40 +763,22 @@ public class MenuUsuario {
 
 	public static Double menuCriacaoConta() throws ValorInvalido {
 		Double renda = inserirRenda();
-		boolean debitoAutomatico = false;
 
-		String[] cabecalhoCartoesGeral = {
-				"Digite um apelido para seu novo cartao", //entrada[0]
-				"[DIGITE] [1]: PARA SEU CARTAO SER DE CREDITO | DIGITE [0] PARA SEU NOVO CARTAO SER DE DEBITO.", //entrada[1]
-		};
-
-		String[] entradas = UsuarioEntradas(cabecalhoCartoesGeral);
-
-		while (!VerificadorEntrada.verificarEntradasZeroUm(entradas)) {
-			entradas = UsuarioEntradas(cabecalhoCartoesGeral);
-		}
-
-		String FuncaoCartao = VerificadorEntrada.verificadorEntradaFuncaoCartao(entradas[1]);
 		String entrada;
-
-		if (FuncaoCartao.equals(CREDITO)) {
-			System.out.println("Deseja debito automatico? [1] SIM [0] NAO");
+		System.out.println("Deseja debito automatico? [1] SIM [0] NAO");
+		entrada = teclado.nextLine();
+		while (VerificadorEntrada.verificarEntradasZeroUm(entrada)) {
+			System.out.println("Por favor, insira corretamente a opcao!");
 			entrada = teclado.nextLine();
-			while (VerificadorEntrada.verificarEntradasZeroUm(entrada)) {
-				System.out.println("Por favor, insira corretamente a opcao!");
-				entrada = teclado.nextLine();
-			}
-			debitoAutomatico = GerenciadorBanco.intToBoolean(Integer.parseInt(entrada));
 		}
+		boolean debitoAutomatico = GerenciadorBanco.intToBoolean(Integer.parseInt(entrada));
+		MenuCriacaoCartao();
 
 		InterfaceUsuario.setDadosConta(new DadosConta(
 				VerificadorEntrada.tipoDeContaPelaRenda(renda),
 				debitoAutomatico)
 		);
-		InterfaceUsuario.setDadosCartao(new DadosCartao(
-				entradas[0], //Apelido do cartao
-				FuncaoCartao
-		));
+
 		return renda;
 	}
 
@@ -786,29 +825,29 @@ public class MenuUsuario {
 
 	private static void gerarEmprestimo() throws EmprestimoException, ValorInvalido {
 		Conta contaAtual = InterfaceUsuario.usuarioAtualConta();
-		if (!contaAtual.hasEmprestimo()) {
-			String[] cabecalho = {
-					"Valor do emprestimo: ",
-					"Quantidade de parcelas (ate 12x): ",
-			};
-			String[] entrada = UsuarioEntradas(cabecalho);
-
-			int parcelas = Integer.parseInt(entrada[1]);
-			Double valor = Double.parseDouble(entrada[0]);
-			if (contaAtual.getCarteira().getLimiteMaximo() >= valor) {
-				if (0 < parcelas && parcelas <= 12 && !contaAtual.hasEmprestimo()) {
-					Agencia.getInstance().pegarEmprestimo(valor);
-					contaAtual.setEmprestimo(valor);
-					contaAtual.setParcelaEmprestimo(valor / parcelas);
-				} else {
-					throw new EmprestimoException();
-				}
-			} else {
-				throw new EmprestimoException("Seu limite e insuficiente para esse emprestimo");
-			}
-		} else {
+		if (contaAtual.hasEmprestimo()) {
 			throw new EmprestimoException("Voce ja possui um emprestimo");
 		}
+		String[] cabecalho = {
+				"Valor do emprestimo: ",
+				"Quantidade de parcelas (ate 12x): ",
+		};
+		String[] entrada = UsuarioEntradas(cabecalho);
+
+		int parcelas = Integer.parseInt(entrada[1]);
+		double valor = Double.parseDouble(entrada[0]);
+
+		if (contaAtual.getCarteira().getLimiteMaximo() * 4 < valor) {
+			throw new EmprestimoException("Seu limite e insuficiente para esse emprestimo");
+		}
+
+		if (!(0 < parcelas && parcelas <= 12)) {
+			throw new EmprestimoException();
+		}
+
+		Agencia.getInstance().pegarEmprestimo(valor);
+		contaAtual.criarEmprestimo(valor, parcelas);
+		System.out.printf("EMPRESTIMO REALIZADO! (Novo saldo: %.2f)\n", contaAtual.getSaldo());
 	}
 
 	private static void pagarEmprestimo() throws EmprestimoException {
@@ -827,9 +866,12 @@ public class MenuUsuario {
 						break;
 					case "1":
 						contaAtual.pagarParcelaEmprestimo();
+						System.out.printf("PARCELA PAGA! (Novo total: %.2f)\n", contaAtual.getEmprestimo());
 						break;
 					case "2":
 						contaAtual.pagarEmprestimo();
+						System.out.printf("EMPRESTIMO PAGO! (Novo saldo: %.2f)\n", contaAtual.getSaldo());
+						break;
 					default:
 						GerenciadorBanco.imprimirErroOpcao();
 				}
@@ -849,10 +891,17 @@ public class MenuUsuario {
 
 		String[] entrada = UsuarioEntradas(cabecalho);
 
-		Cliente cliente = Agencia.buscarCliente(entrada[0]);
 		ClienteEmpresa clienteEmpresa = Agencia.buscarEmpresa(entrada[0]);
-		if (clienteEmpresa != null) {
-			imprimirBorda("-", TAM_BORDA);
+		Cliente cliente = null;
+		try {
+			cliente = Agencia.buscarCliente(entrada[0]);
+		} catch (BuscaException ex) {
+			if (clienteEmpresa == null) {
+				throw ex;
+			}
+		}
+		if (clienteEmpresa != null && cliente != null) {
+			imprimirBorda("=");
 			System.out.println("Entrar como:");
 			System.out.println("[0] - Cancelar");
 			System.out.println("[1] - Pessoa");
@@ -869,6 +918,8 @@ public class MenuUsuario {
 				default:
 					throw new LoginException("Login cancelado");
 			}
+		} else if (clienteEmpresa != null) {
+			cliente = clienteEmpresa;
 		}
 		cliente.verificarSenha(entrada[1]);
 		InterfaceUsuario.setClienteAtual(cliente);
@@ -886,12 +937,13 @@ public class MenuUsuario {
 		}
 	}
 
-	private static void mostrarBoletos() {
-		Conta contaAtual = InterfaceUsuario.usuarioAtualConta();
-		for (Transacao transacao : contaAtual.getHistorico().getTransacoes()) {
-			if (transacao instanceof Boleto boleto && !boleto.isPago()) {
-				System.out.println(boleto);
-			}
+	private static void mostrarBoletos() throws BuscaException {
+		HashSet<Boleto> boletosGerados = Agencia.buscarBoletosConta(InterfaceUsuario.usuarioAtualConta());
+		if (boletosGerados.size() <= 0) {
+			throw new BuscaException("Voce nao possui boletos gerados");
+		}
+		for (Boleto boleto : boletosGerados) {
+			System.out.println(boleto);
 		}
 	}
 

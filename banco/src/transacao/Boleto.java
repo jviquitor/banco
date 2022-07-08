@@ -1,5 +1,6 @@
 package transacao;
 
+import cliente.Cliente;
 import interfaceUsuario.dados.DadosBoleto;
 import interfaceUsuario.dados.DadosTransacao;
 import transacao.exceptions.TransacaoException;
@@ -66,10 +67,11 @@ public class Boleto extends Transacao implements Serializable {
 		return toString;
 	}
 
-	public void pagar() throws TransacaoException {
+	public void pagar(Cliente origem) throws TransacaoException {
 		if (Boolean.TRUE.equals(foiPago)) {
 			throw new TransacaoException("Esse boleto ja foi pago");
 		}
+		this.origem = origem;
 		this.foiPago = true;
 	}
 

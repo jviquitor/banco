@@ -12,8 +12,9 @@ import transacao.Boleto;
 import transacao.Transacao;
 import utilsBank.GeracaoAleatoria;
 import utilsBank.GerenciadorBanco;
-import utilsBank.arquivo.Exception.EscritaArquivoException;
+import utilsBank.VerificadorDiario;
 import utilsBank.arquivo.GerenciadorArquivo;
+import utilsBank.arquivo.exception.EscritaArquivoException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -97,8 +98,23 @@ public class Agencia {
 		throw new BuscaException("Boleto nao encontrado");
 	}
 
+	public static HashSet<Boleto> buscarBoletosConta(Conta conta) {
+		HashSet<Boleto> boletosConta = new HashSet<>();
+		for (Boleto boleto : boletos) {
+			if (boleto.getContaDestino().getIdConta().equals(conta.getIdConta())) {
+				boletosConta.add(boleto);
+			}
+		}
+
+		return boletosConta;
+	}
+
 	public static void addBoleto(Boleto boleto) {
 		boletos.add(boleto);
+	}
+
+	public static void apagarBoleto(Boleto boleto) {
+		boletos.remove(boleto);
 	}
 
 	public static void imprimirClientes() {
@@ -159,5 +175,6 @@ public class Agencia {
 		GeracaoAleatoria.salvarNossosNumeros();
 		GeracaoAleatoria.salvarNumerosCartoes();
 		GeracaoAleatoria.salvarIdsContas();
+		GerenciadorArquivo.salvarData(VerificadorDiario.getInstance().getUltimaAtualizacao());
 	}
 }

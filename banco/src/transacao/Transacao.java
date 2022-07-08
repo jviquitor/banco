@@ -77,11 +77,11 @@ public class Transacao implements Serializable {
 	}
 
 	public Data getDataAgendada() {
-		return dataAgendada;
+		return this.dataAgendada;
 	}
 
 	public boolean hasDataAgendada() {
-		return dataAgendada != null;
+		return this.dataAgendada != null;
 	}
 
 	public Data getDataEmissaoTransacao() {
