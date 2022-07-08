@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GerenciamentoCartao implements Serializable {
-	//TODO Parcelamento com juros dependendo do tipo do cartoa
 	@Serial
 	private static final long serialVersionUID = 7L;
 	private final List<Cartao> listaDeCartao;

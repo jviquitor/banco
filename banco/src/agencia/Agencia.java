@@ -97,6 +97,10 @@ public class Agencia {
 		}
 	}
 
+	public static ArrayList<Transacao> getTransacoes() {
+		return transacoesAgendadas;
+	}
+
 	public void pegarEmprestimo(double valor) throws EmprestimoException {
 		if (this.rendaAgencia >= valor) {
 			this.rendaAgencia -= valor;

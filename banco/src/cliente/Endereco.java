@@ -6,20 +6,14 @@ import java.io.Serializable;
 public class Endereco implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 3L;
-	private final Integer CEP;
+	private final String CEP;
 	private final Integer numeroCasa;
 	private String complemento;
 
-	public Endereco(Integer CEP, Integer numeroCasa, String complemento) {
+	public Endereco(String CEP, Integer numeroCasa, String complemento) {
 		this.CEP = CEP;
 		this.numeroCasa = numeroCasa;
 		this.complemento = complemento;
-	}
-
-	public Endereco(Integer CEP, Integer numeroCasa) {
-		this.CEP = CEP;
-		this.numeroCasa = numeroCasa;
-		this.complemento = null;
 	}
 
 	@Override

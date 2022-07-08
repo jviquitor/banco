@@ -1,4 +1,4 @@
-package interfaceUsuario.Exceptions;
+package interfaceUsuario;
 
 public class printUtils {
 

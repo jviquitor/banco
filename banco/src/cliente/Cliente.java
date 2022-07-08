@@ -1,5 +1,6 @@
 package cliente;
 
+import cartao.Fatura;
 import cliente.exceptions.LoginException;
 import conta.Conta;
 import conta.ContaDiamond;
@@ -68,6 +69,12 @@ public abstract class Cliente implements Serializable {
 
 	public String getStringIdentificacao() {
 		return "identificacao";
+	}
+
+	public boolean pagarFatura(Double valor) {
+		Fatura fatura = new Fatura(valor, this);
+		this.getConta().pagarFatura(valor);
+		return true;
 	}
 
 	public void setChavesPix() {

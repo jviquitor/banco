@@ -35,10 +35,10 @@ public class Conta implements Serializable {
 	protected final List<Transacao> transacoesRealizadas;
 	protected final List<Transacao> transacoesAgendadas;
 	protected final List<Transacao> transacoesRecebidas;
-	protected Historico notificacoes;
 	protected final Historico historico;
 	protected final GerenciamentoCartao carteira;
 	protected final ChavePix chavesPix;
+	protected Historico notificacoes;
 	protected Double saldo;
 	protected Double dinheiroGuardado;
 	protected Double emprestimo;
@@ -57,6 +57,10 @@ public class Conta implements Serializable {
 		this.emprestimo = 0.0;
 		this.parcelaEmprestimo = 0.0;
 		this.chavesPix = new ChavePix(null, null, null, null);
+	}
+
+	public String getIdConta() {
+		return idConta;
 	}
 
 	public ChavePix getChavesPix() {
@@ -79,10 +83,10 @@ public class Conta implements Serializable {
 	public void setDinheiroGuardado(Double valor, String opcao) {
 		if (opcao.equals(MenuUsuario.GUARDAR)) {
 			this.saldo -= valor;
-			this.dinheiroGuardado = valor;
+			this.dinheiroGuardado += valor;
 		} else if (opcao.equals(MenuUsuario.RESGATAR)) {
 			this.saldo += valor;
-			this.dinheiroGuardado = valor;
+			this.dinheiroGuardado -= valor;
 		}
 
 	}
@@ -313,8 +317,8 @@ public class Conta implements Serializable {
 		return this.emprestimo > 0.0;
 	}
 
-	public ArrayList<Transacao> getHistorico() {
-		return this.historico.getTransacoes();
+	public Historico getHistorico() {
+		return historico;
 	}
 
 	public void addHistorico(Transacao transacao) throws TransacaoException {

@@ -2,6 +2,7 @@ package interfaceUsuario;
 
 import cliente.Cliente;
 import conta.Conta;
+import interfaceUsuario.Exceptions.PagamentoNaoRealizadoException;
 import interfaceUsuario.dados.*;
 import utilsBank.databank.Data;
 import utilsBank.databank.DataBank;
@@ -74,21 +75,20 @@ public class InterfaceUsuario {
 		InterfaceUsuario.dadosCartao = dadosCartao;
 	}
 
-	public static boolean pagarFatura(Double valor) {
-		clienteAtual.getConta().pagarFatura(valor);
+	private static boolean pagarFatura(Double valor) {
+		clienteAtual.pagarFatura(valor);
 		return true;
 	}
 
-	//TODO fazer pagamento debito automatico e Agendada Transacoes
-	public static boolean pagamentoDebitoAutomatico(Double v) {
+	public static boolean pagamentoDebitoAutomatico(Double v) throws PagamentoNaoRealizadoException {
 		if (clienteAtual.getConta().getDebitoAutomatico()) {
-			Data dataAtual = DataBank.criarData(DataBank.SEM_HORA); //TODO usar uma funcao que nao retorne tambem a hora
+			Data dataAtual = DataBank.criarData(DataBank.SEM_HORA);
 
 			if (dataAtual.toString(new int[]{DataBank.SEM_HORA}).equals(clienteAtual.getConta().getDataDebitoAutomatico().toString(new int[]{DataBank.SEM_HORA}))) {
 				return InterfaceUsuario.pagarFatura(v);
 			}
 		}
-		return false; //TODO aqui pode ser uma excecao de pagamento nao realizado por algo
+		throw new PagamentoNaoRealizadoException("O Pagamento por debito automatico nao pode ser concluido. Por favor, pague manualmente");
 	}
 
 }
