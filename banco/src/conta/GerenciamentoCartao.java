@@ -1,7 +1,7 @@
 package conta;
 
 import cartao.Cartao;
-import utilsBank.databank.Data;
+import interfaceUsuario.exceptions.ValorInvalido;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -12,16 +12,16 @@ public class GerenciamentoCartao implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 7L;
 	private final List<Cartao> listaDeCartao;
-	private Double limiteMaximo;
 	private Double limiteUsado;
 	private boolean debitoAutomatico = false;
-	private Data dataDebitoAutomatico;
+	private int dataDebitoAutomatico;
 
 	protected GerenciamentoCartao() {
 		this.listaDeCartao = new ArrayList<>();
+		this.limiteUsado = 0.0;
 	}
 
-	protected Data getDataDebitoAutomatico() {
+	public int getDataDebitoAutomatico() {
 		return dataDebitoAutomatico;
 	}
 
@@ -36,18 +36,28 @@ public class GerenciamentoCartao implements Serializable {
 	}
 
 	/**
+	 * Retorna o limite maximo do Cartao
+	 *
+	 * @return Double
+	 */
+	public Double getLimiteMaximo() throws ValorInvalido {
+		if (!listaDeCartao.isEmpty()) {
+			return listaDeCartao.get(0).getLimiteMaximo();
+		}
+		throw new ValorInvalido("Nenhum Cartao adicionado, por favor, tente novamente criando um cartao virtual.");
+	}
+
+	/**
 	 * Retorna o valor do limite restante para ser gasto
 	 *
 	 * @return Double
 	 */
-	public Double getLimiteRestante() {
-		return limiteMaximo - limiteUsado;
+	public Double getLimiteRestante() throws ValorInvalido {
+		return getLimiteMaximo() - limiteUsado;
 	}
 
 	/**
 	 * Diminui o Limite usado com base no parametro informado
-	 *
-	 * @param valorPagoFatura
 	 */
 	protected void aumentarLimiteAtual(Double valorPagoFatura) {
 		this.limiteUsado -= valorPagoFatura;
@@ -55,8 +65,6 @@ public class GerenciamentoCartao implements Serializable {
 
 	/**
 	 * Aumenta o limite usado com base no parametor informado
-	 *
-	 * @param valorGasto
 	 */
 
 	protected void diminuirLimiteAtual(Double valorGasto) {
@@ -64,17 +72,13 @@ public class GerenciamentoCartao implements Serializable {
 	}
 
 	/**
-	 * Recebe um Cartao e verifica se o Cartao ja foi inserido na lista do Cartao, caso nao, adiciona
-	 *
-	 * @param cartao
-	 * @return Boolean
+	 * Recebe um Cartao e verifica se o Cartao ja foi inserido na lista do cartão, caso nao, adiciona
 	 */
 
-	protected boolean adicionarNovoCartao(Cartao cartao) {
+	protected void adicionarNovoCartao(Cartao cartao) {
 		if (!listaDeCartao.contains(cartao)) {
-			return listaDeCartao.add(cartao);
+			listaDeCartao.add(cartao);
 		}
-		return false;
 	}
 
 	protected List<Cartao> getListaDeCartao() {
@@ -82,31 +86,11 @@ public class GerenciamentoCartao implements Serializable {
 	}
 
 
-	/**
-	 * Retorna o limite maximo do Cartao
-	 *
-	 * @return Double
-	 */
-
-	public Double getLimiteMaximo() {
-		return limiteMaximo;
-	}
-
-	/**
-	 * Coloca o LimiteMaximo
-	 *
-	 * @param limiteMaximo
-	 */
-
-	protected void setLimiteMaximo(Double limiteMaximo) {
-		this.limiteMaximo = limiteMaximo;
-	}
-
 	public boolean isDebitoAutomatico() {
 		return this.debitoAutomatico;
 	}
 
-	public void setDebitoAutomatico(boolean debitoAutomatico, Data dataDebitoAutomatico) {
+	public void setDebitoAutomatico(boolean debitoAutomatico, int dataDebitoAutomatico) {
 		this.debitoAutomatico = debitoAutomatico;
 		this.dataDebitoAutomatico = dataDebitoAutomatico;
 	}

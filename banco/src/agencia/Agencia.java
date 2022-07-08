@@ -5,6 +5,7 @@ import agencia.exceptions.InsercaoException;
 import cliente.Cliente;
 import cliente.ClienteEmpresa;
 import conta.Conta;
+import conta.Rentavel;
 import funcionalidades.exceptions.EmprestimoException;
 import interfaceUsuario.dados.DadosChavesPix;
 import transacao.Boleto;
@@ -118,7 +119,19 @@ public class Agencia {
 		}
 	}
 
-	public void addCliente(Cliente cliente) throws InsercaoException, EscritaArquivoException, BuscaException {
+	public void abrindoAgencia() {
+		for (Cliente cliente : clientes) {
+			cliente.getConta().setSaldoTotalDepositado(0.0);
+		}
+	}
+
+	public void renderContas() {
+		for (Cliente cliente : clientes) {
+			((Rentavel) cliente.getConta()).renderSaldo();
+		}
+	}
+
+	public void addCliente(Cliente cliente) throws InsercaoException, EscritaArquivoException {
 		try {
 			Agencia.buscarCliente(cliente.getIdentificacao());
 		} catch (BuscaException e) {

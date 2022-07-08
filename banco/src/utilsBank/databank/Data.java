@@ -15,6 +15,9 @@ public class Data implements Serializable {
 	private final int hora;
 	private final int minuto;
 	private final int segundo;
+	private int dia;
+	private int mes;
+	private int ano;
 
 	public Data(Calendar data) {
 		this.calendar = data;
@@ -48,6 +51,7 @@ public class Data implements Serializable {
 					break;
 				case DataBank.SEM_BARRA:
 					text = text.replace("/", "");
+					break;
 			}
 		}
 		return text;

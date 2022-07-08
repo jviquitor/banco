@@ -13,8 +13,6 @@ public class Historico implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 8L;
 	private final ArrayList<Transacao> transacoes;
-
-
 	private final ArrayList<Fatura> faturas;
 
 	public Historico() {

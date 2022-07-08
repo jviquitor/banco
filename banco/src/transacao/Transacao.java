@@ -14,12 +14,12 @@ import java.io.Serializable;
 public class Transacao implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 5L;
-	protected Double valor;
-	protected String nossoNumero;
-	protected String idPagamento;
+	protected final Double valor;
+	protected final String nossoNumero;
+	protected final String idPagamento;
+	private final Cliente destino; //@Lembrando DESTINO, QUEM RECEBE
 	protected Data dataEmissaoTransacao;
-	protected Cliente origem; //@Lembrando Origem EH QUEM MANDOU TAL COISA
-	private Cliente destino; //@Lembrando DESTINO EH O DESTINATARIO DO DINHEIRO, QUEM RECEBE
+	protected Cliente origem; //@Lembrando Origem, QUEM MANDOU TAL COISA
 	private Data dataAgendada;
 
 	public Transacao(DadosTransacao dadosTransacao) {
@@ -33,10 +33,11 @@ public class Transacao implements Serializable {
 		this.dataAgendada = null;
 	}
 
-	public Transacao(DadosTransacao dadosTransacao, Data dataAgendada) {
+	public static Transacao criarTransacaoAgendada(DadosTransacao dadosTransacao, Data dataAgendada) {
 		Transacao transacao = new Transacao(dadosTransacao);
 		transacao.dataAgendada = dataAgendada;
 		transacao.dataEmissaoTransacao = DataBank.criarData(DataBank.COM_HORA);
+		return transacao;
 	}
 
 	public void gerarComprovante() {

@@ -1,6 +1,5 @@
 package utilsBank.databank;
 
-import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -9,7 +8,6 @@ public class DataBank {
 	public static final int COM_HORA = 1;
 	public static final int SEM_BARRA = 2;
 	private static final Locale IDIOMA = new Locale("pt", "BR");
-	private static final int FORMATO = DateFormat.SHORT;
 
 	/**
 	 * @return Objeto Data a partir da hora atual.

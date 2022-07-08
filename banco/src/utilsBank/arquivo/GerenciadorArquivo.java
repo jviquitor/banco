@@ -1,17 +1,17 @@
 package utilsBank.arquivo;
 
 import cliente.Cliente;
-import conta.Conta;
 import transacao.Boleto;
 import transacao.Transacao;
-import utilsBank.arquivo.Exception.EscritaArquivoException;
-import utilsBank.arquivo.Exception.LeituraArquivoException;
+import utilsBank.arquivo.exception.EscritaArquivoException;
+import utilsBank.arquivo.exception.LeituraArquivoException;
+import utilsBank.databank.Data;
+import utilsBank.databank.DataBank;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-//TODO Criar exceptions para os casos inválidos
 public class GerenciadorArquivo {
 	public static final String PATH_CLIENTES = "banco/clientes.dat";
 	public static final String PATH_CHAVES_NOSSO_NUMEROS = "banco/chaves_nossos_numeros.dat";
@@ -19,19 +19,18 @@ public class GerenciadorArquivo {
 	public static final String PATH_CHAVES_GERADAS_NUMERO_CARTAO = "banco/geradas_numero_cartao.dat";
 	public static final String PATH_CHAVES_ID_CONTA = "banco/chaves_id_conta.dat";
 	public static final String PATH_BOLETOS = "banco/boletos.dat";
+	public static final String PATH_DATA = "banco/data.dat";
 	public static final String PATH_TRANSACOES = "banco/transacoes.dat";
 
-	public static ArrayList<Conta> listar(String path) throws RuntimeException {
+	public static Data lerData(String path) throws RuntimeException {
 		try {
 			ObjectInputStream arquivo = new ObjectInputStream(new FileInputStream(path));
-			ArrayList<Conta> dados = (ArrayList<Conta>) arquivo.readObject();
+			Data data = (Data) arquivo.readObject();
 			arquivo.close();
-			if (dados.size() > 0) {
-				return dados;
+			if (data != null) {
+				return data;
 			}
-			/* Lista vazia */
-
-			throw new LeituraArquivoException("Lista vazia");
+			return DataBank.criarData("01/01/2000", DataBank.SEM_HORA);
 		} catch (FileNotFoundException ex) {
 			/* Arquivo nao encontrado */
 			throw new RuntimeException("Arquivo nao encontrado");
@@ -139,15 +138,17 @@ public class GerenciadorArquivo {
 		}
 	}
 
-	public static void inserirSet(String path, HashSet<Cliente> novosDados) {
+	public static void salvarData(Data data) throws LeituraArquivoException, EscritaArquivoException {
 		try {
-			ObjectOutputStream arquivo = new ObjectOutputStream(new FileOutputStream(path));
-			arquivo.writeObject(novosDados);
+			ObjectOutputStream arquivo = new ObjectOutputStream(new FileOutputStream(GerenciadorArquivo.PATH_DATA));
+			arquivo.writeObject(data);
 			arquivo.close();
 		} catch (FileNotFoundException ex) {
 			/* Diretorio nao encontrado */
+			throw new LeituraArquivoException("Diretorio nao encontrado");
 		} catch (IOException ex) {
 			/* Arquivo nao pode ser acessado */
+			throw new EscritaArquivoException("Arquivo nao pode ser acessado");
 		}
 	}
 

@@ -25,15 +25,16 @@ public class ChavePix implements Serializable {
 		switch (tipoDechave) {
 			case DadosChavesPix.TELEFONE:
 				this.telefone = dadosChavesPix.getTelefone();
-				break;
+				return true;
 			case DadosChavesPix.EMAIL:
 				this.email = dadosChavesPix.getEmail();
-				break;
+				return true;
+
 			case DadosChavesPix.CHAVE_ALEATORIA:
 				this.chaveAleatoria = GeracaoAleatoria.gerarChaveAleatoria(GeracaoAleatoria.TAMANHO_CHAVE_ALEATORIA);
-				break;
+				return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override

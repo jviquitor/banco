@@ -3,6 +3,7 @@ package cliente;
 import java.io.Serial;
 import java.io.Serializable;
 
+@SuppressWarnings("unused")
 public class Endereco implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 3L;
@@ -27,5 +28,9 @@ public class Endereco implements Serializable {
 
 	protected void setComplemento(String complemento) {
 		this.complemento = complemento;
+	}
+
+	protected Integer getNumeroCasa() {
+		return numeroCasa;
 	}
 }

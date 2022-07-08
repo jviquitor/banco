@@ -24,13 +24,6 @@ public class DadosTransacao implements Serializable {
 		setOrigemPix(chaveorigem, tipoChaveOrigem);
 	}
 
-	public DadosTransacao(Double valor, String chaveDestino, String tipoChaveDestino, Cliente cliente) throws BuscaException {
-		this.valor = valor;
-		this.dataAgendada = null;
-		setDestinoPix(chaveDestino, tipoChaveDestino);
-		setOrigemPix(cliente);
-	}
-
 	public DadosTransacao(Double valor, String chaveDestino, String chaveorigem, String tipoChaveDestino, String tipoChaveOrigem, String dataAgendada) throws BuscaException {
 		this.valor = valor;
 		this.dataAgendada = DataBank.criarData(dataAgendada, DataBank.SEM_HORA);
@@ -56,10 +49,6 @@ public class DadosTransacao implements Serializable {
 		return this.dataAgendada;
 	}
 
-	private void setDestinoBoleto(String chave) throws BuscaException {
-		this.destino = Agencia.buscarCliente(chave);
-	}
-
 	private void setDestinoPix(String chave, String tipoDaChave) throws BuscaException {
 		this.destino = Agencia.buscarClientePorChavePix(tipoDaChave, chave);
 	}
@@ -68,9 +57,6 @@ public class DadosTransacao implements Serializable {
 		this.origem = Agencia.buscarClientePorChavePix(tipoDaChave, chave);
 	}
 
-	private void setOrigemPix(Cliente cliente) {
-		this.origem = cliente;
-	}
 
 	public Cliente getdestino() {
 		return this.destino;

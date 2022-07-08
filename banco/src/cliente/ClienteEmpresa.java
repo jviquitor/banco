@@ -3,16 +3,20 @@ package cliente;
 import cliente.exceptions.GerenteJaExistenteException;
 import cliente.exceptions.GerenteNaoEncontradoException;
 import conta.Conta;
+import interfaceUsuario.exceptions.ValorInvalido;
 
+import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
 
 public class ClienteEmpresa extends Cliente {
+	@Serial
+	private static final long serialVersionUID = 18L;
 	private final Set<String> GERENTES_EMPRESA = new HashSet<>(); //Guardara as identificacoes de quem pode acessar a conta
 	private final String CNPJ;
 
 
-	public ClienteEmpresa(String nome, String email, String telefone, Integer idade, Endereco end, String cnpj, String senha) {
+	public ClienteEmpresa(String nome, String email, String telefone, Integer idade, Endereco end, String cnpj, String senha) throws ValorInvalido {
 		super(nome, email, telefone, idade, end, senha);
 		this.CNPJ = cnpj;
 	}
@@ -49,14 +53,12 @@ public class ClienteEmpresa extends Cliente {
 		return this.conta;
 	}
 
-	public void setConta(Conta conta) {
-		this.conta = conta;
-	}
 
 	public String getIdentificacao() {
 		return this.CNPJ;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public boolean equals(Cliente outroCliente) {
 		if (outroCliente instanceof ClienteEmpresa) {

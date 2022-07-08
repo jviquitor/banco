@@ -16,22 +16,13 @@ public class DadosBoleto {
 		this.nossoNumero = null;
 	}
 
-	public DadosBoleto(String nossoNumero) {
-		this.nossoNumero = nossoNumero;
-		this.dataVencimento = null;
-		this.multaPorDias = null;
-		this.foiPago = null;
-	}
-
-	public String getNossoNumero() {
-		return nossoNumero;
-	}
 
 	public Integer getMultaPorDias() {
 		return multaPorDias;
 	}
 
 	public Data getDataVencimento() {
+		assert dataVencimento != null;
 		return DataBank.criarData(dataVencimento, DataBank.SEM_HORA);
 	}
 

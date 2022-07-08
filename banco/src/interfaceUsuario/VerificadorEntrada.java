@@ -1,9 +1,13 @@
 package interfaceUsuario;
 
 import cliente.exceptions.TiposClientes;
+import conta.ContaDiamond;
+import conta.ContaPremium;
+import conta.ContaStandard;
+import conta.GerenciamentoCartao;
 import conta.exceptions.TipoInvalido;
-import interfaceUsuario.Exceptions.ValorInvalido;
 import interfaceUsuario.dados.DadosChavesPix;
+import interfaceUsuario.exceptions.ValorInvalido;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -15,14 +19,19 @@ public class VerificadorEntrada {
 	public static final String STANDARD = "standard";
 	public static final String PREMIUM = "premium";
 	public static final String DIAMOND = "diamond";
+	public static final String IDENTIFICACAO = "identificacao";
+	public static final int MAX_CARACTERES_ENTRADA = 60;
 	protected static final double RENDA_MINIMA = 200.0;
 	protected static final double RENDA_MAXIMA_STANDARD = 10000.0;
 	protected static final double RENDA_MAXIMA_PREMIUM = 30000.0;
-	protected static final double RENDA_MINIMA_DIAMOND = 30001.0;
 	protected static final String[] ENTRADAS_CHAVE_PIX = {"chave_aleatoria", "telefone", "email"};
 	protected static final int DIGITOS_MAXIMO_TELEFONE = 12;
 	protected static final int QUANTIDADE_IDENTIFICACAO_VALIDA = 14;
+	private static final int DIA_MINIMO_DEB_AUTO = 1;
+	private static final int DIA_MAX_DEB_AUTO = 8;
+	private static final int APELIDO_MAX_CARACTERES = 30;
 	private static final Pattern NAO_APENAS_ALFABETO = Pattern.compile("[^a-zA-Z\s]");
+	private static final Pattern NAO_APENAS_ALFABETO_DIGITO = Pattern.compile("[^a-zA-Z0-9\s]");
 	private static final Pattern HAS_WHITESPACE = Pattern.compile("\s");
 	private static final Pattern QUALQUER_NAO_DIGITO = Pattern.compile("/\\D+/");
 	private static final String EMAIL_PATTERN =
@@ -35,16 +44,12 @@ public class VerificadorEntrada {
 	private static final int TAMANHO_CEP = 8;
 	private static final Scanner teclado = new Scanner(System.in);
 
-	protected static boolean verificarEntradasZeroUm(String[] entradas) {
-		return entradas[1].equals("0") || entradas[1].equals("1");
-	}
-
 	protected static boolean verificarEntradasZeroUm(String entrada) {
 		return !entrada.equals("0") && !entrada.equals("1");
 	}
 
-	protected static boolean verificarDadosTransacao(String entrada, String tipoOperacao) throws ValorInvalido {
-		int value = -1;
+	protected static boolean verificarDadosTransacao(String entrada, String tipoOperacao, String tipoConta) throws ValorInvalido {
+		int value;
 		try {
 			value = Integer.parseInt(entrada);
 		} catch (Exception exception) {
@@ -52,9 +57,28 @@ public class VerificadorEntrada {
 			value = Integer.parseInt(entrada);
 		}
 		if (tipoOperacao.equals(TRANSFERENCIA)) {
-			return verificarEntradaValor(entrada);
+			return verificarEntradaValor(entrada, tipoOperacao);
 		} else if (tipoOperacao.equals(DEPOSITO)) {
-			return value > 0.0;
+			if (value > 0.0) {
+				double valorDepositosOcorridos = InterfaceUsuario.getClienteAtual().getConta().getSaldoTotalDepositado();
+				switch (tipoConta) {
+					case STANDARD:
+						if (value <= ContaStandard.DEPOSITO_MAXIMO && valorDepositosOcorridos + value <= ContaStandard.DEPOSITO_MAXIMO) {
+							return true;
+						}
+						throw new ValorInvalido("[ERRO] O seu tipo de conta nao permite transacoes maiores do que " + ContaStandard.DEPOSITO_MAXIMO + " reais\nPor favor, insira um valor valido!");
+					case PREMIUM:
+						if (value <= ContaPremium.DEPOSITO_MAXIMO && valorDepositosOcorridos + value <= ContaPremium.DEPOSITO_MAXIMO) {
+							return true;
+						}
+						throw new ValorInvalido("[ERRO] O seu tipo de conta nao permite transacoes maiores do que " + ContaPremium.DEPOSITO_MAXIMO + " reais\nPor favor, insira um valor valido!");
+					case DIAMOND:
+						if (value <= ContaDiamond.DEPOSITO_MAXIMO && valorDepositosOcorridos + value <= ContaDiamond.DEPOSITO_MAXIMO) {
+							return true;
+						}
+						throw new ValorInvalido("[ERRO] Nossa agencia nao permite depositos maiores do que " + ContaDiamond.DEPOSITO_MAXIMO + " reais\nPor favor, insira um valor valido!");
+				}
+			}
 		}
 		return false;
 	}
@@ -78,7 +102,6 @@ public class VerificadorEntrada {
 	}
 
 	public static boolean verificarIdade(String idade, TiposClientes tiposClientes) {
-		int idadeValor = Integer.parseInt(idade);
 		if (tiposClientes == TiposClientes.CLIENTE_EMPRESA) {
 			return Integer.parseInt(idade) >= 3;
 		}
@@ -90,9 +113,8 @@ public class VerificadorEntrada {
 	}
 
 	private static boolean verificadorIdentificacao(String e) {
-		int id;
 		try {
-			id = Integer.parseInt(e);
+			Integer.parseInt(e);
 		} catch (NumberFormatException ex) {
 			return true;
 		}
@@ -133,7 +155,7 @@ public class VerificadorEntrada {
 		throw new TipoInvalido("O tipo de conta nao pode ser definido");
 	}
 
-	protected static boolean verificarEntradaValor(String s) throws ValorInvalido {
+	protected static boolean verificarEntradaValorParaFatura(String s, MenuUsuarioConstantes verificarValorSaldo) throws ValorInvalido {
 		double valor;
 		try {
 			valor = Double.parseDouble(s);
@@ -143,10 +165,11 @@ public class VerificadorEntrada {
 		if (valor < 0.0) {
 			throw new ValorInvalido("[ERRO] Valor negativo para operacao");
 		}
-		if (valor >= InterfaceUsuario.getClienteAtual().getConta().getSaldo()) {
-			throw new ValorInvalido("[ERRO] Nao ha saldo suficiente para realizar essa operacao!");
+		if (verificarValorSaldo == MenuUsuarioConstantes.VERIFICAR_VALOR_SALDO) {
+			if (valor >= InterfaceUsuario.getClienteAtual().getConta().getSaldo()) {
+				throw new ValorInvalido("[ERRO] Nao ha saldo suficiente para realizar essa operacao!");
+			}
 		}
-
 		return true;
 	}
 
@@ -172,6 +195,28 @@ public class VerificadorEntrada {
 		return true;
 	}
 
+	protected static boolean verificarEntradaValorFatura(String s, MenuUsuarioConstantes tipoOperacao, GerenciamentoCartao carteira) throws ValorInvalido {
+		if (tipoOperacao == MenuUsuarioConstantes.PAGAR_FATURA) {
+			if (verificarEntradaValorParaFatura(s, MenuUsuarioConstantes.VERIFICAR_VALOR_SALDO)) {
+				double valor = Double.parseDouble(s);
+				if (valor > carteira.getFatura()) {
+					throw new ValorInvalido("[ERRO] Valor de pagamento maior que o valor da fatura");
+				}
+			}
+		}
+		if (tipoOperacao == MenuUsuarioConstantes.AUMENTAR_FATURA) {
+			if (verificarEntradaValorParaFatura(s, MenuUsuarioConstantes.NAO_VERIFICAR_VALOR_SALDO)) {
+				double valor = Double.parseDouble(s);
+				if (valor > carteira.getLimiteRestante()) {
+					throw new ValorInvalido("[ERRO] Valor inserido maior que o seu limite");
+				}
+			}
+			return false;
+		}
+
+		return true;
+	}
+
 	protected static boolean verificarEntradaValorPositivo(String s) throws ValorInvalido {
 		double valor;
 		try {
@@ -182,7 +227,7 @@ public class VerificadorEntrada {
 		if (valor < 0.0) {
 			throw new ValorInvalido("[ERRO] Valor negativo para operacao");
 		}
-		return true;
+		return false;
 	}
 
 	protected static boolean verificarIdentidadeGerente(String s) {
@@ -192,33 +237,25 @@ public class VerificadorEntrada {
 		return false;
 	}
 
-	//TODO TESTAR VERIFICAR DATA
-	public static boolean verificarData(String d) {
+	public static boolean verificarData(String d) throws ValorInvalido {
 		if (d.contains("/")) {
 			String[] d_data = d.split("/");
 			for (String d_datum : d_data) {
 				try {
-					Integer.parseInt(d_datum);
+					if (Integer.parseInt(d_datum) <= 0) {
+						throw new ValorInvalido("[DATA INVALIDA]");
+					}
 				} catch (NumberFormatException ex) {
-					return false;
+					throw new ValorInvalido("[DATA INVALIDA]");
 				}
 			}
-			return true;
+			return Integer.parseInt(d_data[1]) <= 12 && Integer.parseInt(d_data[2]) >= 2000 && Integer.parseInt(d_data[0]) <= 31;
 		}
-		return false;
+		throw new ValorInvalido("[DATA INVALIDA]");
 	}
 
-	protected static String verificadorEntradaFuncaoCartao(String entrada) {
-		if (entrada.equals("1")) {
-			return CREDITO;
-		} else if (entrada.equals("0")) {
-			return DEBITO;
-		}
-		throw new TipoInvalido("Nenhum valor correto para a funcao do cartao!");
-	}
-
-	protected static boolean verificarDadosAgendamentoTransacao(String[] s) throws ValorInvalido {
-		if (verificarDadosTransacao(s[0], TRANSFERENCIA)) {
+	protected static boolean verificarDadosAgendamentoTransacao(String[] s, String tipoConta) throws ValorInvalido {
+		if (verificarDadosTransacao(s[0], TRANSFERENCIA, tipoConta)) {
 			return verificarData(s[1]);
 		}
 		return false;
@@ -242,23 +279,17 @@ public class VerificadorEntrada {
 		return !NAO_APENAS_ALFABETO.matcher(e).find();
 	}
 
+	private static boolean isAlphanumeric(String e) {
+		return !NAO_APENAS_ALFABETO_DIGITO.matcher(e).find();
+	}
+
 	protected static boolean verificarInformacoesCliente(String[] entradaGeral, TiposClientes tiposClientes) throws ValorInvalido {
-		/*		String[] cabecalhoEndereco = {
-				"CEP",
-				"Numero da Residencia",
-				"Complemento (Opcional)",
-		};
-		String[] cabecalhoGeral = {
-				"Nome completo",
-				"Email",
-				"Telefone",
-				"Idade",
-				tag,
-				"Senha",
-		};*/
-		for (int i = 0; i < entradaGeral.length; i++) {
-			if (entradaGeral[i].isBlank()) {
+		for (String s : entradaGeral) {
+			if (s.isBlank()) {
 				throw new ValorInvalido("Nenhum dos campos podem ser vazios. Tente novamente");
+			}
+			if (s.length() > MAX_CARACTERES_ENTRADA) {
+				throw new ValorInvalido("Numero de caracteres excedido");
 			}
 		}
 
@@ -315,7 +346,7 @@ public class VerificadorEntrada {
 	}
 
 	protected static boolean verificarBoleto(String[] entrada) throws ValorInvalido {
-		if (!verificarEntradaValorPositivo(entrada[0])) {
+		if (verificarEntradaValorPositivo(entrada[0]) || verificarEntradaValorPositivo(entrada[2])) {
 			return false;
 		}
 		if (!verificarData(entrada[1])) {
@@ -328,4 +359,25 @@ public class VerificadorEntrada {
 		}
 		return true;
 	}
+
+	protected static boolean verificarDataDebitoAuto(String entrada) {
+		try {
+			int datavalue = Integer.parseInt(entrada);
+			return datavalue >= DIA_MINIMO_DEB_AUTO && datavalue <= DIA_MAX_DEB_AUTO;
+		} catch (NumberFormatException ex) {
+			return false;
+		}
+	}
+
+	protected static boolean verificarApelido(String[] entradas) throws ValorInvalido {
+		if (entradas[0].length() > APELIDO_MAX_CARACTERES) {
+			throw new ValorInvalido("O apelido excede a quantidade permitida de caracteres");
+		}
+
+		if (!isAlphanumeric(entradas[0])) {
+			throw new ValorInvalido("Por favor, o apelido deve conter apenas numeros e letras");
+		}
+		return true;
+	}
+
 }

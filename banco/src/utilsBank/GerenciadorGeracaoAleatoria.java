@@ -1,7 +1,7 @@
 package utilsBank;
 
-import utilsBank.arquivo.Exception.LeituraArquivoException;
 import utilsBank.arquivo.GerenciadorArquivo;
+import utilsBank.arquivo.exception.LeituraArquivoException;
 
 import java.util.HashSet;
 

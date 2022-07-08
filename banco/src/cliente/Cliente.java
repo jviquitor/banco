@@ -13,10 +13,12 @@ import interfaceUsuario.MenuUsuario;
 import interfaceUsuario.VerificadorEntrada;
 import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosConta;
+import interfaceUsuario.exceptions.ValorInvalido;
 
 import java.io.Serial;
 import java.io.Serializable;
 
+@SuppressWarnings("SameReturnValue")
 public abstract class Cliente implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L;
@@ -30,7 +32,7 @@ public abstract class Cliente implements Serializable {
 	//private Boolean isOnline;
 	protected Double renda;
 
-	public Cliente(String nome, String email, String telefone, Integer idade, Endereco end, String senha) {
+	public Cliente(String nome, String email, String telefone, Integer idade, Endereco end, String senha) throws ValorInvalido {
 		this.nome = nome;
 		this.email = email;
 		this.telefone = telefone;
@@ -48,12 +50,9 @@ public abstract class Cliente implements Serializable {
 		return this.conta;
 	}
 
-	public void setConta(Conta conta) {
-		this.conta = conta;
-	}
-
 	public abstract String getIdentificacao();
 
+	@SuppressWarnings("unused")
 	public abstract boolean equals(Cliente outroCliente);
 
 	public String allInfos() {
@@ -67,12 +66,9 @@ public abstract class Cliente implements Serializable {
 		return getString(toString);
 	}
 
-	public String getStringIdentificacao() {
-		return "identificacao";
-	}
-
 	public boolean pagarFatura(Double valor) {
 		Fatura fatura = new Fatura(valor, this);
+		this.getConta().getHistorico().addFaturas(fatura);
 		this.getConta().pagarFatura(valor);
 		return true;
 	}
@@ -92,7 +88,7 @@ public abstract class Cliente implements Serializable {
 		return toString;
 	}
 
-	public Conta criarConta() {
+	public Conta criarConta() throws ValorInvalido {
 		this.renda = MenuUsuario.menuCriacaoConta();
 		DadosConta dadosConta = InterfaceUsuario.getDadosConta();
 		DadosCartao dadosCartao = InterfaceUsuario.getDadosCartao();
@@ -110,11 +106,7 @@ public abstract class Cliente implements Serializable {
 			} else {
 				throw new TipoInvalido("Por favor, escolha um tipo de conta valido");
 			}
-			if (dadosConta.hasCartaoCredito()) {
-				conta.criarCartao(nome, dadosCartao);
-			} else if (dadosConta.hasCartaoDebito()) {
-				conta.criarCartao(nome, dadosCartao);
-			}
+			conta.criarCartao(nome, dadosCartao);
 		}
 		return conta;
 	}

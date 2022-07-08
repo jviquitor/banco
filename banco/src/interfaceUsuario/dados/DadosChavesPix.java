@@ -25,10 +25,6 @@ public class DadosChavesPix {
 		return telefone;
 	}
 
-	public boolean isChaveAleatoria() {
-		return chaveAleatoria;
-	}
-
 	public String getEmail() {
 		return email;
 	}

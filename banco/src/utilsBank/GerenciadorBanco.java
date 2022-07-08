@@ -1,17 +1,20 @@
 package utilsBank;
 
 import cliente.Cliente;
+import conta.Conta;
+import conta.ContaDiamond;
+import conta.ContaPremium;
+import conta.ContaStandard;
+import interfaceUsuario.VerificadorEntrada;
 import transacao.Boleto;
 import transacao.Transacao;
-import utilsBank.arquivo.Exception.LeituraArquivoException;
 import utilsBank.arquivo.GerenciadorArquivo;
+import utilsBank.arquivo.exception.LeituraArquivoException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public class GerenciadorBanco {
-	//Classe para gerenciar o inicio do programa do banco
-	//Chega e guarda todos os clientes numa estrutura para a agencia
 	private static final String TODOS_OS_DIREITOS_RESERVADOS = "© TODOS OS DIREITOS RESERVADOS AO BIC";
 	private static final String TRANSFERENCIA_AGENDADA = "Sua transferencia foi agendada com sucesso. Obrigada";
 
@@ -22,6 +25,19 @@ public class GerenciadorBanco {
 
 	public static ArrayList<Transacao> inicializarTransacoes() throws LeituraArquivoException {
 		return GerenciadorArquivo.listarTransacoes(GerenciadorArquivo.PATH_TRANSACOES);
+	}
+
+	public static String getTipoConta(Conta c) {
+		if (c instanceof ContaDiamond) {
+			return VerificadorEntrada.DIAMOND;
+		}
+		if (c instanceof ContaPremium) {
+			return VerificadorEntrada.PREMIUM;
+		}
+		if (c instanceof ContaStandard) {
+			return VerificadorEntrada.STANDARD;
+		}
+		return " ";
 	}
 
 	public static boolean intToBoolean(int value) {

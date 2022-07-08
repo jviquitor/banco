@@ -1,14 +1,18 @@
 package conta;
 
-import cartao.CartaoDiamond;
+import java.io.Serial;
 
-public class ContaDiamond extends ContaPremium {
-	private static final int SAQUES_MAXIMOS = 15;
-	private static final int VALOR_SAQUES_MAXIMO = 100000;
-	private static final int FATOR_EMPRESTIMO = 16;
+public class ContaDiamond extends ContaPremium implements Rentavel {
+	public static final int DEPOSITO_MAXIMO = 80000;
+	@Serial
+	private static final long serialVersionUID = 15L;
 
 	public ContaDiamond() {
 		super();
-		this.carteira.setLimiteMaximo(CartaoDiamond.LIMITE_MAX);
+	}
+
+	@Override
+	public void renderSaldo() {
+		this.saldo = this.saldo + (this.saldo * Rentavel.FATOR_RENDER_DIAMOND);
 	}
 }

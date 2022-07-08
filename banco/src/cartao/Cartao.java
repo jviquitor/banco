@@ -13,31 +13,39 @@ public abstract class Cartao implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 6L;
 	protected final String numeroCartao;
-	protected final Integer cvc;
+	protected final String cvc;
 	protected final String apelidoCartao;
 	protected final Data validade;
-	protected final FuncaoCartao funcaoCartao; // @Lembrando Se refere a ser debito ou credito
-	protected String nomeTitular;
+	protected final String nomeTitular;
 	protected String tipoCartao; // @Lembrando, tipo se refere ao tipo de conta
 
 
 	protected Cartao(String nomeTitular, DadosCartao dadosCartao) {
 		this.numeroCartao = Agencia.ID_AGENCIA + GeracaoAleatoria.gerarNumeroCartao();
-		this.cvc = Integer.parseInt(GeracaoAleatoria.gerarNumeros(3));
+		this.cvc = GeracaoAleatoria.gerarNumeros(3);
 		this.apelidoCartao = dadosCartao.getApelidoCartao();
 		this.nomeTitular = nomeTitular;
-		//Possível implementação de método para somar datas (na classe Data)
 		this.validade = DataBank.criarData(DataBank.SEM_HORA);
-		this.funcaoCartao = dadosCartao.getFuncaoCartao();
+		this.validade.somar(2, Data.ANO);
 	}
+
+	/**
+	 * Retorna o limite maximo do Cartao
+	 *
+	 * @return Double
+	 */
+	public abstract Double getLimiteMaximo();
 
 	@Override
 	public String toString() {
 		String toString = "";
-		toString = String.format(toString, "[CARTAO DE %s]", this.funcaoCartao.toString());
+		toString = String.format(toString, "[CARTAO DE CREDITO]");
 
 		if (apelidoCartao != null) {
 			toString = toString + "APELIDO: " + apelidoCartao + "\n";
+		}
+		if (numeroCartao != null) {
+			toString = toString + "NUMERO DO CARTAO: " + numeroCartao + "\n";
 		}
 		if (cvc != null) {
 			toString = toString + "CVC: " + cvc + "\n";

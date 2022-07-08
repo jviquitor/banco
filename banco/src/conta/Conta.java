@@ -26,7 +26,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Conta implements Serializable {
 	@Serial
@@ -34,12 +33,12 @@ public class Conta implements Serializable {
 	protected final String idConta;
 	protected final List<Transacao> transacoesRealizadas;
 	protected final List<Transacao> transacoesAgendadas;
-	protected final List<Transacao> transacoesRecebidas;
 	protected final Historico historico;
 	protected final GerenciamentoCartao carteira;
 	protected final ChavePix chavesPix;
 	protected Historico notificacoes;
 	protected Double saldo;
+	protected Double saldoTotalDepositado;
 	protected Double dinheiroGuardado;
 	protected Double emprestimo;
 	protected Double parcelaEmprestimo;
@@ -48,15 +47,23 @@ public class Conta implements Serializable {
 		this.idConta = GeracaoAleatoria.gerarIdConta(GeracaoAleatoria.TAMANHO_ID_CONTA);
 		this.saldo = 0.0;
 		this.dinheiroGuardado = 0.0;
+		this.saldoTotalDepositado = 0.0;
 		this.transacoesRealizadas = new ArrayList<>();
 		this.transacoesAgendadas = new ArrayList<>();
-		this.transacoesRecebidas = new ArrayList<>();
 		this.notificacoes = new Historico();
 		this.historico = new Historico();
 		this.carteira = new GerenciamentoCartao();
 		this.emprestimo = 0.0;
 		this.parcelaEmprestimo = 0.0;
 		this.chavesPix = new ChavePix(null, null, null, null);
+	}
+
+	public Double getSaldoTotalDepositado() {
+		return saldoTotalDepositado;
+	}
+
+	public void setSaldoTotalDepositado(Double saldoTotalDepositado) {
+		this.saldoTotalDepositado = saldoTotalDepositado;
 	}
 
 	public String getIdConta() {
@@ -103,15 +110,14 @@ public class Conta implements Serializable {
 		if (addTransacaoRealizada(transacao)) {
 			transacao.getContaDestino().aumentarSaldo(valorT);
 			transacao.getContaOrigem().diminuirSaldo(valorT);
+			adicionarHistoricoNotificacao(transacao);
 			return transacao;
 		}
 		throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
 	}
 
-	public boolean addTransacaoRealizada(Transacao t) throws TransacaoException {
+	public boolean addTransacaoRealizada(Transacao t) {
 		if (!transacoesRealizadas.contains(t)) {
-			this.historico.addTransacao(t);
-			this.notificacoes.addTransacao(t);
 			transacoesRealizadas.add(t);
 			return true;
 		}
@@ -127,10 +133,17 @@ public class Conta implements Serializable {
 		return false;
 	}
 
-	private void transferir(Transacao transacao) {
+	private void transferir(Transacao transacao) throws TransacaoException {
 		Double valorT = transacao.getValor();
 		transacao.getContaDestino().aumentarSaldo(valorT);
 		transacao.getContaOrigem().diminuirSaldo(valorT);
+		adicionarHistoricoNotificacao(transacao);
+	}
+
+	private void adicionarHistoricoNotificacao(Transacao transacao) throws TransacaoException {
+		transacao.getContaOrigem().addHistorico(transacao);
+		transacao.getContaDestino().addHistorico(transacao);
+		transacao.getContaDestino().addNotificacao(transacao);
 	}
 
 	public boolean equals(Conta outraConta) {
@@ -169,8 +182,7 @@ public class Conta implements Serializable {
 		boleto.pagar();
 		this.diminuirSaldo(valorTratado);
 		boleto.getContaDestino().aumentarSaldo(valorTratado);
-		boleto.getContaDestino().addHistorico(boleto);
-		boleto.getContaDestino().addNotificacao(boleto);
+		adicionarHistoricoNotificacao(boleto);
 	}
 
 	public Transacao depositar() throws TransacaoException {
@@ -179,9 +191,12 @@ public class Conta implements Serializable {
 		Double valorT = transacao.getValor();
 
 		if (addTransacaoRealizada(transacao)) {
+			this.setSaldoTotalDepositado(valorT);
 			if (transacao.getContaDestino().equals(transacao.getContaOrigem())) {
 				transacao.getContaDestino().aumentarSaldo(valorT);
+				transacao.getContaOrigem().addHistorico(transacao);
 			} else {
+				adicionarHistoricoNotificacao(transacao);
 				transacao.getContaDestino().aumentarSaldo(valorT);
 				transacao.getContaOrigem().diminuirSaldo(valorT);
 			}
@@ -227,30 +242,19 @@ public class Conta implements Serializable {
 	public Transacao agendarTransacao() throws TransacaoException {
 		DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
 		Data dataAgendada = dadosTransacao.getDataAgendada();
-		Transacao transacao = new Transacao(dadosTransacao, dataAgendada);
+		Transacao transacao = Transacao.criarTransacaoAgendada(dadosTransacao, dataAgendada);
 		if (addTransacaoAgendadas(transacao)) {
 			return transacao;
 		}
 		throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
 	}
 
-	//TODO: a Interface eh responsavel por checar o CADA DIA esta corretamente para chamar essa funcao
-	public Transacao buscarTransacoesAgendadas(Data data) {
-		for (Transacao t : transacoesAgendadas) {
-			if (Objects.equals(t.getDataAgendada().toString(), data.toString())) {
-				return t;
-			}
-		}
-		return null;
-	}
-
-	public boolean realizarTransacaoAgendada(Transacao transacao) throws TransacaoException {
+	public void realizarTransacaoAgendada(Transacao transacao) throws TransacaoException {
 		if (transacao.getDataAgendada() == null) {
 			throw new TransacaoException("Essa transacao ja foi realizada");
 		}
 		transferir(transacao);
 		transacao.atualizar();
-		return true;
 	}
 
 	public void apagarTransacaoAgendada(Transacao transacao) throws TransacaoException {
@@ -265,10 +269,9 @@ public class Conta implements Serializable {
 		return saldo;
 	}
 
-	public boolean pagarFatura(Double valor) {
+	public void pagarFatura(Double valor) {
 		this.carteira.aumentarLimiteAtual(valor);
 		this.saldo -= valor;
-		return true;
 	}
 
 	public boolean aumentarFatura(Double valor) {
@@ -288,11 +291,8 @@ public class Conta implements Serializable {
 		return this.parcelaEmprestimo;
 	}
 
-	public void setParcelaEmprestimo(Double valor) {
-		this.parcelaEmprestimo = valor;
-	}
 
-	public Data getDataDebitoAutomatico() {
+	public int getDataDebitoAutomatico() {
 		return this.carteira.getDataDebitoAutomatico();
 	}
 
@@ -349,7 +349,5 @@ public class Conta implements Serializable {
 	public ArrayList<Transacao> getNotificacoes() {
 		return this.notificacoes.getTransacoes();
 	}
-
-//	public abstract boolean renderSaldo();
 
 }

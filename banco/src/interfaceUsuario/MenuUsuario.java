@@ -15,26 +15,22 @@ import cliente.exceptions.TiposClientes;
 import conta.Conta;
 import conta.GerenciamentoCartao;
 import funcionalidades.exceptions.EmprestimoException;
-import interfaceUsuario.Exceptions.ValorInvalido;
 import interfaceUsuario.dados.*;
+import interfaceUsuario.exceptions.ValorInvalido;
 import transacao.Boleto;
 import transacao.Transacao;
 import transacao.exceptions.TransacaoException;
 import utilsBank.GerenciadorBanco;
-import utilsBank.arquivo.Exception.EscritaArquivoException;
-import utilsBank.databank.DataBank;
+import utilsBank.arquivo.exception.EscritaArquivoException;
 
 import java.util.Scanner;
 
 public class MenuUsuario {
 	public static final String DEPOSITO = "do seu Deposito";
 	public static final String TRANSFERENCIA = "da sua transferencia";
-	public static final String PAGAMENTO = "do seu pagamento";
 	public static final String GUARDAR = "guardado";
 	public static final String RESGATAR = "resgatado";
-	public static final String FORMATO_DATAS = "31/12/2002";
-	public static final String DEBITO = "debito";
-	public static final String CREDITO = "credito";
+	public static final String FORMATO_DATAS = "31/12/2022";
 	public static final int TAM_BORDA = 50;
 	public static final String CHAVES_DISPONIVEIS = "[ESCREVA O TIPO DA CHAVE EXATAMENTE COMO ALGUMAS DESSES TIPOS, IDENTIFICACAO [CPF OU CNPJ]\n" +
 			" chave_aleatoria | telefone | email | identificacao";
@@ -44,13 +40,12 @@ public class MenuUsuario {
 	public static void iniciar() {
 		boolean loop = true;
 		while (loop) {
-			imprimirBorda("=", TAM_BORDA);
+			imprimirBorda("=");
 			System.out.println("[0] - Encerrar programa");
 			System.out.println("[1] - Acessar conta");
 			System.out.println("[2] - Criar conta");
-			imprimirBorda("=", TAM_BORDA);
+			imprimirBorda("=");
 			System.out.print("\n> ");
-			Agencia.imprimirClientes();
 			try {
 				switch (teclado.nextLine()) {
 					case "0":
@@ -63,27 +58,28 @@ public class MenuUsuario {
 						break;
 					case "2":
 						InterfaceUsuario.setClienteAtual(criarCliente());
+						if (InterfaceUsuario.getDadosConta().isDebitoAutomatico()) {
+							MenuSetDebitoAutomatico(InterfaceUsuario.getClienteAtual().getConta().getCarteira());
+						}
 						InterfaceUsuario.getClienteAtual().setChavesPix();
 						menuCliente();
 						InterfaceUsuario.setClienteAtual(null);
 						break;
 					default:
 						GerenciadorBanco.imprimirErroOpcao();
+						break;
 				}
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
+			} catch (Exception ignore) {
 			} finally {
 				System.out.println("Obrigada por acessar ao nosso Internet Banking!");
 			}
 		}
 	}
 
-	// TODO TESTAR Tela dos boletos gerados
-//TODO verificar as restricoes
-	//TODO Testar Gerenciador Cartao prestar atencaao na data
-//TODO fazer pagamento debito automatico e Agendada Transacoes
-	private static void imprimirMenu(boolean isClientePessoa) {
-		imprimirBorda("=", TAM_BORDA);
+	//TODO @MAX
+	//todo FAZER pagamento debito automatico
+	private static void imprimirMenu(boolean isClientePessoa, int quantidadeNotificacoes) {
+		imprimirBorda("=");
 		System.out.println("[0] - Sair");
 		System.out.println("[1] - Verificar Saldo");
 		System.out.println("[2] - Gerenciar dinheiro guardado");
@@ -93,19 +89,20 @@ public class MenuUsuario {
 		System.out.println("[6] - Emprestimo");
 		System.out.println("[7] - Agendar transferencia");
 		System.out.println("[8] - Gerenciar Cartoes");
+		//todo SE DER TEMPO COLOCAR GERENCIAR CHAVES PIX
 		System.out.println("[9] - Mostrar chaves Pix");
 		System.out.println("[10] - Modificar chave Pix");
 		System.out.println("[11] - Gerar um boleto");
 		System.out.println("[12] - Ver historico");
 		System.out.println("[13] - Ver boletos gerados");
-		System.out.println("[14] - Ver notificacoes");
+		System.out.println("[14] - Ver notificacoes [" + quantidadeNotificacoes + "]");
 
 		if (!isClientePessoa) {
 			System.out.println("[15] - Adicionar Gerentes");
 			System.out.println("[16] - Remover Gerentes");
 
 		}
-		imprimirBorda("=", TAM_BORDA);
+		imprimirBorda("=");
 		System.out.print("\n> ");
 
 	}
@@ -113,158 +110,159 @@ public class MenuUsuario {
 	private static void menuCliente() {
 		boolean loop = true;
 		Cliente cliente = InterfaceUsuario.getClienteAtual();
+		String tipoConta = GerenciadorBanco.getTipoConta(cliente.getConta());
 		boolean isClientePessoa = true;
-		if (cliente != null) {
-			imprimirBorda("=", TAM_BORDA);
-			System.out.println("Bem vindo " + cliente.getNome());
+		imprimirBorda("=");
+		System.out.println("Bem vindo " + cliente.getNome());
 
-			while (loop) {
-				if (cliente instanceof ClientePessoa) {
-					isClientePessoa = true;
-					imprimirMenu(true);
-				} else if (cliente instanceof ClienteEmpresa) {
-					isClientePessoa = false;
-					imprimirMenu(false);
+		while (loop) {
+			int quantidadeNotificacoes = cliente.getConta().getNotificacoes().size();
+			if (cliente instanceof ClientePessoa) {
+				isClientePessoa = true;
+				imprimirMenu(true, quantidadeNotificacoes);
+			} else if (cliente instanceof ClienteEmpresa) {
+				isClientePessoa = false;
+				imprimirMenu(false, quantidadeNotificacoes);
+			}
+
+			try {
+				String value = teclado.nextLine();
+				Transacao t;
+				switch (value) {
+					case "0":
+						loop = false;
+						break;
+					case "1":
+						System.out.println("SALDO >> " + cliente.getConta().getSaldo());
+						break;
+					case "2":
+						menuGerenciarDinheiroGuardado(cliente);
+						break;
+					case "3":
+						MenuDadosTransacao(TRANSFERENCIA, tipoConta);
+						t = cliente.getConta().transferir();
+						t.gerarComprovante();
+						GerenciadorBanco.imprimirDireitos();
+						break;
+					case "4":
+						MenuPagarBoleto();
+						System.out.println("Boleto pago!");
+						break;
+					case "5":
+						MenuDadosTransacao(DEPOSITO, tipoConta);
+						t = cliente.getConta().depositar();
+						t.gerarComprovante();
+						GerenciadorBanco.imprimirDireitos();
+						break;
+					case "6":
+						menuEmprestimo();
+						break;
+					case "7":
+						menuAgendarTransferencia(tipoConta);
+						t = cliente.getConta().agendarTransacao();
+						t.gerarComprovante();
+						GerenciadorBanco.imprimirMensagemTransferenciaAgendada();
+						GerenciadorBanco.imprimirDireitos();
+						break;
+					case "8":
+						menuGerenciarCarteira(cliente);
+						break;
+					case "9":
+						System.out.println(cliente.getConta().getChavesPix().toString());
+						break;
+					case "10":
+						menuAdicionarChavePix();
+						if (cliente.getConta().modificarChavePix()) {
+							System.out.println("Chave Pix modificada com sucesso");
+							System.out.println(cliente.getConta().getChavesPix());
+						}
+						break;
+					case "11":
+						MenuDadosGerarBoleto();
+						Boleto boleto = criarBoleto();
+						System.out.println("BOLETO GERADO");
+						System.out.println(boleto);
+						break;
+					case "12":
+						boolean menuLoopHistorico = true;
+						while (menuLoopHistorico) {
+
+							System.out.println("[0]: Cancelar");
+							System.out.println("[1]: Mostrar Transacoes");
+							System.out.println("[2]: Mostrar Faturas");
+
+							switch (teclado.nextLine()) {
+								case "0":
+									menuLoopHistorico = false;
+									break;
+								case "1":
+									for (Transacao transacao : cliente.getConta().getHistorico().getTransacoes()) {
+										imprimirBorda("=");
+										System.out.println(transacao);
+									}
+									menuLoopHistorico = false;
+									break;
+								case "2":
+									for (Fatura fatura : cliente.getConta().getHistorico().getFaturas()) {
+										imprimirBorda("=");
+										System.out.println(fatura);
+									}
+									menuLoopHistorico = false;
+									break;
+							}
+						}
+						break;
+					case "13":
+						mostrarBoletos();
+						break;
+					case "14":
+						mostrarNotificacoes();
+						cliente.getConta().resetarNotificacoes();
+						break;
+					case "15":
+						if (!isClientePessoa) {
+							String identificacaoNovoGerente = MenuIdentificarNovoGerente();
+							try {
+								assert cliente instanceof ClienteEmpresa;
+								if (((ClienteEmpresa) cliente).addGerentes(identificacaoNovoGerente)) {
+									System.out.println("Novo gerente adicionado com sucesso!");
+								}
+							} catch (GerenteJaExistenteException ex) {
+								System.out.println(ex.getMessage());
+							}
+						}
+						break;
+					case "16":
+						if (!isClientePessoa) {
+							String identificacaoNovoGerente = MenuIdentificarNovoGerente();
+							assert cliente instanceof ClienteEmpresa;
+							try {
+								if (((ClienteEmpresa) cliente).removerGerentes(identificacaoNovoGerente)) {
+									System.out.println("Gerente removido com sucesso!");
+								}
+							} catch (GerenteNaoEncontradoException ex) {
+								System.out.println(ex.getMessage());
+							}
+						}
+						break;
+					default:
+						GerenciadorBanco.imprimirErroOpcao();
+						break;
 				}
-
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+			} finally {
 				try {
-					String value = teclado.nextLine();
-					Transacao t;
-					switch (value) {
-						case "0":
-							loop = false;
-							break;
-						case "1":
-							System.out.println("SALDO >> " + cliente.getConta().getSaldo());
-							break;
-						case "2":
-							menuGerenciarDinheiroGuardado(cliente);
-							break;
-						case "3":
-							MenuDadosTransacao(TRANSFERENCIA);
-							t = cliente.getConta().transferir();
-							t.gerarComprovante();
-							GerenciadorBanco.imprimirDireitos();
-							break;
-						case "4":
-							MenuPagarBoleto();
-							System.out.println("Boleto pago!");
-							break;
-						case "5":
-							MenuDadosTransacao(DEPOSITO);
-							t = cliente.getConta().depositar();
-							t.gerarComprovante();
-							GerenciadorBanco.imprimirDireitos();
-							break;
-						case "6":
-							menuEmprestimo();
-							break;
-						case "7":
-							//TODO com bug agendamentoTransferiencia
-							menuAgendarTransferencia();
-							t = cliente.getConta().agendarTransacao();
-							t.gerarComprovante();
-							GerenciadorBanco.imprimirMensagemTransferenciaAgendada();
-							GerenciadorBanco.imprimirDireitos();
-							break;
-						case "8":
-							menuGerenciarCartoes(cliente);
-							break;
-						case "9":
-							System.out.println(cliente.getConta().getChavesPix().toString());
-							break;
-						case "10":
-							menuAdicionarChavePix();
-							if (cliente.getConta().modificarChavePix()) {
-								System.out.println("Chave Pix modificada com sucesso");
-								System.out.println(cliente.getConta().getChavesPix());
-							}
-							break;
-						case "11":
-							MenuDadosGerarBoleto();
-							Boleto boleto = criarBoleto();
-							System.out.println("BOLETO GERADO");
-							System.out.println(boleto);
-							break;
-						case "12":
-							boolean menuLoopHistorico = true;
-							while (menuLoopHistorico) {
-
-								System.out.println("[0]: Cancelar");
-								System.out.println("[1]: Mostrar Transacoes");
-								System.out.println("[2]: Mostrar Faturas");
-
-								switch (teclado.nextLine()) {
-									case "0":
-										menuLoopHistorico = false;
-										break;
-									case "1":
-										for (Transacao transacao : cliente.getConta().getHistorico().getTransacoes()) {
-											imprimirBorda("-", TAM_BORDA);
-											System.out.println(transacao);
-										}
-										menuLoopHistorico = false;
-										break;
-									case "2":
-										for (Fatura fatura : cliente.getConta().getHistorico().getFaturas()) {
-											imprimirBorda("-", TAM_BORDA);
-											System.out.println(fatura);
-										}
-										menuLoopHistorico = false;
-										break;
-								}
-							}
-							break;
-						case "13":
-							mostrarBoletos();
-							break;
-						case "14":
-							mostrarNotificacoes();
-							break;
-						case "15":
-							if (!isClientePessoa) {
-								String identificacaoNovoGerente = MenuIdentificarNovoGerente();
-								assert cliente instanceof ClienteEmpresa;
-								try {
-									if (((ClienteEmpresa) cliente).addGerentes(identificacaoNovoGerente)) {
-										System.out.println("Novo gerente adicionado com sucesso!");
-									}
-								} catch (GerenteJaExistenteException ex) {
-									System.out.println(ex.getMessage());
-								}
-							}
-							break;
-						case "16":
-							if (!isClientePessoa) {
-								String identificacaoNovoGerente = MenuIdentificarNovoGerente();
-								assert cliente instanceof ClienteEmpresa;
-								try {
-									if (((ClienteEmpresa) cliente).removerGerentes(identificacaoNovoGerente)) {
-										System.out.println("Gerente removido com sucesso!");
-									}
-								} catch (GerenteNaoEncontradoException ex) {
-									System.out.println(ex.getMessage());
-								}
-							}
-							break;
-						default:
-							GerenciadorBanco.imprimirErroOpcao();
-					}
-				} catch (Exception ex) {
-					System.out.println(ex.getMessage());
-				} finally {
-					try {
-						Agencia.getInstance().atualizarArquivos();
-					} catch (EscritaArquivoException ex) {
-						System.out.println("Ocorreu um erro ao atualizar os nosso banco de dados. Verifique sua conexao e tente novamente.");
-					}
+					Agencia.getInstance().atualizarArquivos();
+				} catch (EscritaArquivoException ex) {
+					System.out.println("Ocorreu um erro ao atualizar os nosso banco de dados. Verifique sua conexao e tente novamente.");
 				}
 			}
 		}
 	}
 
 	private static Double MenuUsuarioGuardarDinheiro(String tipoOperacao) throws ValorInvalido {
-		imprimirBorda("-", TAM_BORDA);
+		imprimirBorda("=");
 		String[] cabecalhoDinheiroGuardado = {
 				"Digite o valor para ser " + tipoOperacao + "!",
 		};
@@ -277,7 +275,7 @@ public class MenuUsuario {
 	}
 
 	private static String MenuIdentificarNovoGerente() {
-		imprimirBorda("-", TAM_BORDA);
+		imprimirBorda("=");
 		String[] cabecalhoNovoGerente = {
 				"Digite a identificacao do novo gerente",
 		};
@@ -296,20 +294,20 @@ public class MenuUsuario {
 			System.out.printf("%s:\n> ", cabecalhoUsuario[i]);
 			entradas[i] = teclado.nextLine();
 		}
-		imprimirBorda("-", TAM_BORDA);
+		imprimirBorda("=");
 		return entradas;
 	}
 
-	private static void MenuDadosTransacao(String tipoOperacao) throws BuscaException, ValorInvalido {
-		imprimirBorda("-", TAM_BORDA);
+	private static void MenuDadosTransacao(String tipoOperacao, String tipoConta) throws BuscaException, ValorInvalido {
+		imprimirBorda("=");
 
 		String[] cabecalhoDadosTransacao = {
 				"Digite o valor ",
 		};
-
 		String[] entradaDadosTransacao = UsuarioEntradas(cabecalhoDadosTransacao);
 
-		while (!VerificadorEntrada.verificarDadosTransacao(entradaDadosTransacao[0], tipoOperacao)) {
+		while (!VerificadorEntrada.verificarDadosTransacao(entradaDadosTransacao[0], tipoOperacao, tipoConta)) {
+			System.out.println("DIGITE OS DADOS CORRETAMENTE POR FAVOR");
 			entradaDadosTransacao = UsuarioEntradas(cabecalhoDadosTransacao);
 		}
 
@@ -321,13 +319,15 @@ public class MenuUsuario {
 			};
 			String[] entradaDados = UsuarioEntradas(cabecalhoDados);
 			InterfaceUsuario.setDadosTransacao(new DadosTransacao(
-					Double.parseDouble(entradaDadosTransacao[0]),
-					entradaDados[1],
-					InterfaceUsuario.getClienteAtual().getIdentificacao(),
-					entradaDados[0],
-					InterfaceUsuario.getClienteAtual().getStringIdentificacao())
+							Double.parseDouble(entradaDadosTransacao[0]),
+							entradaDados[1],
+							InterfaceUsuario.getClienteAtual().getIdentificacao(),
+							entradaDados[0],
+							VerificadorEntrada.IDENTIFICACAO
+					)
 			);
 		} else if (tipoOperacao.equals(DEPOSITO)) {
+
 			Cliente c = InterfaceUsuario.getClienteAtual();
 			InterfaceUsuario.setDadosTransacao(new DadosTransacao(
 					Double.parseDouble(entradaDadosTransacao[0]),
@@ -337,8 +337,8 @@ public class MenuUsuario {
 		}
 	}
 
-	private static void menuAgendarTransferencia() throws BuscaException, ValorInvalido {
-		imprimirBorda("-", TAM_BORDA);
+	private static void menuAgendarTransferencia(String tipoConta) throws BuscaException, ValorInvalido {
+		imprimirBorda("=");
 		String[] cabecalhoDadosTransacao = {
 				"Digite o valor ",
 				"Digite a data para realizar a transferencia [FORMATO CORRETO] " + FORMATO_DATAS,
@@ -346,7 +346,7 @@ public class MenuUsuario {
 
 		String[] entradaDadosTransacao = UsuarioEntradas(cabecalhoDadosTransacao);
 
-		while (!VerificadorEntrada.verificarDadosAgendamentoTransacao(entradaDadosTransacao)) {
+		while (!VerificadorEntrada.verificarDadosAgendamentoTransacao(entradaDadosTransacao, tipoConta)) {
 			entradaDadosTransacao = UsuarioEntradas(cabecalhoDadosTransacao);
 		}
 
@@ -361,7 +361,7 @@ public class MenuUsuario {
 						entradaDados[1],
 						InterfaceUsuario.getClienteAtual().getIdentificacao(),
 						entradaDados[0],
-						InterfaceUsuario.getClienteAtual().getStringIdentificacao(),
+						VerificadorEntrada.IDENTIFICACAO,
 						entradaDadosTransacao[1]
 				)
 		);
@@ -388,12 +388,12 @@ public class MenuUsuario {
 	private static void menuGerenciarDinheiroGuardado(Cliente cliente) {
 		boolean loop = true;
 		while (loop) {
-			imprimirBorda("-", TAM_BORDA);
+			imprimirBorda("=");
 			System.out.println("[0] - Cancelar");
 			System.out.println("[1] - Guardar dinheiro");
 			System.out.println("[2] - Resgatar dinheiro guardado");
 			System.out.println("[3] - Mostrar dinheiro guardado");
-			imprimirBorda("-", TAM_BORDA);
+			imprimirBorda("=");
 			System.out.print("\n> ");
 			try {
 				String op = teclado.nextLine();
@@ -419,6 +419,7 @@ public class MenuUsuario {
 						break;
 					default:
 						GerenciadorBanco.imprimirErroOpcao();
+						break;
 				}
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
@@ -427,18 +428,18 @@ public class MenuUsuario {
 
 	}
 
-	private static void menuGerenciarCartoes(Cliente cliente) {
+	private static void menuGerenciarCarteira(Cliente cliente) {
 		boolean loop = true;
 		while (loop) {
-			imprimirBorda("-", TAM_BORDA);
+			imprimirBorda("=");
 			System.out.println("[0] - Cancelar");
 			System.out.println("[1] - Mostrar Fatura");
 			System.out.println("[2] - Mostrar Limite");
 			System.out.println("[3] - Pagar Fatura");
-			System.out.println("[4] - Mostrar Cartoes [REQUER SENHA]");
+			System.out.println("[4] - Criar/Mostrar Cartoes [REQUER SENHA]");
 			System.out.println("[5] - Modificar Debito automatico ");
 			System.out.println("[6] - [FERRAMENTA ADMINISTRADOR] Aumentar Fatura");
-			imprimirBorda("-", TAM_BORDA);
+			imprimirBorda("=");
 			System.out.print("\n> ");
 			GerenciamentoCartao carteiraCli = cliente.getConta().getCarteira();
 			try {
@@ -457,27 +458,32 @@ public class MenuUsuario {
 						break;
 					case "3":
 						String entrada;
-						do {
-							System.out.println("Deseja pagar o valor total da fatura? [1] SIM [0] NAO");
-							entrada = teclado.nextLine();
-						} while (VerificadorEntrada.verificarEntradasZeroUm(entrada));
+						if (carteiraCli.getFatura() > 0.0) {
+							do {
+								System.out.println("Deseja pagar o valor total da fatura? [1] SIM [0] NAO");
+								entrada = teclado.nextLine();
+							} while (VerificadorEntrada.verificarEntradasZeroUm(entrada));
 
-						if (GerenciadorBanco.intToBoolean(Integer.parseInt(entrada))) {
-							if (VerificadorEntrada.verificarEntradaValor(String.valueOf(carteiraCli.getFatura()))) {
-								if (cliente.pagarFatura(carteiraCli.getFatura())) {
+							if (GerenciadorBanco.intToBoolean(Integer.parseInt(entrada))) {
+								if (VerificadorEntrada.verificarEntradaValorParaFatura(String.valueOf(carteiraCli.getFatura()), MenuUsuarioConstantes.VERIFICAR_VALOR_SALDO)) {
+									if (cliente.pagarFatura(carteiraCli.getFatura())) {
+										System.out.println("FATURA PAGA COM SUCESSO");
+										System.out.println("SUA FATURA >>> " + carteiraCli.getFatura());
+									}
+								}
+							} else {
+								do {
+									System.out.println("Digite o valor para pagar a fatura");
+									entrada = teclado.nextLine();
+								} while (VerificadorEntrada.verificarEntradaValorFatura(String.valueOf(entrada), MenuUsuarioConstantes.PAGAR_FATURA, carteiraCli));
+
+								if (cliente.pagarFatura(Double.parseDouble(entrada))) {
 									System.out.println("FATURA PAGA COM SUCESSO");
 									System.out.println("SUA FATURA >>> " + carteiraCli.getFatura());
 								}
 							}
 						} else {
-							do {
-								System.out.println("Digite o valor para pagar a fatura");
-								entrada = teclado.nextLine();
-							} while (!VerificadorEntrada.verificarEntradaValor(String.valueOf(entrada)));
-							if (cliente.pagarFatura(Double.parseDouble(entrada))) {
-								System.out.println("FATURA PAGA COM SUCESSO");
-								System.out.println("SUA FATURA >>> " + carteiraCli.getFatura());
-							}
+							System.out.println("SUA FATURA ESTA ZERADA! :D");
 						}
 						break;
 					case "4":
@@ -485,7 +491,7 @@ public class MenuUsuario {
 						entrada = teclado.nextLine();
 
 						if (cliente.verificarSenha(entrada)) {
-							cliente.getConta().mostrarCartoes();
+							menuCriarMostrarCartoes(cliente);
 						}
 						break;
 					case "5":
@@ -496,7 +502,7 @@ public class MenuUsuario {
 							System.out.println("[LEMBRANDO: APENAS UMA FERRAMENTA ADMINISTRATIVA PARA GERENCIAR O BANCO]]");
 							System.out.println("DIGITE O VALOR QUE FOI GASTO NO CARTAO");
 							entrada = teclado.nextLine();
-						} while (!VerificadorEntrada.verificarEntradaValor(String.valueOf(entrada)));
+						} while (VerificadorEntrada.verificarEntradaValorFatura(String.valueOf(entrada), MenuUsuarioConstantes.AUMENTAR_FATURA, carteiraCli));
 
 						if (cliente.getConta().aumentarFatura(Double.parseDouble(entrada))) {
 							System.out.println("FATURA ATUALIZADA COM SUCESSO");
@@ -505,6 +511,7 @@ public class MenuUsuario {
 						break;
 					default:
 						GerenciadorBanco.imprimirErroOpcao();
+						break;
 				}
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
@@ -513,6 +520,10 @@ public class MenuUsuario {
 	}
 
 	private static void menuDebitoAutomatico(GerenciamentoCartao carteiraCliente) {
+		if (carteiraCliente.isDebitoAutomatico()) {
+			System.out.printf("DIA DEBITO AUTOMATICO: %d\n", carteiraCliente.getDataDebitoAutomatico());
+		}
+
 		String DEBITO_ATIVADO = "DEBITO AUTOMATICO >> ATIVADO <<\nDESEJA DESATIVAR? [1] SIM [0] NAO";
 		String DEBITO_ATIVADO_MODIFICAR = "DEBITO AUTOMATICO >> ATIVADO <<\nDESEJA MODIFICAR A DATA? [1] SIM [0] NAO";
 		String DEBITO_DESATIVADO = "DEBITO AUTOMATICO >> DESATIVADO <<\nDESEJA ATIVAR? [1] SIM [0] NAO";
@@ -526,7 +537,7 @@ public class MenuUsuario {
 			}
 
 			if (GerenciadorBanco.intToBoolean(Integer.parseInt(entrada))) {
-				carteiraCliente.setDebitoAutomatico(false, null);
+				carteiraCliente.setDebitoAutomatico(false, -1);
 			} else {
 				gerenciarAtivarDesativarDebito(carteiraCliente, DEBITO_ATIVADO_MODIFICAR);
 			}
@@ -544,13 +555,7 @@ public class MenuUsuario {
 		}
 
 		if (GerenciadorBanco.intToBoolean(Integer.parseInt(entrada))) {
-			System.out.println("Digite a data para realizar o debito automatico [FORMATO CORRETO] " + FORMATO_DATAS);
-			entrada = teclado.nextLine();
-
-			while (!VerificadorEntrada.verificarData(entrada)) {
-				entrada = teclado.nextLine();
-			}
-			carteiraCliente.setDebitoAutomatico(true, DataBank.criarData(entrada, DataBank.SEM_HORA));
+			MenuSetDebitoAutomatico(carteiraCliente);
 		}
 	}
 
@@ -574,7 +579,7 @@ public class MenuUsuario {
 
 	private static void menuAdicionarChavePix() {
 		String[] cabecalhoTipoPix = {
-				"[ESCREVA] Escolha o tipo de chave que deseja adicionar ou modificar!\n  " + CHAVES_DISPONIVEIS_ALTERACAO,
+				"[ESCREVA] Escolha o tipo de chave que deseja adicionar ou modificar! [FORMATOS ACEITOS PARA TEXTO]\n  " + CHAVES_DISPONIVEIS_ALTERACAO,
 		};
 		String[] entradas = UsuarioEntradas(cabecalhoTipoPix);
 
@@ -585,7 +590,7 @@ public class MenuUsuario {
 			InterfaceUsuario.setDadosChavePix(new DadosChavesPix(null, null, DadosChavesPix.CHAVE_ALEATORIA, true));
 		} else {
 			String[] cabecalhoChave = {
-					"DIGITE A CHAVE CORRETAMENTE\n  " + CHAVES_DISPONIVEIS_ALTERACAO,
+					"DIGITE A CHAVE CORRETAMENTE\n  ",
 			};
 			String[] entradaChave = UsuarioEntradas(cabecalhoChave);
 
@@ -604,9 +609,9 @@ public class MenuUsuario {
 		}
 	}
 
-	private static Cliente criarCliente() throws InsercaoException, EscritaArquivoException, RuntimeException, BuscaException, ValorInvalido {
-		imprimirBorda("-", TAM_BORDA);
-		String entrada = "-1";
+	private static Cliente criarCliente() throws InsercaoException, EscritaArquivoException, RuntimeException, ValorInvalido {
+		imprimirBorda("=");
+		String entrada;
 		do {
 			System.out.print("Tipo de cliente:\n" +
 					"[0] - Cancelar\n" +
@@ -631,7 +636,7 @@ public class MenuUsuario {
 		}
 
 		String tag = (tipo == TiposClientes.CLIENTE_PESSOA) ? "CPF" : "CNPJ";
-
+		System.out.println("[DIGITE CORRETAMENTE AS INFORMACOES A SEGUIR, NUMERO MAX DE CARACTERES ACEITO >> " + VerificadorEntrada.MAX_CARACTERES_ENTRADA);
 		String[] cabecalhoEndereco = {
 				"CEP",
 				"Numero da Residencia",
@@ -647,12 +652,22 @@ public class MenuUsuario {
 		};
 		String[] entradaEndereco;
 		String[] entradaGeral;
+		int contador = 0;
 		do {
 			entradaEndereco = UsuarioEntradas(cabecalhoEndereco);
+			if (contador > 0) {
+				System.out.println("Insira o endereco corretamente");
+			}
+			contador++;
 		} while (!VerificadorEntrada.verificarEndereco(entradaEndereco));
 
+		contador = 0;
 		do {
 			entradaGeral = UsuarioEntradas(cabecalhoGeral);
+			if (contador > 0) {
+				System.out.println("Insira o as informacoes corretamente");
+			}
+			contador++;
 		} while (!VerificadorEntrada.verificarInformacoesCliente(entradaGeral, tipo));
 
 		Endereco endereco = new Endereco(
@@ -689,7 +704,7 @@ public class MenuUsuario {
 		return cliente;
 	}
 
-	public static Double menuCriacaoConta() {
+	public static Double menuCriacaoConta() throws ValorInvalido {
 		Double renda = inserirRenda();
 		boolean debitoAutomatico = false;
 
@@ -719,7 +734,6 @@ public class MenuUsuario {
 
 		InterfaceUsuario.setDadosConta(new DadosConta(
 				VerificadorEntrada.tipoDeContaPelaRenda(renda),
-				GerenciadorBanco.intToBoolean(Integer.parseInt(entradas[1])),
 				debitoAutomatico)
 		);
 		InterfaceUsuario.setDadosCartao(new DadosCartao(
@@ -744,11 +758,11 @@ public class MenuUsuario {
 	}
 
 	private static void menuEmprestimo() {
-		imprimirBorda("-", TAM_BORDA);
+		imprimirBorda("=");
 		System.out.println("[0] - Cancelar");
 		System.out.println("[1] - Pedir emprestimo");
 		System.out.println("[2] - Pagar emprestimo");
-		imprimirBorda("-", TAM_BORDA);
+		imprimirBorda("=");
 		System.out.print("\n> ");
 		try {
 			String op = teclado.nextLine();
@@ -762,14 +776,15 @@ public class MenuUsuario {
 					pagarEmprestimo();
 					break;
 				default:
-					//Opção inválida
+					GerenciadorBanco.imprimirErroOpcao();
+					break;
 			}
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 		}
 	}
 
-	private static void gerarEmprestimo() throws EmprestimoException {
+	private static void gerarEmprestimo() throws EmprestimoException, ValorInvalido {
 		Conta contaAtual = InterfaceUsuario.usuarioAtualConta();
 		if (!contaAtual.hasEmprestimo()) {
 			String[] cabecalho = {
@@ -799,11 +814,11 @@ public class MenuUsuario {
 	private static void pagarEmprestimo() throws EmprestimoException {
 		Conta contaAtual = InterfaceUsuario.usuarioAtualConta();
 		if (contaAtual.hasEmprestimo()) {
-			imprimirBorda("-", TAM_BORDA);
+			imprimirBorda("=");
 			System.out.println("[0] - Cancelar");
 			System.out.printf("[1] - Pagar parcela (%.2f)\n", contaAtual.getParcelaEmprestimo());
 			System.out.printf("[2] - Pagar total (%.2f)\n", contaAtual.getEmprestimo());
-			imprimirBorda("-", TAM_BORDA);
+			imprimirBorda("=");
 			System.out.print("\n> ");
 			try {
 				String op = teclado.nextLine();
@@ -816,7 +831,7 @@ public class MenuUsuario {
 					case "2":
 						contaAtual.pagarEmprestimo();
 					default:
-						//Opção inválida
+						GerenciadorBanco.imprimirErroOpcao();
 				}
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
@@ -842,7 +857,7 @@ public class MenuUsuario {
 			System.out.println("[0] - Cancelar");
 			System.out.println("[1] - Pessoa");
 			System.out.println("[2] - Empresa");
-			imprimirBorda("-", TAM_BORDA);
+			imprimirBorda("=");
 			System.out.print("> ");
 			String op = teclado.nextLine();
 			switch (op) {
@@ -880,8 +895,9 @@ public class MenuUsuario {
 		}
 	}
 
-	private static void imprimirBorda(String padrao, int tam) {
-		for (int i = 0; i < tam; i++) {
+	@SuppressWarnings("SameParameterValue")
+	private static void imprimirBorda(String padrao) {
+		for (int i = 0; i < TAM_BORDA; i++) {
 			System.out.print(padrao);
 		}
 		System.out.println();

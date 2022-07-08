@@ -41,7 +41,7 @@ public class Boleto extends Transacao implements Serializable {
 			toString = toString + "NUMERO DO BOLETO: " + nossoNumero + "\n";
 		}
 		if (origem != null) {
-			toString = toString + "ORIGEM DO BOLETO:  " + origem + "\n\n";
+			toString = toString + "ORIGEM DO BOLETO:  " + origem + "\n";
 		}
 		if (getDataAgendada() == null && dataEmissaoTransacao != null) {
 			toString = toString + "DATA EMISSAO DO BOLETO: " + dataEmissaoTransacao + "\n";
@@ -73,7 +73,4 @@ public class Boleto extends Transacao implements Serializable {
 		this.foiPago = true;
 	}
 
-	public boolean isPago() {
-		return this.foiPago;
-	}
 }
