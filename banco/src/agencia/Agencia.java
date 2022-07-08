@@ -53,7 +53,13 @@ public class Agencia {
 		throw new BuscaException("Cliente nao encontrado");
 	}
 
-	public static Cliente buscarClientePorChavePix(String tipodeChave, String chave) throws BuscaException {
+	/**
+	 * @param tipodeChave Informa o tipo da chave, declara em DadosChavesPix
+	 * @param chave       Podendo ser de email, chave aleatória, identificação, telefone
+	 * @return cliente que contém a chave especificada
+	 * @throws BuscaException caso o cliente não for encontrado
+	 */
+	public Cliente buscarClientePorChavePix(String tipodeChave, String chave) throws BuscaException {
 		String chavePix = null;
 		for (Cliente cliente : clientes) {
 			Conta contaCliente = cliente.getConta();
@@ -78,8 +84,14 @@ public class Agencia {
 		throw new BuscaException("Cliente nao encontrado");
 	}
 
-	public static ClienteEmpresa buscarEmpresa(String cpf) {
-		for (Cliente cliente : clientes) {
+	/**
+	 * Busca um cliente que é gerente de uma empresa, e retorna a empresa que o mesmo faz parte.
+	 *
+	 * @param cpf recebe uma string de identificação para buscar uma empresa que esse cpf faz parte como gerente
+	 * @return clienteEmpresa ou null se não for encontrado o gerente
+	 */
+	public ClienteEmpresa buscarEmpresa(String cpf) {
+		for (Cliente cliente : this.clientes) {
 			if (cliente instanceof ClienteEmpresa clienteEmpresa) {
 				if (clienteEmpresa.verificarGerente(cpf)) {
 					return clienteEmpresa;
@@ -98,7 +110,13 @@ public class Agencia {
 		throw new BuscaException("Boleto nao encontrado");
 	}
 
-	public static HashSet<Boleto> buscarBoletosConta(Conta conta) {
+	/**
+	 * retorna os boletos que estão atrelados a uma conta.
+	 *
+	 * @param conta do cliente
+	 * @return HashSet dos boletos que fazem parte da conta do cliente
+	 */
+	public HashSet<Boleto> buscarBoletosConta(Conta conta) {
 		HashSet<Boleto> boletosConta = new HashSet<>();
 		for (Boleto boleto : boletos) {
 			if (boleto.getContaDestino().getIdConta().equals(conta.getIdConta())) {
@@ -127,6 +145,12 @@ public class Agencia {
 		return transacoesAgendadas;
 	}
 
+	/**
+	 * Função que gerencia a funcionalidade do cliente ter o empréstimo
+	 *
+	 * @param valor do emprestimo
+	 * @throws EmprestimoException caso a renda da agência não tiver dinheiro para emprestar
+	 */
 	public void pegarEmprestimo(double valor) throws EmprestimoException {
 		if (this.rendaAgencia >= valor) {
 			this.rendaAgencia -= valor;
