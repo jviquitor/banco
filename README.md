@@ -10,7 +10,7 @@ O trabalho final tinha a proposta desenvolver uma aplicação orientada a objeto
 
 Utilizamos a [JDK 18](https://jdk.java.net/) para a realização desse trabalho. Deve ser utilizada essa versão.
 
-# Como instalar
+# Como instalar e executar o BIC
 ```
 git clone https://github.com/Asunnya/bic-poo
 cd exec/jar
