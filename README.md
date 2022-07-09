@@ -10,8 +10,27 @@ O trabalho final tinha a proposta desenvolver uma aplicação orientada a objeto
 
 Utilizamos a [JDK 18](https://jdk.java.net/) para a realização desse trabalho. Por isso, recomendamos essa versão para utilização.
 
+# Como instalar
+```
+git clone https://github.com/Asunnya/bic-poo
+cd exc/jar
+java -jar bic-poo.jar
+```
+## Possíveis erros na execução do .jar
+Caso você tenha problema ao rodar o .jar, listamos alguns erros conhecidos
+```
+Error: LinkageError occurred while loading main class Main
+        java.lang.UnsupportedClassVersionError: Main has been compiled by a more recent version of the Java Runtime (class file version 62.0), this version of the Java Runtime only recognizes class file versions up to 61.0
+```
+Caso você tenha o problema assima, utilize essas versões para rodar o -jar.
 
-# Funcionalidades do Banco para o Cliente
+```
+openjdk 18 2022-03-22
+OpenJDK Runtime Environment (build 18+36-2087)
+OpenJDK 64-Bit Server VM (build 18+36-2087, mixed mode, sharing)
+```
+
+# Funcionalidades do BIC para o Cliente
 
 1. Tipos de Clientes diferentes, sendo, cliente pessoa e cliente empresa. 
 2. Tipos de Contas diferentes dependendo da renda informada pelo cliente
@@ -22,8 +41,8 @@ Utilizamos a [JDK 18](https://jdk.java.net/) para a realização desse trabalho.
 7. Caso for uma empresa, se mais de um gerente deseja acessar nosso banco, você pode simplesmente adicionar a identificação do usuário e o mesmo utiliza a senha da empresa.
 8. Com a conta no bic, você rende seu saldo e caso tenha dinheiro guardado, rende muito mais!
 
-# Utilização
-Recomendamos a utilização da [IDE InteliJJ](https://www.jetbrains.com/idea/) para o projeto. Apenas porque foi essa utilizada pelos autores 
+# Recomendação de uso pelo código-fonte
+Recomendamos a utilização da [IDE InteliJJ](https://www.jetbrains.com/idea/) para o projeto. Apenas porque foi essa utilizada pelos autores do projeto.
 
 # O Projeto: Explicação focada para desenvolvedores.
 
