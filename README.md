@@ -6,9 +6,9 @@
 
 O trabalho final tinha a proposta desenvolver uma aplicação orientada a objetos em Java. A Aplicação escolhida pelo grupo foi realizar um banco digital, dentro dos limites digitais do banco, sem poder uma verificação concreta de depósitos ou usuários com identificação inválidas.
 
-# Versão do Java recomendada
+# Versão do Java 
 
-Utilizamos a [JDK 18](https://jdk.java.net/) para a realização desse trabalho. Por isso, recomendamos essa versão para utilização.
+Utilizamos a [JDK 18](https://jdk.java.net/) para a realização desse trabalho. Deve ser utilizada essa versão.
 
 # Como instalar
 ```
