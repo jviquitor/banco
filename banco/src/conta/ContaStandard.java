@@ -15,4 +15,9 @@ public class ContaStandard extends Conta implements Rentavel {
     public void renderSaldo() {
         this.saldo = this.saldo + (this.saldo * Rentavel.FATOR_RENDER_STANDARD);
     }
+
+    @Override
+    public void renderDinheiroGuardado() {
+        this.dinheiroGuardado = this.dinheiroGuardado + (this.dinheiroGuardado * Rentavel.FATOR_RENDER_GUARDADO_STANDARD);
+    }
 }

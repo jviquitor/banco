@@ -205,6 +205,7 @@ public class Agencia {
 	public void renderContas() {
 		for (Cliente cliente : clientes) {
 			((Rentavel) cliente.getConta()).renderSaldo();
+			((Rentavel) cliente.getConta()).renderDinheiroGuardado();
 		}
 	}
 

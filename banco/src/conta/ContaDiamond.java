@@ -15,4 +15,9 @@ public class ContaDiamond extends ContaPremium implements Rentavel {
     public void renderSaldo() {
         this.saldo = this.saldo + (this.saldo * Rentavel.FATOR_RENDER_DIAMOND);
     }
+
+    @Override
+    public void renderDinheiroGuardado() {
+        this.dinheiroGuardado = this.dinheiroGuardado + (this.dinheiroGuardado * Rentavel.FATOR_RENDER__GUARDADO_DIAMOND);
+    }
 }
