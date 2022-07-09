@@ -335,7 +335,7 @@ public class MenuUsuario {
             };
             String[] entradaDados = UsuarioEntradas(cabecalhoDados);
 
-            while (!VerificadorEntrada.verificarChavePix(entradaDados[1], entradaDados[0], tiposClientes)) {
+            while (!VerificadorEntrada.verificarChavePix(entradaDados[1], entradaDados[0])) {
                 System.out.println("DIGITE OS DADOS CORRETAMENTE POR FAVOR");
                 entradaDados = UsuarioEntradas(cabecalhoDados);
             }
@@ -669,7 +669,7 @@ public class MenuUsuario {
             };
             String[] entradaChave = UsuarioEntradas(cabecalhoChave);
 
-            while (!VerificadorEntrada.verificarChavePix(entradaChave[0], entradas[0], tiposClientes)) {
+            while (!VerificadorEntrada.verificarChavePix(entradaChave[0], entradas[0])) {
                 entradas = UsuarioEntradas(cabecalhoTipoPix);
             }
 

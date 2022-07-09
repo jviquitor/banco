@@ -13,7 +13,7 @@ Utilizamos a [JDK 18](https://jdk.java.net/) para a realização desse trabalho.
 # Como instalar
 ```
 git clone https://github.com/Asunnya/bic-poo
-cd exc/jar
+cd exec/jar
 java -jar bic-poo.jar
 ```
 ## Possíveis erros na execução do .jar
