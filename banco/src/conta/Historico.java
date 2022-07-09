@@ -27,8 +27,9 @@ public class Historico implements Serializable {
             for (int i = 0; i < TRANSACOES.size() && !achouPos; i++) {
                 Data dataNovaCmp = novaTransacao.hasDataAgendada() ? novaTransacao.getDataAgendada() : novaTransacao.getDataEmissaoTransacao();
                 Data dataAtualCmp = TRANSACOES.get(i).hasDataAgendada() ? TRANSACOES.get(i).getDataAgendada() : TRANSACOES.get(i).getDataEmissaoTransacao();
-                if (dataNovaCmp.antesDe(dataAtualCmp)) {
-                    index = i;
+                index = i + 1;
+                if (dataNovaCmp.depoisDe(dataAtualCmp)) {
+                    index--;
                     achouPos = true;
                 }
             }
