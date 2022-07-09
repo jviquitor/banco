@@ -29,7 +29,6 @@ public class ChavePix implements Serializable {
             case DadosChavesPix.EMAIL:
                 this.email = dadosChavesPix.getEmail();
                 return true;
-
             case DadosChavesPix.CHAVE_ALEATORIA:
                 this.chaveAleatoria = GeracaoAleatoria.gerarChaveAleatoria(GeracaoAleatoria.TAMANHO_CHAVE_ALEATORIA);
                 return true;

@@ -57,7 +57,7 @@ public abstract class Cliente implements Serializable {
 
 	public Fatura pagarFatura(Double valor) {
 		Fatura fatura = new Fatura(valor, this);
-		this.getConta().getHISTORICO().addFaturas(fatura);
+		this.getConta().getHistorico().addFaturas(fatura);
 		this.getConta().pagarFatura(valor);
 		return fatura;
 	}

@@ -23,6 +23,7 @@ import transacao.exceptions.TransacaoException;
 import utilsBank.GerenciadorBanco;
 import utilsBank.arquivo.exception.EscritaArquivoException;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 
@@ -125,6 +126,12 @@ public class MenuUsuario {
             try {
                 String value = TECLADO.nextLine();
                 Transacao t;
+                TiposClientes tiposClientes;
+                if (isClientePessoa) {
+                    tiposClientes = TiposClientes.CLIENTE_PESSOA;
+                } else {
+                    tiposClientes = TiposClientes.CLIENTE_EMPRESA;
+                }
                 switch (value) {
                     case "0":
                         loop = false;
@@ -136,7 +143,7 @@ public class MenuUsuario {
                         menuGerenciarDinheiroGuardado(cliente);
                         break;
                     case "3":
-                        MenuDadosTransacao(TRANSFERENCIA, tipoConta);
+                        MenuDadosTransacao(TRANSFERENCIA, tipoConta, tiposClientes);
                         t = cliente.getConta().transferir();
                         t.gerarComprovante();
                         GerenciadorBanco.imprimirDireitos();
@@ -146,7 +153,7 @@ public class MenuUsuario {
                         System.out.println("Boleto pago!");
                         break;
                     case "5":
-                        MenuDadosTransacao(DEPOSITO, tipoConta);
+                        MenuDadosTransacao(DEPOSITO, tipoConta, tiposClientes);
                         t = cliente.getConta().depositar();
                         t.gerarComprovante();
                         GerenciadorBanco.imprimirDireitos();
@@ -168,7 +175,7 @@ public class MenuUsuario {
                         System.out.println(cliente.getConta().getChavesPix().toString());
                         break;
                     case "10":
-                        menuAdicionarChavePix();
+                        menuAdicionarChavePix(tiposClientes);
                         if (cliente.getConta().modificarChavePix()) {
                             System.out.println("Chave Pix modificada com sucesso");
                             System.out.println(cliente.getConta().getChavesPix());
@@ -193,17 +200,29 @@ public class MenuUsuario {
                                     menuLoopHistorico = false;
                                     break;
                                 case "1":
-                                    for (Transacao transacao : cliente.getConta().getHISTORICO().getTransacoes()) {
-                                        imprimirBorda("=");
-                                        System.out.println(transacao);
+                                    ArrayList<Transacao> transacoesCliente = cliente.getConta().getHistorico().getTransacoes();
+                                    if (transacoesCliente.isEmpty()) {
+                                        System.out.println("Nenhuma transacao ocorrida.");
+                                    } else {
+                                        for (Transacao transacao : transacoesCliente) {
+                                            imprimirBorda("=");
+                                            System.out.println(transacao);
+                                        }
                                     }
+
                                     menuLoopHistorico = false;
                                     break;
                                 case "2":
-                                    for (Fatura fatura : cliente.getConta().getHISTORICO().getFaturas()) {
-                                        imprimirBorda("=");
-                                        System.out.println(fatura);
+                                    ArrayList<Fatura> faturaCliente = cliente.getConta().getHistorico().getFaturas();
+                                    if (faturaCliente.isEmpty()) {
+                                        System.out.println("Nenhuma fatura paga");
+                                    } else {
+                                        for (Fatura fatura : cliente.getConta().getHistorico().getFaturas()) {
+                                            imprimirBorda("=");
+                                            System.out.println(fatura);
+                                        }
                                     }
+
                                     menuLoopHistorico = false;
                                     break;
                             }
@@ -295,7 +314,7 @@ public class MenuUsuario {
         return entradas;
     }
 
-    private static void MenuDadosTransacao(String tipoOperacao, String tipoConta) throws BuscaException, ValorInvalido {
+    private static void MenuDadosTransacao(String tipoOperacao, String tipoConta, TiposClientes tiposClientes) throws BuscaException, ValorInvalido {
         imprimirBorda("=");
 
         String[] cabecalhoDadosTransacao = {
@@ -315,6 +334,11 @@ public class MenuUsuario {
                     "Digite a chave",
             };
             String[] entradaDados = UsuarioEntradas(cabecalhoDados);
+
+            while (!VerificadorEntrada.verificarChavePix(entradaDados[1], entradaDados[0], tiposClientes)) {
+                System.out.println("DIGITE OS DADOS CORRETAMENTE POR FAVOR");
+                entradaDados = UsuarioEntradas(cabecalhoDados);
+            }
             InterfaceUsuario.setDadosTransacao(new DadosTransacao(
                             Double.parseDouble(entradaDadosTransacao[0]),
                             entradaDados[1],
@@ -628,7 +652,7 @@ public class MenuUsuario {
         InterfaceUsuario.setDadosTransacao(dadosTransacao);
     }
 
-    private static void menuAdicionarChavePix() {
+    private static void menuAdicionarChavePix(TiposClientes tiposClientes) {
         String[] cabecalhoTipoPix = {
                 "[ESCREVA] Escolha o tipo de chave que deseja adicionar ou modificar! [FORMATOS ACEITOS PARA TEXTO]\n  " + CHAVES_DISPONIVEIS_ALTERACAO,
         };
@@ -641,11 +665,11 @@ public class MenuUsuario {
             InterfaceUsuario.setDadosChavePix(new DadosChavesPix(null, null, DadosChavesPix.CHAVE_ALEATORIA));
         } else {
             String[] cabecalhoChave = {
-                    "DIGITE A CHAVE CORRETAMENTE\n  ",
+                    "POR FAVOR, DIGITE A CHAVE CORRETAMENTE\n",
             };
             String[] entradaChave = UsuarioEntradas(cabecalhoChave);
 
-            while (!VerificadorEntrada.verificarChavePix(entradaChave[0], entradas[0])) {
+            while (!VerificadorEntrada.verificarChavePix(entradaChave[0], entradas[0], tiposClientes)) {
                 entradas = UsuarioEntradas(cabecalhoTipoPix);
             }
 

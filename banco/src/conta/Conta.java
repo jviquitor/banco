@@ -135,32 +135,23 @@ public class Conta implements Serializable {
         Double valorT = transacao.getValor();
 
         if (addTransacaoRealizada(transacao)) {
-            transacao.getContaDestino().aumentarSaldo(valorT);
-            transacao.getContaOrigem().diminuirSaldo(valorT);
-            adicionarHistoricoNotificacao(transacao);
+            if (transacao.getContaDestino().equals(transacao.getContaOrigem())) {
+                this.setSaldoTotalDepositado(valorT);
+                transacao.getContaDestino().aumentarSaldo(valorT);
+                transacao.getContaOrigem().addHistorico(transacao);
+            } else {
+                transacao.getContaDestino().aumentarSaldo(valorT);
+                transacao.getContaOrigem().diminuirSaldo(valorT);
+                adicionarHistoricoNotificacao(transacao);
+            }
             return transacao;
         }
+
         throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
     }
 
     public Transacao depositar() throws TransacaoException {
-        DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
-        Transacao transacao = new Transacao(dadosTransacao);
-        Double valorT = transacao.getValor();
-
-        if (addTransacaoRealizada(transacao)) {
-            this.setSaldoTotalDepositado(valorT);
-            if (transacao.getContaDestino().equals(transacao.getContaOrigem())) {
-                transacao.getContaDestino().aumentarSaldo(valorT);
-                transacao.getContaOrigem().addHistorico(transacao);
-            } else {
-                adicionarHistoricoNotificacao(transacao);
-                transacao.getContaDestino().aumentarSaldo(valorT);
-                transacao.getContaOrigem().diminuirSaldo(valorT);
-            }
-            return transacao;
-        }
-        throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
+        return transferir();
     }
 
     public void mostrarCartoes() {
@@ -323,7 +314,7 @@ public class Conta implements Serializable {
         return this.notificacoes.getTransacoes();
     }
 
-    public Historico getHISTORICO() {
+    public Historico getHistorico() {
         return HISTORICO;
     }
 

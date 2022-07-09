@@ -60,14 +60,14 @@ public class GeracaoAleatoria {
     }
 
     public static String gerarChaveAleatoria(int tamanhoChave) {
-        if (CHAVES_GERADAS_ALEATORIA.size() < Math.pow(36, tamanhoChave)) {
+        String caracteres = "abcdefghijklmnopqrstuvwxyz1234567890";
+        if (CHAVES_GERADAS_ALEATORIA.size() < Math.pow(caracteres.length(), tamanhoChave)) {
             Random aleatorio = new Random();
-            String caracteres = "abcdefghijklmnopqrstuvwxyz1234567890";
             String chaveAleatoria;
             do {
                 chaveAleatoria = "";
                 for (int i = 0; i < tamanhoChave; i++) {
-                    chaveAleatoria += caracteres.charAt(aleatorio.nextInt(36));
+                    chaveAleatoria += caracteres.charAt(aleatorio.nextInt(caracteres.length()));
                 }
             } while (!CHAVES_GERADAS_ALEATORIA.add(chaveAleatoria));
             GerenciadorGeracaoAleatoria.salvandoGeracaoAleatoria(GerenciadorArquivo.PATH_CHAVES_GERADAS_ALEATORIA, (HashSet<String>) CHAVES_GERADAS_ALEATORIA);
