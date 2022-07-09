@@ -8,12 +8,12 @@ public class Endereco implements Serializable {
     @Serial
     private static final long serialVersionUID = 3L;
     private final String CEP;
-    private final Integer numeroCasa;
+    private final Integer NUMERO_CASA;
     private String complemento;
 
     public Endereco(String CEP, Integer numeroCasa, String complemento) {
         this.CEP = CEP;
-        this.numeroCasa = numeroCasa;
+        this.NUMERO_CASA = numeroCasa;
         this.complemento = complemento;
     }
 
@@ -31,6 +31,6 @@ public class Endereco implements Serializable {
     }
 
     protected Integer getNumeroCasa() {
-        return numeroCasa;
+        return NUMERO_CASA;
     }
 }

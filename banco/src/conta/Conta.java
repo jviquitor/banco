@@ -6,7 +6,6 @@ import cliente.Cliente;
 import conta.exceptions.TipoInvalido;
 import conta.exceptions.TransacaoNaoRealizadaException;
 import funcionalidades.exceptions.EmprestimoException;
-import historico.Historico;
 import interfaceUsuario.InterfaceUsuario;
 import interfaceUsuario.MenuUsuario;
 import interfaceUsuario.dados.DadosCartao;
@@ -56,62 +55,15 @@ public class Conta implements Serializable {
         this.CHAVES_PIX = new ChavePix(null, null, null, null);
     }
 
-    public Double getSaldoTotalDepositado() {
-        return saldoTotalDepositado;
-    }
-
-    public void setSaldoTotalDepositado(Double saldoTotalDepositado) {
-        this.saldoTotalDepositado = saldoTotalDepositado;
-    }
-
-    public String getIdConta() {
-        return ID_CONTA;
-    }
-
-    public ChavePix getCHAVES_PIX() {
-        return CHAVES_PIX;
-    }
+    /**
+     * Com os dados da chave pix tratados na Interface chama CHAVES_PIX.mudarAdicionarChavePix
+     *
+     * @return @code true ou @code false caso mudou ou não
+     */
 
     public boolean modificarChavePix() {
         DadosChavesPix dadosChavePix = InterfaceUsuario.getDadosChavePix();
         return CHAVES_PIX.mudarAdicionarChavePix(dadosChavePix.getTipoChave(), dadosChavePix);
-    }
-
-    public void aumentarSaldo(Double valor) {
-        this.saldo += valor;
-    }
-
-    private void diminuirSaldo(Double valor) {
-        this.saldo -= valor;
-    }
-
-    public void setDinheiroGuardado(Double valor, String opcao) {
-        if (opcao.equals(MenuUsuario.GUARDAR)) {
-            this.saldo -= valor;
-            this.dinheiroGuardado += valor;
-        } else if (opcao.equals(MenuUsuario.RESGATAR)) {
-            this.saldo += valor;
-            this.dinheiroGuardado -= valor;
-        }
-
-    }
-
-    public Double getDinheiroGuardado() {
-        return dinheiroGuardado;
-    }
-
-    public Transacao transferir() throws TransacaoException {
-        DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
-        Transacao transacao = new Transacao(dadosTransacao);
-        Double valorT = transacao.getValor();
-
-        if (addTransacaoRealizada(transacao)) {
-            transacao.getContaDestino().aumentarSaldo(valorT);
-            transacao.getContaOrigem().diminuirSaldo(valorT);
-            adicionarHistoricoNotificacao(transacao);
-            return transacao;
-        }
-        throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
     }
 
     public boolean addTransacaoRealizada(Transacao t) {
@@ -131,12 +83,32 @@ public class Conta implements Serializable {
         return false;
     }
 
-    private void transferir(Transacao transacao) throws TransacaoException {
-        Double valorT = transacao.getValor();
-        transacao.getContaDestino().aumentarSaldo(valorT);
-        transacao.getContaOrigem().diminuirSaldo(valorT);
-        transacao.getContaDestino().addHistorico(transacao);
-        transacao.getContaDestino().addNotificacao(transacao);
+    public Transacao agendarTransacao() throws TransacaoException {
+        DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
+        Data dataAgendada = dadosTransacao.getDataAgendada();
+        Transacao transacao = Transacao.criarTransacaoAgendada(dadosTransacao, dataAgendada);
+        if (addTransacaoAgendadas(transacao)) {
+            Agencia.getInstance().addTransacao(transacao);
+            return transacao;
+        }
+        throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
+    }
+
+    public Transacao realizarTransacaoAgendada(Transacao transacao) throws TransacaoException {
+        if (transacao.getDataAgendada() == null) {
+            throw new TransacaoException("Essa transacao ja foi realizada");
+        }
+        transferir(transacao);
+        transacao.atualizar();
+        return transacao;
+    }
+
+    public void apagarTransacaoAgendada(Transacao transacao) throws TransacaoException {
+        try {
+            this.TRANSACOES_AGENDADAS.remove(transacao);
+        } catch (Exception ex) {
+            throw new TransacaoException("Transacao nao encontrada");
+        }
     }
 
     private void adicionarHistoricoNotificacao(Transacao transacao) throws TransacaoException {
@@ -145,43 +117,30 @@ public class Conta implements Serializable {
         transacao.getContaDestino().addNotificacao(transacao);
     }
 
-    public boolean equals(Conta outraConta) {
-        return this.ID_CONTA.equals(outraConta.ID_CONTA);
+    public void addHistorico(Transacao transacao) throws TransacaoException {
+        this.HISTORICO.addTransacao(transacao);
     }
 
-    public void mostrarCartoes() {
-        for (Cartao cartao : this.CARTEIRA.getListaDeCartao()) {
-            System.out.println(cartao);
-        }
+    private void transferir(Transacao transacao) throws TransacaoException {
+        Double valorT = transacao.getValor();
+        transacao.getContaDestino().aumentarSaldo(valorT);
+        transacao.getContaOrigem().diminuirSaldo(valorT);
+        transacao.getContaDestino().addHistorico(transacao);
+        transacao.getContaDestino().addNotificacao(transacao);
     }
 
-    public void criarCartao(String nomeTitular, DadosCartao dadosCartao) {
-        Cartao cartao;
+    public Transacao transferir() throws TransacaoException {
+        DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
+        Transacao transacao = new Transacao(dadosTransacao);
+        Double valorT = transacao.getValor();
 
-        if (this.getClass() == ContaStandard.class) {
-            cartao = new CartaoStandard(nomeTitular, dadosCartao);
-        } else if (this.getClass() == ContaPremium.class) {
-            cartao = new CartaoPremium(nomeTitular, dadosCartao);
-        } else if (this.getClass() == ContaDiamond.class) {
-            cartao = new CartaoDiamond(nomeTitular, dadosCartao);
-        } else {
-            throw new TipoInvalido("Tipo do cartao invalido.");
+        if (addTransacaoRealizada(transacao)) {
+            transacao.getContaDestino().aumentarSaldo(valorT);
+            transacao.getContaOrigem().diminuirSaldo(valorT);
+            adicionarHistoricoNotificacao(transacao);
+            return transacao;
         }
-
-        this.CARTEIRA.adicionarNovoCartao(cartao);
-    }
-
-    public void pagarBoleto(Boleto boleto, Cliente origem) throws TransacaoException {
-        int intervalo = DataBank.criarData(DataBank.SEM_HORA).calcularIntervalo(boleto.getDataVencimento());
-        Double valorTratado = (intervalo < 0) ? boleto.getMultaPorDias() * -intervalo : boleto.getMultaPorDias();
-        valorTratado += boleto.getValor();
-        if (this.saldo < valorTratado) {
-            throw new TransacaoException("Saldo insuficiente");
-        }
-        boleto.pagar(origem);
-        this.diminuirSaldo(valorTratado);
-        boleto.getContaDestino().aumentarSaldo(valorTratado);
-        adicionarHistoricoNotificacao(boleto);
+        throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
     }
 
     public Transacao depositar() throws TransacaoException {
@@ -202,6 +161,47 @@ public class Conta implements Serializable {
             return transacao;
         }
         throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
+    }
+
+    public void mostrarCartoes() {
+        for (Cartao cartao : this.CARTEIRA.getListaDeCartoes()) {
+            System.out.println(cartao);
+        }
+    }
+
+    public void pagarBoleto(Boleto boleto, Cliente origem) throws TransacaoException {
+        int intervalo = DataBank.criarData(DataBank.SEM_HORA).calcularIntervalo(boleto.getDataVencimento());
+        Double valorTratado = (intervalo < 0) ? boleto.getMultaPorDias() * -intervalo : boleto.getMultaPorDias();
+        valorTratado += boleto.getValor();
+        if (this.saldo < valorTratado) {
+            throw new TransacaoException("Saldo insuficiente");
+        }
+        boleto.pagar(origem);
+        this.diminuirSaldo(valorTratado);
+        boleto.getContaDestino().aumentarSaldo(valorTratado);
+        adicionarHistoricoNotificacao(boleto);
+    }
+
+    public void criarCartao(String nomeTitular, DadosCartao dadosCartao) {
+        Cartao cartao;
+
+        if (this.getClass() == ContaStandard.class) {
+            cartao = new CartaoStandard(nomeTitular, dadosCartao);
+        } else if (this.getClass() == ContaPremium.class) {
+            cartao = new CartaoPremium(nomeTitular, dadosCartao);
+        } else if (this.getClass() == ContaDiamond.class) {
+            cartao = new CartaoDiamond(nomeTitular, dadosCartao);
+        } else {
+            throw new TipoInvalido("Tipo do cartao invalido.");
+        }
+
+        this.CARTEIRA.adicionarNovoCartao(cartao);
+    }
+
+    public void criarEmprestimo(Double valor, Integer parcelas) {
+        this.emprestimo = valor;
+        this.parcelaEmprestimo = valor / parcelas;
+        this.aumentarSaldo(valor);
     }
 
     public void pagarEmprestimo() throws EmprestimoException {
@@ -234,42 +234,6 @@ public class Conta implements Serializable {
         }
     }
 
-    public GerenciamentoCartao getCARTEIRA() {
-        return this.CARTEIRA;
-    }
-
-    public Transacao agendarTransacao() throws TransacaoException {
-        DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
-        Data dataAgendada = dadosTransacao.getDataAgendada();
-        Transacao transacao = Transacao.criarTransacaoAgendada(dadosTransacao, dataAgendada);
-        if (addTransacaoAgendadas(transacao)) {
-            Agencia.getInstance().addTransacao(transacao);
-            return transacao;
-        }
-        throw new TransacaoNaoRealizadaException("Ocorreu algum erro ao realizar a Transacao. Tente novamente");
-    }
-
-    public Transacao realizarTransacaoAgendada(Transacao transacao) throws TransacaoException {
-        if (transacao.getDataAgendada() == null) {
-            throw new TransacaoException("Essa transacao ja foi realizada");
-        }
-        transferir(transacao);
-        transacao.atualizar();
-        return transacao;
-    }
-
-    public void apagarTransacaoAgendada(Transacao transacao) throws TransacaoException {
-        try {
-            this.TRANSACOES_AGENDADAS.remove(transacao);
-        } catch (Exception ex) {
-            throw new TransacaoException("Transacao nao encontrada");
-        }
-    }
-
-    public Double getSaldo() {
-        return saldo;
-    }
-
     public void pagarFatura(Double valor) {
         this.CARTEIRA.aumentarLimiteAtual(valor);
         this.saldo -= valor;
@@ -280,22 +244,87 @@ public class Conta implements Serializable {
         return true;
     }
 
-    public Double getEmprestimo() {
-        return emprestimo;
+    public void aumentarSaldo(Double valor) {
+        this.saldo += valor;
     }
 
-    public void criarEmprestimo(Double valor, Integer parcelas) {
-        this.emprestimo = valor;
-        this.parcelaEmprestimo = valor / parcelas;
-        this.aumentarSaldo(valor);
+    private void diminuirSaldo(Double valor) {
+        this.saldo -= valor;
+    }
+
+    public boolean hasEmprestimo() {
+        return this.emprestimo > 0.0;
+    }
+
+    public boolean hasNotificacoes() {
+        return this.notificacoes.getTransacoes().size() > 0;
+    }
+
+    public void addNotificacao(Transacao transacao) throws TransacaoException {
+        this.notificacoes.addTransacao(transacao);
+    }
+
+    public void addNotificacao(Fatura fatura) {
+        this.notificacoes.addFaturas(fatura);
+    }
+
+    public void resetarNotificacoes() {
+        this.notificacoes = new Historico();
+    }
+
+    public void setDinheiroGuardado(Double valor, String opcao) {
+        if (opcao.equals(MenuUsuario.GUARDAR)) {
+            this.saldo -= valor;
+            this.dinheiroGuardado += valor;
+        } else if (opcao.equals(MenuUsuario.RESGATAR)) {
+            this.saldo += valor;
+            this.dinheiroGuardado -= valor;
+        }
+
+    }
+
+    public String getIdConta() {
+        return ID_CONTA;
+    }
+
+    public ChavePix getChavesPix() {
+        return CHAVES_PIX;
+    }
+
+    public Double getSaldoTotalDepositado() {
+        return saldoTotalDepositado;
+    }
+
+    public void setSaldoTotalDepositado(Double saldoTotalDepositado) {
+        this.saldoTotalDepositado = saldoTotalDepositado;
+    }
+
+    public Double getDinheiroGuardado() {
+        return dinheiroGuardado;
+    }
+
+    public GerenciamentoCartao getCARTEIRA() {
+        return this.CARTEIRA;
+    }
+
+    public Double getSaldo() {
+        return saldo;
+    }
+
+    public Double getEmprestimo() {
+        return emprestimo;
     }
 
     public Double getParcelaEmprestimo() {
         return this.parcelaEmprestimo;
     }
 
-    public int getDataDebitoAutomatico() {
-        return this.CARTEIRA.getDataDebitoAutomatico();
+    public ArrayList<Transacao> getNotificacoes() {
+        return this.notificacoes.getTransacoes();
+    }
+
+    public Historico getHISTORICO() {
+        return HISTORICO;
     }
 
     @Override
@@ -320,40 +349,9 @@ public class Conta implements Serializable {
         return toString;
     }
 
-    public boolean getDebitoAutomatico() {
-        return this.CARTEIRA.isDebitoAutomatico();
+    public boolean equals(Conta outraConta) {
+        return this.ID_CONTA.equals(outraConta.ID_CONTA);
     }
 
-    public boolean hasEmprestimo() {
-        return this.emprestimo > 0.0;
-    }
-
-    public Historico getHISTORICO() {
-        return HISTORICO;
-    }
-
-    public void addHistorico(Transacao transacao) throws TransacaoException {
-        this.HISTORICO.addTransacao(transacao);
-    }
-
-    public void resetarNotificacoes() {
-        this.notificacoes = new Historico();
-    }
-
-    public void addNotificacao(Transacao transacao) throws TransacaoException {
-        this.notificacoes.addTransacao(transacao);
-    }
-
-    public void addNotificacao(Fatura fatura) {
-        this.notificacoes.addFaturas(fatura);
-    }
-
-    public boolean hasNotificacoes() {
-        return this.notificacoes.getTransacoes().size() > 0;
-    }
-
-    public ArrayList<Transacao> getNotificacoes() {
-        return this.notificacoes.getTransacoes();
-    }
 
 }

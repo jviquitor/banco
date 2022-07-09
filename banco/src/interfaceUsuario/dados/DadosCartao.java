@@ -1,14 +1,14 @@
 package interfaceUsuario.dados;
 
 public class DadosCartao {
-    private final String apelidoCartao;
+    private final String APELIDO_CARTAO;
 
     public DadosCartao(String apelidoCartao) {
-        this.apelidoCartao = apelidoCartao;
+        this.APELIDO_CARTAO = apelidoCartao;
     }
 
     public String getApelidoCartao() {
-        return apelidoCartao;
+        return APELIDO_CARTAO;
     }
 
 }

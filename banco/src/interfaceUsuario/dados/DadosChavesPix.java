@@ -5,28 +5,26 @@ public class DadosChavesPix {
 	public static final String CHAVE_ALEATORIA = "chave_aleatoria";
 	public static final String EMAIL = "email";
 	public static final String IDENTIFICACAO = "identificacao";
-	private final String telefone;
-	private final String email;
-	private final String tipoChave;
-	private final boolean chaveAleatoria;
+	private final String NUMERO_TELEFONE;
+	private final String EMAIL_USUARIO;
+	private final String TIPO_CHAVE;
 
-	public DadosChavesPix(String telefone, String email, String tipoChave, boolean chaveAleatoria) {
-		this.telefone = telefone;
-		this.email = email;
-		this.tipoChave = tipoChave;
-		this.chaveAleatoria = chaveAleatoria;
+	public DadosChavesPix(String telefone, String email, String tipoChave) {
+		this.NUMERO_TELEFONE = telefone;
+		this.EMAIL_USUARIO = email;
+		this.TIPO_CHAVE = tipoChave;
 	}
 
 	public String getTipoChave() {
-		return tipoChave;
+		return TIPO_CHAVE;
 	}
 
 	public String getTelefone() {
-		return telefone;
+		return NUMERO_TELEFONE;
 	}
 
 	public String getEmail() {
-		return email;
+		return EMAIL_USUARIO;
 	}
 
 }

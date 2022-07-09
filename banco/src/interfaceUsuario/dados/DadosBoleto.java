@@ -4,29 +4,27 @@ import utilsBank.databank.Data;
 import utilsBank.databank.DataBank;
 
 public class DadosBoleto {
-    private final String nossoNumero;
-    private final String dataVencimento; //@Lembrando sera setada no construtor e sera utilizada com o getters
-    private final Integer multaPorDias;
-    private final Boolean foiPago;
+	private final String DATA_VENCIMENTO; //@Lembrando sera setada no construtor e sera utilizada com o getters
+	private final Integer MULTA_DIAS;
+	private final Boolean FOI_PAGO;
 
-    public DadosBoleto(String dataVencimento, Integer multaPorDias, boolean foiPago) {
-        this.dataVencimento = dataVencimento;
-        this.multaPorDias = multaPorDias;
-        this.foiPago = foiPago;
-        this.nossoNumero = null;
-    }
+	public DadosBoleto(String dataVencimento, Integer multaPorDias, boolean foiPago) {
+		this.DATA_VENCIMENTO = dataVencimento;
+		this.MULTA_DIAS = multaPorDias;
+		this.FOI_PAGO = foiPago;
+	}
 
 
-    public Integer getMultaPorDias() {
-        return multaPorDias;
-    }
+	public Integer getMultaPorDias() {
+		return MULTA_DIAS;
+	}
 
-    public Data getDataVencimento() {
-        assert dataVencimento != null;
-        return DataBank.criarData(dataVencimento, DataBank.SEM_HORA);
-    }
+	public Data getDataVencimento() {
+		assert DATA_VENCIMENTO != null;
+		return DataBank.criarData(DATA_VENCIMENTO, DataBank.SEM_HORA);
+	}
 
-    public boolean getFoiPago() {
-        return Boolean.TRUE.equals(this.foiPago);
-    }
+	public boolean getFoiPago() {
+		return Boolean.TRUE.equals(this.FOI_PAGO);
+	}
 }

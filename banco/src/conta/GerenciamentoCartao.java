@@ -11,50 +11,16 @@ import java.util.List;
 public class GerenciamentoCartao implements Serializable {
     @Serial
     private static final long serialVersionUID = 7L;
-    private final List<Cartao> listaDeCartao;
+    private final List<Cartao> LISTA_DE_CARTOES;
     private Double limiteUsado;
     private boolean debitoAutomatico = false;
     private int dataDebitoAutomatico;
 
     protected GerenciamentoCartao() {
-        this.listaDeCartao = new ArrayList<>();
+        this.LISTA_DE_CARTOES = new ArrayList<>();
         this.limiteUsado = 0.0;
     }
 
-    public int getDataDebitoAutomatico() {
-        return dataDebitoAutomatico;
-    }
-
-    /**
-     * Retorna o valor do Limite utilizado [FATURA]
-     *
-     * @return Double
-     */
-
-    public Double getFatura() {
-        return limiteUsado;
-    }
-
-    /**
-     * Retorna o limite maximo do Cartao
-     *
-     * @return Double
-     */
-    public Double getLimiteMaximo() throws ValorInvalido {
-        if (!listaDeCartao.isEmpty()) {
-            return listaDeCartao.get(0).getLimiteMaximo();
-        }
-        throw new ValorInvalido("Nenhum Cartao adicionado, por favor, tente novamente criando um cartao virtual.");
-    }
-
-    /**
-     * Retorna o valor do limite restante para ser gasto
-     *
-     * @return Double
-     */
-    public Double getLimiteRestante() throws ValorInvalido {
-        return getLimiteMaximo() - limiteUsado;
-    }
 
     /**
      * Diminui o Limite usado com base no parametro informado
@@ -76,18 +42,9 @@ public class GerenciamentoCartao implements Serializable {
      */
 
     protected void adicionarNovoCartao(Cartao cartao) {
-        if (!listaDeCartao.contains(cartao)) {
-            listaDeCartao.add(cartao);
+        if (!LISTA_DE_CARTOES.contains(cartao)) {
+            LISTA_DE_CARTOES.add(cartao);
         }
-    }
-
-    protected List<Cartao> getListaDeCartao() {
-        return listaDeCartao;
-    }
-
-
-    public boolean isDebitoAutomatico() {
-        return this.debitoAutomatico && this.dataDebitoAutomatico > 0;
     }
 
     public void setDebitoAutomatico(boolean debitoAutomatico, int dataDebitoAutomatico) {
@@ -95,5 +52,52 @@ public class GerenciamentoCartao implements Serializable {
         this.dataDebitoAutomatico = dataDebitoAutomatico;
     }
 
+    /**
+     * Retorna o dia que o usuário colocou de debito automático
+     *
+     * @return dataDebitoAutomaticoç
+     */
+    public int getDataDebitoAutomatico() {
+        return dataDebitoAutomatico;
+    }
+
+    /**
+     * Retorna o valor do Limite utilizado [FATURA]
+     *
+     * @return Double
+     */
+
+    public Double getFatura() {
+        return limiteUsado;
+    }
+
+    /**
+     * Retorna o limite maximo do Cartao
+     *
+     * @return Double
+     */
+    public Double getLimiteMaximo() throws ValorInvalido {
+        if (!LISTA_DE_CARTOES.isEmpty()) {
+            return LISTA_DE_CARTOES.get(0).getLimiteMaximo();
+        }
+        throw new ValorInvalido("Nenhum Cartao adicionado, por favor, tente novamente criando um cartao virtual.");
+    }
+
+    /**
+     * Retorna o valor do limite restante para ser gasto
+     *
+     * @return Double
+     */
+    public Double getLimiteRestante() throws ValorInvalido {
+        return getLimiteMaximo() - limiteUsado;
+    }
+
+    protected List<Cartao> getListaDeCartoes() {
+        return LISTA_DE_CARTOES;
+    }
+
+    public boolean isDebitoAutomatico() {
+        return this.debitoAutomatico && this.dataDebitoAutomatico > 0;
+    }
 
 }

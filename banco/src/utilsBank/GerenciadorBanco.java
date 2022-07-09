@@ -20,29 +20,16 @@ public class GerenciadorBanco {
     private static final String TRANSFERENCIA_AGENDADA = "Sua transferencia foi agendada com sucesso. Obrigada";
 
     //
+    public static boolean intToBoolean(int value) {
+        return value != 0;
+    }
+
     public static HashSet<Cliente> inicializarClientes() throws LeituraArquivoException {
         return GerenciadorArquivo.listarSet(GerenciadorArquivo.PATH_CLIENTES);
     }
 
     public static ArrayList<Transacao> inicializarTransacoes() throws LeituraArquivoException {
         return GerenciadorArquivo.listarTransacoes(GerenciadorArquivo.PATH_TRANSACOES);
-    }
-
-    public static String getTipoConta(Conta c) {
-        if (c instanceof ContaDiamond) {
-            return VerificadorEntrada.DIAMOND;
-        }
-        if (c instanceof ContaPremium) {
-            return VerificadorEntrada.PREMIUM;
-        }
-        if (c instanceof ContaStandard) {
-            return VerificadorEntrada.STANDARD;
-        }
-        return " ";
-    }
-
-    public static boolean intToBoolean(int value) {
-        return value != 0;
     }
 
     public static HashSet<Boleto> inicializarBoletos() {
@@ -60,5 +47,18 @@ public class GerenciadorBanco {
 
     public static void imprimirMensagemTransferenciaAgendada() {
         System.out.println(TRANSFERENCIA_AGENDADA);
+    }
+
+    public static String getTipoConta(Conta c) {
+        if (c instanceof ContaDiamond) {
+            return VerificadorEntrada.DIAMOND;
+        }
+        if (c instanceof ContaPremium) {
+            return VerificadorEntrada.PREMIUM;
+        }
+        if (c instanceof ContaStandard) {
+            return VerificadorEntrada.STANDARD;
+        }
+        return " ";
     }
 }

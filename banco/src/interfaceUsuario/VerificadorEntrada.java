@@ -42,7 +42,7 @@ public class VerificadorEntrada {
     private static final int TAMANHO_CPF = 11;
     private static final int TAMANHO_CNPJ = 14;
     private static final int TAMANHO_CEP = 8;
-    private static final Scanner teclado = new Scanner(System.in);
+    private static final Scanner TECLADO = new Scanner(System.in);
 
     protected static boolean verificarEntradasZeroUm(String entrada) {
         return !entrada.equals("0") && !entrada.equals("1");
@@ -123,7 +123,7 @@ public class VerificadorEntrada {
 
     protected static boolean verificarChavePix(String entrada, String tipoChavePix) {
         System.out.println("A CHAVE INSERIDA " + entrada + " ESTA CORRETA? [1] SIM! [0] NAO, PRECISO TROCAR");
-        if (teclado.nextLine().equals("0")) {
+        if (TECLADO.nextLine().equals("0")) {
             return false;
         } else {
             switch (tipoChavePix) {

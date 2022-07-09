@@ -42,8 +42,8 @@ public class ClienteEmpresa extends Cliente {
     @Override
     public String toString() {
         String toString = "[CLIENTE]\n";
-        if (nome != null) {
-            toString = toString + "NOME: " + nome + "\n";
+        if (NOME != null) {
+            toString = toString + "NOME: " + NOME + "\n";
         }
         return getString(toString);
     }
@@ -52,7 +52,6 @@ public class ClienteEmpresa extends Cliente {
     public Conta getConta() {
         return this.conta;
     }
-
 
     public String getIdentificacao() {
         return this.CNPJ;

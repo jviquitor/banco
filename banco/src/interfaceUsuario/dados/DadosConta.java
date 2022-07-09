@@ -1,19 +1,19 @@
 package interfaceUsuario.dados;
 
 public class DadosConta {
-    private final String tipoDaConta;
-    private final boolean debitoAutomatico;
+    private final String TIPO_CONTA;
+    private final boolean DEBITO_AUTOMATICO;
 
     public DadosConta(String tipoDaConta, boolean debitoAutomatico) {
-        this.tipoDaConta = tipoDaConta;
-        this.debitoAutomatico = debitoAutomatico;
+        this.TIPO_CONTA = tipoDaConta;
+        this.DEBITO_AUTOMATICO = debitoAutomatico;
     }
 
     public String getTipoDaConta() {
-        return tipoDaConta;
+        return TIPO_CONTA;
     }
 
     public boolean isDebitoAutomatico() {
-        return debitoAutomatico;
+        return DEBITO_AUTOMATICO;
     }
 }

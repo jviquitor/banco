@@ -36,7 +36,7 @@ public class MenuUsuario {
     public static final String CHAVES_DISPONIVEIS = "[ESCREVA O TIPO DA CHAVE EXATAMENTE COMO ALGUMAS DESSES TIPOS, IDENTIFICACAO [CPF OU CNPJ]\n" +
             " chave_aleatoria | telefone | email | identificacao";
     public static final String CHAVES_DISPONIVEIS_ALTERACAO = "chave_aleatoria | telefone | email";
-    private static final Scanner teclado = new Scanner(System.in);
+    private static final Scanner TECLADO = new Scanner(System.in);
 
     public static void iniciar() {
         boolean loop = true;
@@ -48,7 +48,7 @@ public class MenuUsuario {
             imprimirBorda("=");
             System.out.print("\n> ");
             try {
-                switch (teclado.nextLine()) {
+                switch (TECLADO.nextLine()) {
                     case "0":
                         loop = false;
                         break;
@@ -76,8 +76,6 @@ public class MenuUsuario {
         }
     }
 
-    //TODO @MAX
-    //todo FAZER pagamento debito automatico
     private static void imprimirMenu(boolean isClientePessoa, int quantidadeNotificacoes) {
         imprimirBorda("=");
         System.out.println("[0] - Sair");
@@ -89,7 +87,6 @@ public class MenuUsuario {
         System.out.println("[6] - Emprestimo");
         System.out.println("[7] - Agendar transferencia");
         System.out.println("[8] - Gerenciar Cartoes");
-        //todo SE DER TEMPO COLOCAR GERENCIAR CHAVES PIX
         System.out.println("[9] - Mostrar chaves Pix");
         System.out.println("[10] - Modificar chave Pix");
         System.out.println("[11] - Gerar um boleto");
@@ -126,7 +123,7 @@ public class MenuUsuario {
             }
 
             try {
-                String value = teclado.nextLine();
+                String value = TECLADO.nextLine();
                 Transacao t;
                 switch (value) {
                     case "0":
@@ -168,13 +165,13 @@ public class MenuUsuario {
                         menuGerenciarCarteira(cliente);
                         break;
                     case "9":
-                        System.out.println(cliente.getConta().getCHAVES_PIX().toString());
+                        System.out.println(cliente.getConta().getChavesPix().toString());
                         break;
                     case "10":
                         menuAdicionarChavePix();
                         if (cliente.getConta().modificarChavePix()) {
                             System.out.println("Chave Pix modificada com sucesso");
-                            System.out.println(cliente.getConta().getCHAVES_PIX());
+                            System.out.println(cliente.getConta().getChavesPix());
                         }
                         break;
                     case "11":
@@ -191,7 +188,7 @@ public class MenuUsuario {
                             System.out.println("[1]: Mostrar Transacoes");
                             System.out.println("[2]: Mostrar Faturas");
 
-                            switch (teclado.nextLine()) {
+                            switch (TECLADO.nextLine()) {
                                 case "0":
                                     menuLoopHistorico = false;
                                     break;
@@ -292,7 +289,7 @@ public class MenuUsuario {
 
         for (int i = 0; i < cabecalhoUsuario.length; i++) {
             System.out.printf("%s:\n> ", cabecalhoUsuario[i]);
-            entradas[i] = teclado.nextLine();
+            entradas[i] = TECLADO.nextLine();
         }
         imprimirBorda("=");
         return entradas;
@@ -369,7 +366,7 @@ public class MenuUsuario {
 
     private static void MenuPagarBoleto() throws BuscaException, TransacaoException {
         System.out.print("Numero do boleto: \n> ");
-        String numBoleto = teclado.nextLine();
+        String numBoleto = TECLADO.nextLine();
         Boleto boleto = Agencia.getInstance().buscarBoleto(numBoleto);
         Conta origem = InterfaceUsuario.usuarioAtualConta();
         origem.pagarBoleto(boleto, InterfaceUsuario.getClienteAtual());
@@ -397,7 +394,7 @@ public class MenuUsuario {
             imprimirBorda("=");
             System.out.print("\n> ");
             try {
-                String op = teclado.nextLine();
+                String op = TECLADO.nextLine();
                 double valor;
                 switch (op) {
                     case "0":
@@ -444,7 +441,7 @@ public class MenuUsuario {
             System.out.print("\n> ");
             GerenciamentoCartao carteiraCli = cliente.getConta().getCARTEIRA();
             try {
-                String op = teclado.nextLine();
+                String op = TECLADO.nextLine();
                 switch (op) {
                     case "0":
                         loop = false;
@@ -462,7 +459,7 @@ public class MenuUsuario {
                         if (carteiraCli.getFatura() > 0.0) {
                             do {
                                 System.out.println("Deseja pagar o valor total da fatura? [1] SIM [0] NAO");
-                                entrada = teclado.nextLine();
+                                entrada = TECLADO.nextLine();
                             } while (VerificadorEntrada.verificarEntradasZeroUm(entrada));
 
                             if (GerenciadorBanco.intToBoolean(Integer.parseInt(entrada))) {
@@ -474,7 +471,7 @@ public class MenuUsuario {
                             } else {
                                 do {
                                     System.out.println("Digite o valor para pagar a fatura");
-                                    entrada = teclado.nextLine();
+                                    entrada = TECLADO.nextLine();
                                 } while (VerificadorEntrada.verificarEntradaValorFatura(String.valueOf(entrada), MenuUsuarioConstantes.PAGAR_FATURA, carteiraCli));
 
                                 cliente.pagarFatura(Double.parseDouble(entrada));
@@ -487,7 +484,7 @@ public class MenuUsuario {
                         break;
                     case "4":
                         System.out.println("[INSIRA SUA SENHA]");
-                        entrada = teclado.nextLine();
+                        entrada = TECLADO.nextLine();
 
                         if (cliente.verificarSenha(entrada)) {
                             menuCriarMostrarCartoes(cliente);
@@ -500,7 +497,7 @@ public class MenuUsuario {
                         do {
                             System.out.println("[LEMBRANDO: APENAS UMA FERRAMENTA ADMINISTRATIVA PARA GERENCIAR O BANCO]]");
                             System.out.println("DIGITE O VALOR QUE FOI GASTO NO CARTAO");
-                            entrada = teclado.nextLine();
+                            entrada = TECLADO.nextLine();
                         } while (VerificadorEntrada.verificarEntradaValorFatura(String.valueOf(entrada), MenuUsuarioConstantes.AUMENTAR_FATURA, carteiraCli));
 
                         if (cliente.getConta().aumentarFatura(Double.parseDouble(entrada))) {
@@ -528,7 +525,7 @@ public class MenuUsuario {
                 System.out.println("[0] - Cancelar");
                 System.out.println("[1] - Mostrar Cartoes");
                 System.out.println("[2] - Adicionar Cartao");
-                entrada = teclado.nextLine();
+                entrada = TECLADO.nextLine();
                 switch (entrada) {
                     case "0":
                         loop = false;
@@ -564,11 +561,11 @@ public class MenuUsuario {
 
     private static void MenuSetDebitoAutomatico(GerenciamentoCartao carteira) {
         System.out.println("DIGITE O DIA PARA DEBITAR AUTOMATICAMENTE ENTRE [" + VerificadorEntrada.DIA_MINIMO_DEB_AUTO + " - " + VerificadorEntrada.DIA_MAX_DEB_AUTO + "]");
-        String entrada = teclado.nextLine();
+        String entrada = TECLADO.nextLine();
 
         while (!VerificadorEntrada.verificarDataDebitoAuto(entrada)) {
             System.out.println("DIA INVALIDO, POR FAVOR, INSIRA CORRETAMENTE UM DIA ENTRE [" + VerificadorEntrada.DIA_MINIMO_DEB_AUTO + " - " + VerificadorEntrada.DIA_MAX_DEB_AUTO + "]");
-            entrada = teclado.nextLine();
+            entrada = TECLADO.nextLine();
         }
         carteira.setDebitoAutomatico(true, Integer.parseInt(entrada));
     }
@@ -585,9 +582,9 @@ public class MenuUsuario {
 
         if (carteiraCliente.isDebitoAutomatico()) {
             System.out.println(DEBITO_ATIVADO);
-            entrada = teclado.nextLine();
+            entrada = TECLADO.nextLine();
             while (VerificadorEntrada.verificarEntradasZeroUm(entrada)) {
-                entrada = teclado.nextLine();
+                entrada = TECLADO.nextLine();
             }
 
             if (GerenciadorBanco.intToBoolean(Integer.parseInt(entrada))) {
@@ -603,9 +600,9 @@ public class MenuUsuario {
     private static void gerenciarAtivarDesativarDebito(GerenciamentoCartao carteiraCliente, String ESTADO_MENSAGEM) {
         String entrada;
         System.out.println(ESTADO_MENSAGEM);
-        entrada = teclado.nextLine();
+        entrada = TECLADO.nextLine();
         while (VerificadorEntrada.verificarEntradasZeroUm(entrada)) {
-            entrada = teclado.nextLine();
+            entrada = TECLADO.nextLine();
         }
 
         if (GerenciadorBanco.intToBoolean(Integer.parseInt(entrada))) {
@@ -641,7 +638,7 @@ public class MenuUsuario {
             entradas = UsuarioEntradas(cabecalhoTipoPix);
         }
         if (entradas[0].equals(DadosChavesPix.CHAVE_ALEATORIA)) {
-            InterfaceUsuario.setDadosChavePix(new DadosChavesPix(null, null, DadosChavesPix.CHAVE_ALEATORIA, true));
+            InterfaceUsuario.setDadosChavePix(new DadosChavesPix(null, null, DadosChavesPix.CHAVE_ALEATORIA));
         } else {
             String[] cabecalhoChave = {
                     "DIGITE A CHAVE CORRETAMENTE\n  ",
@@ -654,10 +651,10 @@ public class MenuUsuario {
 
             switch (entradas[0]) {
                 case DadosChavesPix.TELEFONE:
-                    InterfaceUsuario.setDadosChavePix(new DadosChavesPix(entradaChave[0], null, DadosChavesPix.TELEFONE, false));
+                    InterfaceUsuario.setDadosChavePix(new DadosChavesPix(entradaChave[0], null, DadosChavesPix.TELEFONE));
                     break;
                 case DadosChavesPix.EMAIL:
-                    InterfaceUsuario.setDadosChavePix(new DadosChavesPix(null, entradaChave[0], DadosChavesPix.EMAIL, false));
+                    InterfaceUsuario.setDadosChavePix(new DadosChavesPix(null, entradaChave[0], DadosChavesPix.EMAIL));
                     break;
             }
         }
@@ -672,7 +669,7 @@ public class MenuUsuario {
                     "[1] - Pessoa fisica\n" +
                     "[2] - Pessoa juridica\n" +
                     "> \n");
-            entrada = teclado.nextLine();
+            entrada = TECLADO.nextLine();
         } while (!VerificadorEntrada.verificarTipo(entrada));
 
         TiposClientes tipo;
@@ -763,10 +760,10 @@ public class MenuUsuario {
 
         String entrada;
         System.out.println("Deseja debito automatico? [1] SIM [0] NAO");
-        entrada = teclado.nextLine();
+        entrada = TECLADO.nextLine();
         while (VerificadorEntrada.verificarEntradasZeroUm(entrada)) {
             System.out.println("Por favor, insira corretamente a opcao!");
-            entrada = teclado.nextLine();
+            entrada = TECLADO.nextLine();
         }
         boolean debitoAutomatico = GerenciadorBanco.intToBoolean(Integer.parseInt(entrada));
         MenuCriacaoCartao();
@@ -784,7 +781,7 @@ public class MenuUsuario {
         while (renda < VerificadorEntrada.RENDA_MINIMA) {
             try {
                 System.out.println("Por favor, Insira sua Renda");
-                renda = Double.parseDouble(teclado.nextLine());
+                renda = Double.parseDouble(TECLADO.nextLine());
                 VerificadorEntrada.verificarRenda(renda);
             } catch (ValorInvalido ex) {
                 System.out.println(ex.getMessage());
@@ -801,7 +798,7 @@ public class MenuUsuario {
         imprimirBorda("=");
         System.out.print("\n> ");
         try {
-            String op = teclado.nextLine();
+            String op = TECLADO.nextLine();
             switch (op) {
                 case "0":
                     break;
@@ -857,7 +854,7 @@ public class MenuUsuario {
             imprimirBorda("=");
             System.out.print("\n> ");
             try {
-                String op = teclado.nextLine();
+                String op = TECLADO.nextLine();
                 switch (op) {
                     case "0":
                         break;
@@ -905,7 +902,7 @@ public class MenuUsuario {
             System.out.println("[2] - Empresa");
             imprimirBorda("=");
             System.out.print("> ");
-            String op = teclado.nextLine();
+            String op = TECLADO.nextLine();
             switch (op) {
                 case "1":
                     break;

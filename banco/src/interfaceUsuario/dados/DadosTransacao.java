@@ -12,41 +12,41 @@ import java.io.Serializable;
 public class DadosTransacao implements Serializable {
     @Serial
     private static final long serialVersionUID = 9L;
-    private final Double valor;
-    private final Data dataAgendada;
+    private final Double VALOR;
+    private final Data DATA_AGENDADA;
     private Cliente destino;  //destino o dinheiro vai para o destino
     private Cliente origem; //origem o dinheiro sai da origem
 
     public DadosTransacao(Double valor, String chaveDestino, String chaveorigem, String tipoChaveDestino, String tipoChaveOrigem) throws BuscaException {
-        this.valor = valor;
-        this.dataAgendada = null;
+        this.VALOR = valor;
+        this.DATA_AGENDADA = null;
         setDestinoPix(chaveDestino, tipoChaveDestino);
         setOrigemPix(chaveorigem, tipoChaveOrigem);
     }
 
     public DadosTransacao(Double valor, String chaveDestino, String chaveorigem, String tipoChaveDestino, String tipoChaveOrigem, String dataAgendada) throws BuscaException {
-        this.valor = valor;
-        this.dataAgendada = DataBank.criarData(dataAgendada, DataBank.SEM_HORA);
+        this.VALOR = valor;
+        this.DATA_AGENDADA = DataBank.criarData(dataAgendada, DataBank.SEM_HORA);
         setDestinoPix(chaveDestino, tipoChaveDestino);
         setOrigemPix(chaveorigem, tipoChaveOrigem);
     }
 
 
     public DadosTransacao(Double valor, Cliente destino) {
-        this.valor = valor;
+        this.VALOR = valor;
         this.destino = destino;
-        this.dataAgendada = null;
+        this.DATA_AGENDADA = null;
     }
 
     public DadosTransacao(Double valor, Cliente destino, Cliente origem) {
-        this.valor = valor;
+        this.VALOR = valor;
         this.destino = destino;
         this.origem = origem;
-        this.dataAgendada = null;
+        this.DATA_AGENDADA = null;
     }
 
     public Data getDataAgendada() {
-        return this.dataAgendada;
+        return this.DATA_AGENDADA;
     }
 
     private void setDestinoPix(String chave, String tipoDaChave) throws BuscaException {
@@ -68,7 +68,7 @@ public class DadosTransacao implements Serializable {
     }
 
     public Double getValor() {
-        return valor;
+        return VALOR;
     }
 
 }
