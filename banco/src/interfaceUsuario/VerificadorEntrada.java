@@ -126,7 +126,7 @@ public class VerificadorEntrada {
         return e.length() == GeracaoAleatoria.TAMANHO_CHAVE_ALEATORIA;
     }
 
-    protected static boolean verificarChavePix(String entrada, String tipoChavePix, TiposClientes tiposClientes) {
+    protected static boolean verificarChavePix(String entrada, String tipoChavePix) {
         System.out.println("A CHAVE INSERIDA " + entrada + " ESTA CORRETA? [1] SIM! [0] NAO, PRECISO TROCAR");
         if (TECLADO.nextLine().equals("0")) {
             return false;
@@ -139,7 +139,7 @@ public class VerificadorEntrada {
                 case DadosChavesPix.CHAVE_ALEATORIA:
                     return verificadorChaveAleatoria(entrada);
                 case DadosChavesPix.IDENTIFICACAO:
-                    return verificarIdentificacao(entrada, tiposClientes);
+                    return verificadorIdentificacao(entrada);
             }
         }
         return false;
