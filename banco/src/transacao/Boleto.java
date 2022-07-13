@@ -1,6 +1,8 @@
 package transacao;
 
+import agencia.Agencia;
 import cliente.Cliente;
+import interfaceUsuario.InterfaceUsuario;
 import interfaceUsuario.dados.DadosBoleto;
 import interfaceUsuario.dados.DadosTransacao;
 import transacao.exceptions.TransacaoException;
@@ -30,6 +32,16 @@ public class Boleto extends Transacao implements Serializable {
         }
         this.origem = origem;
         this.foiPago = true;
+    }
+
+    public static Boleto criarBoleto() {
+        DadosBoleto dadosBoleto = InterfaceUsuario.getDadosBoleto();
+        DadosTransacao dadosTransacao = InterfaceUsuario.getDadosTransacao();
+
+        Boleto boleto = new Boleto(dadosTransacao, dadosBoleto);
+        Agencia.getInstance().addBoleto(boleto);
+
+        return boleto;
     }
 
     public Data getDataVencimento() {

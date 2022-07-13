@@ -19,7 +19,8 @@ public class ClientePessoa extends Cliente {
 	 *
 	 * @return String
 	 */
-	private String clienteAllInfos() {
+
+	/*private String clienteAllInfos() {
 		String toString = "[CLIENTE]\n";
 		if (NOME != null) {
 			toString = toString + "NOME: " + NOME + "\n";
@@ -28,9 +29,7 @@ public class ClientePessoa extends Cliente {
 			toString = toString + "CPF: " + CPF + "\n";
 		}
 		return getString(toString);
-	}
-
-
+	}*/
 	@Override
 	public String toString() {
 		String toString = "[CLIENTE]\n";

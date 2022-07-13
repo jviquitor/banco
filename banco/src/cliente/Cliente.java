@@ -9,11 +9,11 @@ import conta.ContaStandard;
 import conta.exceptions.DadosInvalidosException;
 import conta.exceptions.TipoInvalido;
 import interfaceUsuario.InterfaceUsuario;
-import interfaceUsuario.MenuUsuario;
-import interfaceUsuario.VerificadorEntrada;
 import interfaceUsuario.dados.DadosCartao;
 import interfaceUsuario.dados.DadosConta;
 import interfaceUsuario.exceptions.ValorInvalido;
+import interfaceUsuario.menus.MenuConta;
+import interfaceUsuario.verificadores.dados.VerificadorEntrada;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -74,7 +74,7 @@ public abstract class Cliente implements Serializable {
 	}
 
 	public Conta criarConta() throws ValorInvalido {
-		this.renda = MenuUsuario.menuCriacaoConta();
+		this.renda = MenuConta.criacaoConta();
 		DadosConta dadosConta = InterfaceUsuario.getDadosConta();
 		DadosCartao dadosCartao = InterfaceUsuario.getDadosCartao();
 		Conta conta;

@@ -62,7 +62,7 @@ public class Agencia {
 
 	/**
 	 * @param tipodeChave Informa o tipo da chave, declara em DadosChavesPix
-	 * @param chave       Podendo ser de email, chave aleatória, identificação, telefone
+	 * @param chave       Podendo ser de "email", chave aleatória, identificação, telefone
 	 * @return cliente que contém a chave especificada
 	 * @throws BuscaException caso o cliente não for encontrado
 	 */
@@ -94,7 +94,7 @@ public class Agencia {
 	/**
 	 * Busca um cliente que é gerente de uma empresa, e retorna a empresa que o mesmo faz parte.
 	 *
-	 * @param cpf recebe uma string de identificação para buscar uma empresa que esse cpf faz parte como gerente
+	 * @param cpf recebe uma ‘string’ de identificação para buscar uma empresa que esse cpf faz parte como gerente
 	 * @return clienteEmpresa ou null se não for encontrado o gerente
 	 */
 	public ClienteEmpresa buscarEmpresa(String cpf) {
@@ -161,7 +161,7 @@ public class Agencia {
 	}
 
 	/**
-	 * Apenas um metódo para ver todos os clientes com suas informações.
+	 * Apenas um metódo para ver todos os clientes com as suas informações.
 	 */
 	public void imprimirClientes() {
 		for (Cliente cliente : this.clientes) {

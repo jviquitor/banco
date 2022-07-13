@@ -5,7 +5,7 @@ import conta.Conta;
 import conta.ContaDiamond;
 import conta.ContaPremium;
 import conta.ContaStandard;
-import interfaceUsuario.VerificadorEntrada;
+import interfaceUsuario.verificadores.dados.VerificadorEntrada;
 import transacao.Boleto;
 import transacao.Transacao;
 import utilsBank.arquivo.GerenciadorArquivo;

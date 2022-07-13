@@ -1,5 +1,5 @@
 import agencia.Agencia;
-import interfaceUsuario.MenuUsuario;
+import interfaceUsuario.menus.MenuUsuario;
 import utilsBank.VerificadorDiario;
 
 public class Main {

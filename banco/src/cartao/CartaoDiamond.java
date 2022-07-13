@@ -1,7 +1,7 @@
 package cartao;
 
-import interfaceUsuario.VerificadorEntrada;
 import interfaceUsuario.dados.DadosCartao;
+import interfaceUsuario.verificadores.dados.VerificadorEntrada;
 
 import java.io.Serial;
 
