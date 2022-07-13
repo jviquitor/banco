@@ -22,7 +22,7 @@ Caso você tenha problema ao rodar o .jar, listamos alguns erros conhecidos
 Error: LinkageError occurred while loading main class Main
         java.lang.UnsupportedClassVersionError: Main has been compiled by a more recent version of the Java Runtime (class file version 62.0), this version of the Java Runtime only recognizes class file versions up to 61.0
 ```
-Caso você tenha o problema assima, utilize essas versões para rodar o -jar.
+Caso você tenha o problema acima, utilize essas versões para rodar o -jar.
 
 ```
 openjdk 18 2022-03-22
