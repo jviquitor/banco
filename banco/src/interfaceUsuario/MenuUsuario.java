@@ -562,16 +562,16 @@ public class MenuUsuario {
         ));
     }
 
-	private static void MenuSetDebitoAutomatico(GerenciamentoCartao carteira) {
-		System.out.println("DIGITE O DIA PARA DEBITAR AUTOMATICAMENTE [01 - 08]");
-		String entrada = teclado.nextLine();
+    private static void MenuSetDebitoAutomatico(GerenciamentoCartao carteira) {
+        System.out.println("DIGITE O DIA PARA DEBITAR AUTOMATICAMENTE ENTRE [" + VerificadorEntrada.DIA_MINIMO_DEB_AUTO + " - " + VerificadorEntrada.DIA_MAX_DEB_AUTO + "]");
+        String entrada = teclado.nextLine();
 
-		while (!VerificadorEntrada.verificarDataDebitoAuto(entrada)) {
-			System.out.println("DIA INVALIDO, POR FAVOR, INSIRA CORRETAMENTE UM DIA ENTRE [01 - 08]");
-			entrada = teclado.nextLine();
-		}
-		carteira.setDebitoAutomatico(true, Integer.parseInt(entrada));
-	}
+        while (!VerificadorEntrada.verificarDataDebitoAuto(entrada)) {
+            System.out.println("DIA INVALIDO, POR FAVOR, INSIRA CORRETAMENTE UM DIA ENTRE [" + VerificadorEntrada.DIA_MINIMO_DEB_AUTO + " - " + VerificadorEntrada.DIA_MAX_DEB_AUTO + "]");
+            entrada = teclado.nextLine();
+        }
+        carteira.setDebitoAutomatico(true, Integer.parseInt(entrada));
+    }
 
     private static void menuDebitoAutomatico(GerenciamentoCartao carteiraCliente) {
         if (carteiraCliente.isDebitoAutomatico()) {

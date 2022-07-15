@@ -186,4 +186,18 @@ public class GerenciadorArquivo {
         }
     }
 
+
+    public static void salvarTransacoes(ArrayList<Transacao> transacaos) throws LeituraArquivoException, EscritaArquivoException {
+        try {
+            ObjectOutputStream arquivo = new ObjectOutputStream(new FileOutputStream(GerenciadorArquivo.PATH_TRANSACOES));
+            arquivo.writeObject(transacaos);
+            arquivo.close();
+        } catch (FileNotFoundException ex) {
+            /* Diretorio nao encontrado */
+            throw new LeituraArquivoException("Diretorio nao encontrado");
+        } catch (IOException ex) {
+            /* Arquivo nao pode ser acessado */
+            throw new EscritaArquivoException("Arquivo nao pode ser acessado");
+        }
+    }
 }

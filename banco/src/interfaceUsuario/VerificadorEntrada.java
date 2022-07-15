@@ -16,33 +16,33 @@ import java.util.regex.Pattern;
 import static interfaceUsuario.MenuUsuario.*;
 
 public class VerificadorEntrada {
-	public static final String STANDARD = "standard";
-	public static final String PREMIUM = "premium";
-	public static final String DIAMOND = "diamond";
-	public static final String IDENTIFICACAO = "identificacao";
-	public static final int MAX_CARACTERES_ENTRADA = 60;
-	protected static final double RENDA_MINIMA = 200.0;
-	protected static final double RENDA_MAXIMA_STANDARD = 10000.0;
-	protected static final double RENDA_MAXIMA_PREMIUM = 30000.0;
-	protected static final String[] ENTRADAS_CHAVE_PIX = {"chave_aleatoria", "telefone", "email"};
-	protected static final int DIGITOS_MAXIMO_TELEFONE = 12;
-	protected static final int QUANTIDADE_IDENTIFICACAO_VALIDA = 14;
-	private static final int DIA_MINIMO_DEB_AUTO = 1;
-	private static final int DIA_MAX_DEB_AUTO = 8;
-	private static final int APELIDO_MAX_CARACTERES = 30;
-	private static final Pattern NAO_APENAS_ALFABETO = Pattern.compile("[^a-zA-Z\s]");
-	private static final Pattern NAO_APENAS_ALFABETO_DIGITO = Pattern.compile("[^a-zA-Z0-9\s]");
-	private static final Pattern HAS_WHITESPACE = Pattern.compile("\s");
-	private static final Pattern QUALQUER_NAO_DIGITO = Pattern.compile("/\\D+/");
-	private static final String EMAIL_PATTERN =
-			"^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
-					+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-	private static final Pattern EMAIL_VERIFICADOR = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
-	private static final int TAMANHO_MINIMO_SENHA = 3;
-	private static final int TAMANHO_CPF = 11;
-	private static final int TAMANHO_CNPJ = 14;
-	private static final int TAMANHO_CEP = 8;
-	private static final Scanner teclado = new Scanner(System.in);
+    public static final String STANDARD = "standard";
+    public static final String PREMIUM = "premium";
+    public static final String DIAMOND = "diamond";
+    public static final String IDENTIFICACAO = "identificacao";
+    public static final int MAX_CARACTERES_ENTRADA = 60;
+    public static final int DIA_MINIMO_DEB_AUTO = 1;
+    public static final int DIA_MAX_DEB_AUTO = 10;
+    protected static final double RENDA_MINIMA = 200.0;
+    protected static final double RENDA_MAXIMA_STANDARD = 10000.0;
+    protected static final double RENDA_MAXIMA_PREMIUM = 30000.0;
+    protected static final String[] ENTRADAS_CHAVE_PIX = {"chave_aleatoria", "telefone", "email"};
+    protected static final int DIGITOS_MAXIMO_TELEFONE = 12;
+    protected static final int QUANTIDADE_IDENTIFICACAO_VALIDA = 14;
+    private static final int APELIDO_MAX_CARACTERES = 30;
+    private static final Pattern NAO_APENAS_ALFABETO = Pattern.compile("[^a-zA-Z\s]");
+    private static final Pattern NAO_APENAS_ALFABETO_DIGITO = Pattern.compile("[^a-zA-Z0-9\s]");
+    private static final Pattern HAS_WHITESPACE = Pattern.compile("\s");
+    private static final Pattern QUALQUER_NAO_DIGITO = Pattern.compile("/\\D+/");
+    private static final String EMAIL_PATTERN =
+            "^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
+                    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private static final Pattern EMAIL_VERIFICADOR = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
+    private static final int TAMANHO_MINIMO_SENHA = 3;
+    private static final int TAMANHO_CPF = 11;
+    private static final int TAMANHO_CNPJ = 14;
+    private static final int TAMANHO_CEP = 8;
+    private static final Scanner teclado = new Scanner(System.in);
 
     protected static boolean verificarEntradasZeroUm(String entrada) {
         return !entrada.equals("0") && !entrada.equals("1");

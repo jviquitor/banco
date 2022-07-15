@@ -26,20 +26,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Conta implements Serializable {
-	@Serial
-	private static final long serialVersionUID = 2L;
-	protected final String idConta;
-	protected final List<Transacao> transacoesRealizadas;
-	protected final List<Transacao> transacoesAgendadas;
-	protected final Historico historico;
-	protected final GerenciamentoCartao carteira;
-	protected final ChavePix chavesPix;
-	protected Historico notificacoes;
-	protected Double saldo;
-	protected Double saldoTotalDepositado;
-	protected Double dinheiroGuardado;
-	protected Double emprestimo;
-	protected Double parcelaEmprestimo;
+    @Serial
+    private static final long serialVersionUID = 2L;
+    protected final String ID_CONTA;
+    protected final List<Transacao> TRANSACOES_REALIZADAS;
+    protected final List<Transacao> TRANSACOES_AGENDADAS;
+    protected final Historico HISTORICO;
+    protected final GerenciamentoCartao CARTEIRA;
+    protected final ChavePix CHAVES_PIX;
+    protected Historico notificacoes;
+    protected Double saldo;
+    protected Double saldoTotalDepositado;
+    protected Double dinheiroGuardado;
+    protected Double emprestimo;
+    protected Double parcelaEmprestimo;
 
     protected Conta() {
         this.ID_CONTA = GeracaoAleatoria.gerarIdConta(GeracaoAleatoria.TAMANHO_ID_CONTA);
@@ -64,9 +64,9 @@ public class Conta implements Serializable {
         this.saldoTotalDepositado = saldoTotalDepositado;
     }
 
-	public String getIdConta() {
-		return idConta;
-	}
+    public String getIdConta() {
+        return ID_CONTA;
+    }
 
     public ChavePix getCHAVES_PIX() {
         return CHAVES_PIX;
@@ -145,9 +145,9 @@ public class Conta implements Serializable {
         transacao.getContaDestino().addNotificacao(transacao);
     }
 
-	public boolean equals(Conta outraConta) {
-		return this.idConta.equals(outraConta.idConta);
-	}
+    public boolean equals(Conta outraConta) {
+        return this.ID_CONTA.equals(outraConta.ID_CONTA);
+    }
 
     public void mostrarCartoes() {
         for (Cartao cartao : this.CARTEIRA.getListaDeCartao()) {
