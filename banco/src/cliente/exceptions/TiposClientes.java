@@ -1,6 +1,6 @@
 package cliente.exceptions;
 
 public enum TiposClientes {
-	CLIENTE_PESSOA,
-	CLIENTE_EMPRESA
+    CLIENTE_PESSOA,
+    CLIENTE_EMPRESA
 }

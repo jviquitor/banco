@@ -15,49 +15,50 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class GerenciadorBanco {
-	private static final String TODOS_OS_DIREITOS_RESERVADOS = "© TODOS OS DIREITOS RESERVADOS AO BIC";
-	private static final String TRANSFERENCIA_AGENDADA = "Sua transferencia foi agendada com sucesso. Obrigada";
+    public static final Double JUROS_FATURA = 0.03;
+    private static final String TODOS_OS_DIREITOS_RESERVADOS = "© TODOS OS DIREITOS RESERVADOS AO BIC";
+    private static final String TRANSFERENCIA_AGENDADA = "Sua transferencia foi agendada com sucesso. Obrigada";
 
-	//
-	public static HashSet<Cliente> inicializarClientes() throws LeituraArquivoException {
-		return GerenciadorArquivo.listarSet(GerenciadorArquivo.PATH_CLIENTES);
-	}
+    //
+    public static HashSet<Cliente> inicializarClientes() throws LeituraArquivoException {
+        return GerenciadorArquivo.listarSet(GerenciadorArquivo.PATH_CLIENTES);
+    }
 
-	public static ArrayList<Transacao> inicializarTransacoes() throws LeituraArquivoException {
-		return GerenciadorArquivo.listarTransacoes(GerenciadorArquivo.PATH_TRANSACOES);
-	}
+    public static ArrayList<Transacao> inicializarTransacoes() throws LeituraArquivoException {
+        return GerenciadorArquivo.listarTransacoes(GerenciadorArquivo.PATH_TRANSACOES);
+    }
 
-	public static String getTipoConta(Conta c) {
-		if (c instanceof ContaDiamond) {
-			return VerificadorEntrada.DIAMOND;
-		}
-		if (c instanceof ContaPremium) {
-			return VerificadorEntrada.PREMIUM;
-		}
-		if (c instanceof ContaStandard) {
-			return VerificadorEntrada.STANDARD;
-		}
-		return " ";
-	}
+    public static String getTipoConta(Conta c) {
+        if (c instanceof ContaDiamond) {
+            return VerificadorEntrada.DIAMOND;
+        }
+        if (c instanceof ContaPremium) {
+            return VerificadorEntrada.PREMIUM;
+        }
+        if (c instanceof ContaStandard) {
+            return VerificadorEntrada.STANDARD;
+        }
+        return " ";
+    }
 
-	public static boolean intToBoolean(int value) {
-		return value != 0;
-	}
+    public static boolean intToBoolean(int value) {
+        return value != 0;
+    }
 
-	public static HashSet<Boleto> inicializarBoletos() {
-		return GerenciadorArquivo.listarSetBoleto(GerenciadorArquivo.PATH_BOLETOS);
-	}
+    public static HashSet<Boleto> inicializarBoletos() {
+        return GerenciadorArquivo.listarSetBoleto(GerenciadorArquivo.PATH_BOLETOS);
+    }
 
-	public static void imprimirDireitos() {
-		System.out.println(TODOS_OS_DIREITOS_RESERVADOS);
-	}
+    public static void imprimirDireitos() {
+        System.out.println(TODOS_OS_DIREITOS_RESERVADOS);
+    }
 
-	public static void imprimirErroOpcao() {
-		System.out.println("Opcao Invalida");
-		imprimirDireitos();
-	}
+    public static void imprimirErroOpcao() {
+        System.out.println("Opcao Invalida");
+        imprimirDireitos();
+    }
 
-	public static void imprimirMensagemTransferenciaAgendada() {
-		System.out.println(TRANSFERENCIA_AGENDADA);
-	}
+    public static void imprimirMensagemTransferenciaAgendada() {
+        System.out.println(TRANSFERENCIA_AGENDADA);
+    }
 }
