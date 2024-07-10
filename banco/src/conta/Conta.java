@@ -40,7 +40,7 @@ public class Conta implements Serializable {
     protected Double emprestimo;
     protected Double parcelaEmprestimo;
 
-    protected Conta() {
+    public Conta() {
         this.ID_CONTA = GeracaoAleatoria.gerarIdConta(GeracaoAleatoria.TAMANHO_ID_CONTA);
         this.saldo = 0.0;
         this.dinheiroGuardado = 0.0;
@@ -66,18 +66,18 @@ public class Conta implements Serializable {
         return CHAVES_PIX.mudarAdicionarChavePix(dadosChavePix.getTipoChave(), dadosChavePix);
     }
 
-    public boolean addTransacaoRealizada(Transacao t) {
-        if (!TRANSACOES_REALIZADAS.contains(t)) {
-            TRANSACOES_REALIZADAS.add(t);
+    public boolean addTransacaoRealizada(Transacao transacao) {
+        if (!TRANSACOES_REALIZADAS.contains(transacao)) {
+            TRANSACOES_REALIZADAS.add(transacao);
             return true;
         }
         return false;
     }
 
-    public boolean addTransacaoAgendadas(Transacao t) throws TransacaoException {
-        if (!TRANSACOES_AGENDADAS.contains(t)) {
-            this.HISTORICO.addTransacao(t);
-            TRANSACOES_AGENDADAS.add(t);
+    public boolean addTransacaoAgendadas(Transacao transacao) throws TransacaoException {
+        if (!TRANSACOES_AGENDADAS.contains(transacao)) {
+            this.HISTORICO.addTransacao(transacao);
+            TRANSACOES_AGENDADAS.add(transacao);
             return true;
         }
         return false;
